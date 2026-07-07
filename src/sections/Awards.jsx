@@ -26,7 +26,7 @@ export default function Awards() {
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                   {g.items.map((item, i) => (
-                    <div key={i} style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 24, padding: '18px 0', borderBottom: '1px solid var(--line)', alignItems: 'baseline' }}>
+                    <div key={i} className="aw-row">
                       <div>
                         <div style={{ color: 'var(--text)', fontWeight: 500, marginBottom: item.foot ? 4 : 0 }}>{item.k}</div>
                         {item.foot && <div className="text-dim small">{item.foot}</div>}

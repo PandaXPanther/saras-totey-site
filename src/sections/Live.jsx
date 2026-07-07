@@ -16,7 +16,7 @@ export default function Live() {
         <Reveal>
           <div className="eyebrow">{LIVE.eyebrow}</div>
         </Reveal>
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) auto', gap: 24, alignItems: 'end', marginBottom: 24 }}>
+        <div className="live-header">
           <Reveal i={1}>
             <h2 style={{ maxWidth: '20ch' }}>
               These numbers <span className="grad">refresh nightly.</span>

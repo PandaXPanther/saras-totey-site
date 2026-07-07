@@ -24,8 +24,8 @@ function LazyOrderbookField() {
 export default function Hero() {
   return (
     <section id="top" style={{ paddingTop: 140, paddingBottom: 80, position: 'relative', overflow: 'hidden', minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
-      <Aurora color="#3a5878" size={720} top="30%" left="25%" opacity={0.22} />
-      <Aurora color="#4a3d6e" size={800} top="70%" left="75%" opacity={0.18} />
+      <Aurora color="#7ce7c1" size={640} top="25%" left="22%" opacity={0.14} />
+      <Aurora color="#b998ff" size={720} top="65%" left="78%" opacity={0.16} />
       <div style={{ position: 'absolute', inset: 0, opacity: 0.7 }}>
         <LazyOrderbookField />
       </div>
@@ -61,7 +61,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.0, delay: 0.5, ease: [0.2, 0.9, 0.2, 1] }}
-          style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 40 }}
+          style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginTop: 36, maxWidth: '100%' }}
         >
           {HERO.live_pills.map((p) => (
             <span key={p.label} className={`pill ${p.tone}`}>
@@ -76,7 +76,7 @@ export default function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 1.1 }}
-          style={{ display: 'flex', flexWrap: 'wrap', gap: 24, marginTop: 56, color: 'var(--text-faint)', fontFamily: 'var(--font-mono)', fontSize: 12, letterSpacing: '0.08em' }}
+          style={{ display: 'flex', flexWrap: 'wrap', columnGap: 20, rowGap: 8, marginTop: 48, color: 'var(--text-faint)', fontFamily: 'var(--font-mono)', fontSize: 11.5, letterSpacing: '0.08em' }}
         >
           <span>{IDENTITY.location.toUpperCase()}</span>
           <span>{IDENTITY.school.toUpperCase()}</span>

@@ -53,8 +53,8 @@ function Bars({ count = 44, side = 'bid' }) {
           <boxGeometry args={[0.1, 1, 0.06]} />
           <meshBasicMaterial
             transparent
-            opacity={0.3}
-            color={side === 'bid' ? '#4c6a88' : '#5c7398'}
+            opacity={0.42}
+            color={side === 'bid' ? '#7ce7c1' : '#9db5ff'}
           />
         </mesh>
       ))}
@@ -73,7 +73,7 @@ function Grid() {
       {lines.map((l, i) => (
         <mesh key={i} position={[0, l.y, -0.5]}>
           <planeGeometry args={[20, 0.004]} />
-          <meshBasicMaterial color="#3a4560" transparent opacity={0.14} />
+          <meshBasicMaterial color="#5b6a95" transparent opacity={0.18} />
         </mesh>
       ))}
     </group>

@@ -23,8 +23,8 @@ export default function Backtest() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           {BACKTEST.rows.map((row, i) => (
             <Reveal key={i} i={i}>
-              <div className="card" style={{ padding: 28 }}>
-                <div style={{ display: 'grid', gridTemplateColumns: 'minmax(240px, 1.4fr) repeat(3, minmax(120px, 1fr))', gap: 24, alignItems: 'baseline' }}>
+              <div className="card" style={{ padding: 24 }}>
+                <div className="bt-row">
                   <div>
                     <div className="mono" style={{ fontSize: 11, color: 'var(--text-faint)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 8 }}>{row.window}</div>
                     <div style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 500, letterSpacing: '-0.01em', color: 'var(--text)', marginBottom: 8 }}>{row.system}</div>

@@ -28,7 +28,7 @@ export default function System({ system }) {
           <div className="eyebrow">system {String(system.order).padStart(2, '0')} · {system.tag}</div>
         </Reveal>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) auto', gap: 24, alignItems: 'end', marginBottom: 24 }}>
+        <div className="sys-header">
           <Reveal i={1}>
             <h2 style={{ maxWidth: '14ch' }}>
               {system.name}

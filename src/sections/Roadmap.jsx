@@ -22,7 +22,7 @@ export default function Roadmap() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           {ROADMAP.items.map((r, i) => (
             <Reveal key={i} i={i}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'minmax(200px, 240px) 1fr', gap: 32, padding: '24px 0', borderTop: '1px solid var(--line)', alignItems: 'start' }}>
+              <div className="rm-row">
                 <div className="mono" style={{ fontSize: 12, color: 'var(--text)', letterSpacing: '0.1em', textTransform: 'uppercase', paddingTop: 4 }}>{r.system}</div>
                 <p style={{ color: 'var(--text-dim)', maxWidth: '68ch', margin: 0, lineHeight: 1.65 }}>{r.next}</p>
               </div>
