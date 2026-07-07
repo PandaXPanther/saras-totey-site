@@ -1,8 +1,25 @@
-import React, { Suspense } from 'react';
+import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import OrderbookField from '../components/OrderbookField.jsx';
 import Aurora from '../components/Aurora.jsx';
 import { HERO, IDENTITY } from '../data/content.js';
+
+const OrderbookField = lazy(() => import('../components/OrderbookField.jsx'));
+
+function LazyOrderbookField() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
+  return (
+    <Suspense fallback={null}>
+      <OrderbookField />
+    </Suspense>
+  );
+}
 
 export default function Hero() {
   return (
@@ -10,9 +27,7 @@ export default function Hero() {
       <Aurora color="#3a5878" size={720} top="30%" left="25%" opacity={0.22} />
       <Aurora color="#4a3d6e" size={800} top="70%" left="75%" opacity={0.18} />
       <div style={{ position: 'absolute', inset: 0, opacity: 0.7 }}>
-        <Suspense fallback={null}>
-          <OrderbookField />
-        </Suspense>
+        <LazyOrderbookField />
       </div>
       <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at center, transparent 30%, var(--bg) 85%)', pointerEvents: 'none' }} />
 

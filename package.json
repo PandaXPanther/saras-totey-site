@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "refresh": "node scripts/refresh_live.mjs",
-    "build": "node scripts/refresh_live.mjs && vite build",
+    "build": "node scripts/refresh_live.mjs && vite build && node scripts/prerender.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
