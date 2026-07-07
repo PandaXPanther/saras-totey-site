@@ -27,9 +27,9 @@ export default function Hero() {
           transition={{ duration: 0.9, delay: 0.15, ease: [0.2, 0.9, 0.2, 1] }}
           style={{ maxWidth: '20ch' }}
         >
-          I build trading systems.<br />
-          <span className="grad">Real capital.</span>{' '}
-          <span style={{ color: 'var(--text-dim)' }}>Verifiable numbers.</span>
+          {HERO.headline_line1}<br />
+          <span className="grad">{HERO.headline_grad}</span>{' '}
+          <span style={{ color: 'var(--text-dim)' }}>{HERO.headline_rest}</span>
         </motion.h1>
 
         <motion.p

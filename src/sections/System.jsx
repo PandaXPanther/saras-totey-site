@@ -28,7 +28,7 @@ export default function System({ system }) {
           <div className="eyebrow">system {String(system.order).padStart(2, '0')} · {system.tag}</div>
         </Reveal>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) auto', gap: 24, alignItems: 'end', marginBottom: 40 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) auto', gap: 24, alignItems: 'end', marginBottom: 24 }}>
           <Reveal i={1}>
             <h2 style={{ maxWidth: '14ch' }}>
               {system.name}
@@ -41,6 +41,23 @@ export default function System({ system }) {
             </span>
           </Reveal>
         </div>
+
+        {/* TL;DR strip — plain English summary */}
+        {system.tldr && (
+          <Reveal>
+            <div style={{
+              padding: '20px 24px',
+              borderLeft: '2px solid var(--line-strong)',
+              background: 'rgba(15, 21, 36, 0.4)',
+              borderRadius: 4,
+              marginBottom: 40,
+              maxWidth: '80ch',
+            }}>
+              <div className="mono" style={{ fontSize: 10, color: 'var(--text-faint)', letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: 10 }}>In plain English</div>
+              <p style={{ color: 'var(--text)', fontSize: 16, lineHeight: 1.65, margin: 0 }}>{system.tldr}</p>
+            </div>
+          </Reveal>
+        )}
 
         {/* KPIs grid */}
         <Reveal i={2}>
@@ -145,6 +162,47 @@ export default function System({ system }) {
               <div className="mono" style={{ fontSize: 11, color: 'var(--text-faint)', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 14 }}>What I found</div>
               <h3 style={{ marginBottom: 16, maxWidth: '30ch' }}>{system.research_finding.title}</h3>
               <p className="lede" style={{ maxWidth: '68ch', marginBottom: 0 }}>{system.research_finding.body}</p>
+            </div>
+          </Reveal>
+        )}
+
+        {/* Code snippet */}
+        {system.code_snippet && (
+          <Reveal>
+            <div className="mt-16">
+              <div className="mono" style={{ fontSize: 11, color: 'var(--text-faint)', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 12 }}>The important part of the code</div>
+              <p className="text-dim" style={{ maxWidth: '68ch', marginBottom: 14, fontSize: 15 }}>{system.code_snippet.caption}</p>
+              <pre style={{
+                margin: 0,
+                padding: '20px 24px',
+                background: '#0a0e18',
+                border: '1px solid var(--line)',
+                borderRadius: 8,
+                overflowX: 'auto',
+                fontFamily: 'var(--font-mono)',
+                fontSize: 13.5,
+                lineHeight: 1.65,
+                color: '#c8d0dd',
+              }}>
+                <code>{system.code_snippet.code}</code>
+              </pre>
+            </div>
+          </Reveal>
+        )}
+
+        {/* Citations */}
+        {system.citations && system.citations.length > 0 && (
+          <Reveal>
+            <div className="mt-16">
+              <div className="mono" style={{ fontSize: 11, color: 'var(--text-faint)', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 16 }}>References</div>
+              <ol style={{ paddingLeft: 20, margin: 0, color: 'var(--text-dim)' }}>
+                {system.citations.map((c, i) => (
+                  <li key={i} style={{ marginBottom: 14, lineHeight: 1.55, maxWidth: '76ch' }}>
+                    <a href={c.href} target="_blank" rel="noreferrer" style={{ color: 'var(--text)', borderBottom: '1px solid var(--line-strong)' }}>{c.title}</a>
+                    {c.note && <span style={{ color: 'var(--text-dim)' }}> — {c.note}</span>}
+                  </li>
+                ))}
+              </ol>
             </div>
           </Reveal>
         )}

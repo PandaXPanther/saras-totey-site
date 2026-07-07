@@ -16,7 +16,7 @@ export default function Thesis() {
             Three years of building bots. <span className="grad">One year of learning why they matter.</span>
           </h2>
         </Reveal>
-        {THESIS.body.map((p, i) => (
+        {THESIS.paragraphs.map((p, i) => (
           <Reveal key={i} i={i + 2}>
             <p className="lede" style={{ marginBottom: 24 }}>{p}</p>
           </Reveal>
