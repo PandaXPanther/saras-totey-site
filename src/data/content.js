@@ -286,11 +286,11 @@ export const ROADMAP = {
 export const LIVE = {
   eyebrow: 'Live signals · refreshed daily',
   intro: 'The site rebuilds every night at 06:00 UTC via a GitHub Actions workflow. Commit counts and the Hyperliquid cohort ROI regenerate against real APIs. Every number here is reproducible.',
-  last_updated_iso: '2026-07-07T16:25:23.683Z',
+  last_updated_iso: '2026-07-07T16:37:05.593Z',
   cards: [
-    { k: "CounterSnipe commits", v: "327", foot: "srtt16/countersnipe" },
-    { k: "Prediction bot commits", v: "16", foot: "PandaXPanther/pandaxpanther-prediction-bot" },
-    { k: "copy-trader commits", v: "3", foot: "PandaXPanther/copy-trader" },
+    { k: "CounterSnipe commits", v: "328", foot: "srtt16/countersnipe" },
+    { k: "Prediction bot commits", v: "17", foot: "PandaXPanther/pandaxpanther-prediction-bot" },
+    { k: "copy-trader commits", v: "4", foot: "PandaXPanther/copy-trader" },
     { k: "Hyperliquid cohort · top-5 90d ROI", v: "+396.0%", foot: "Recomputed from seed_wallets.json + Hyperliquid API" },
     { k: "Days since CounterSnipe live", v: "52", foot: "Since May 16, 2026" },
     { k: "Days since last commit", v: "0", foot: "Across the three-repo fleet" },
