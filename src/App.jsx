@@ -4,6 +4,8 @@ import Hero from './sections/Hero.jsx';
 import Thesis from './sections/Thesis.jsx';
 import System from './sections/System.jsx';
 import Backtest from './sections/Backtest.jsx';
+import Live from './sections/Live.jsx';
+import Roadmap from './sections/Roadmap.jsx';
 import Other from './sections/Other.jsx';
 import Awards from './sections/Awards.jsx';
 import Footer from './sections/Footer.jsx';
@@ -20,6 +22,8 @@ export default function App() {
           <System key={s.slug} system={s} flipped={i % 2 === 1} />
         ))}
         <Backtest />
+        <Live />
+        <Roadmap />
         <Other />
         <Awards />
         <Footer />

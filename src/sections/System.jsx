@@ -119,6 +119,35 @@ export default function System({ system }) {
             </div>
           </div>
         </Reveal>
+
+        {/* Origin + hardest lesson */}
+        {system.origin && (
+          <div className="grid grid-2 mt-16" style={{ alignItems: 'start', gap: 32 }}>
+            <Reveal>
+              <div>
+                <div className="mono" style={{ fontSize: 11, color: 'var(--text-faint)', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 12 }}>How it started</div>
+                <p className="lede" style={{ maxWidth: '52ch' }}>{system.origin.how_it_started}</p>
+              </div>
+            </Reveal>
+            <Reveal i={1}>
+              <div>
+                <div className="mono" style={{ fontSize: 11, color: 'var(--text-faint)', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 12 }}>Hardest lesson</div>
+                <p className="lede" style={{ maxWidth: '52ch' }}>{system.origin.hardest_lesson}</p>
+              </div>
+            </Reveal>
+          </div>
+        )}
+
+        {/* Research finding */}
+        {system.research_finding && (
+          <Reveal>
+            <div className="card mt-16" style={{ padding: '32px 36px', borderColor: 'var(--line-strong)' }}>
+              <div className="mono" style={{ fontSize: 11, color: 'var(--text-faint)', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 14 }}>What I found</div>
+              <h3 style={{ marginBottom: 16, maxWidth: '30ch' }}>{system.research_finding.title}</h3>
+              <p className="lede" style={{ maxWidth: '68ch', marginBottom: 0 }}>{system.research_finding.body}</p>
+            </div>
+          </Reveal>
+        )}
       </div>
     </section>
   );

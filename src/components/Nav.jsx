@@ -7,6 +7,8 @@ const LINKS = [
   { id: 'prediction-bot', label: 'Prediction bot' },
   { id: 'copy-trader', label: 'copy-trader' },
   { id: 'backtest', label: 'Backtest' },
+  { id: 'live', label: 'Live' },
+  { id: 'roadmap', label: 'Next' },
   { id: 'awards', label: 'Record' },
 ];
 

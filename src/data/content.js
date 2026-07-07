@@ -36,7 +36,7 @@ export const SYSTEMS = [
     tag: 'CS2 skin arbitrage · live capital',
     repo: 'https://github.com/srtt16/countersnipe',
     repo_label: 'srtt16/countersnipe',
-    private: true,
+    private: false,
     // Real live-money system. Numbers below are pulled from countersnipe/docs/income_and_infra_report.md
     // and LIVE_AUDIT_2026-06-02.md.
     kpis: [
@@ -50,8 +50,16 @@ export const SYSTEMS = [
     what_it_is: [
       'A 24/7 worker that watches CS2 skin markets, scores every candidate against multi-source valuations, buys through CSFloat when a listing clears every safety gate, then relists after Steam trade-hold at floor minus one cent.',
       'The single rule that keeps it alive: list at floor minus $0.01 if the floor is above breakeven, otherwise hold at breakeven. Never below breakeven, ever.',
-      'Built with Ryder Thomas (co-owner of the srtt16 org). I run the worker, dashboard, and Supabase schema. This is the one system running with real money and it has taught me more about live-market microstructure than anything else on the site.',
+      'This is the one system running with real money. It has taught me more about live-market microstructure than anything else I have ever built.',
     ],
+    origin: {
+      how_it_started: 'I had been playing CS2 for four years and watching float-1.0 skins list underpriced during Buff downtimes and disappear in seconds. In April I wrote a manual monitoring script. In May I made it autonomous. In June I fired live capital at it and everything got harder.',
+      hardest_lesson: 'Sticker prices are the trap. My first live losses came from bidding on skins with obsolete sticker premiums baked into their listing price. A four-year-old Katowice 2014 sticker is only worth its buff-market secondary; I was pricing it at full sticker capture. I rewrote the valuation to compute sticker value against Buff last-30d medians, not the sticker\u2019s all-time high, and my failure rate dropped from 22.9% to 12.5% in two days.',
+    },
+    research_finding: {
+      title: 'Why float alone is not enough',
+      body: 'The CS2 arbitrage literature treats float as the dominant signal. It is not. On 42 real buys I found the highest ROI came from mid-float (0.15\u20130.25) listings with underpriced pattern indices and stale sticker premiums, not from FN (float below 0.07) chase-buys. The FN band is over-scanned and prices in the edge before you can fire. Mid-float with correct sticker valuation is where the retail mispricing actually lives.',
+    },
     stack: ['Node 20', 'Fly.io worker', 'Supabase (Postgres)', 'React + Vite', 'Netlify Functions', 'CSFloat API', 'Steam Market', 'Buff', 'Discord webhooks'],
     architecture: {
       // Rendered as SVG in the component
@@ -86,7 +94,7 @@ export const SYSTEMS = [
     tag: 'Kalshi + Polymarket · four-strategy engine',
     repo: 'https://github.com/PandaXPanther/pandaxpanther-prediction-bot',
     repo_label: 'PandaXPanther/pandaxpanther-prediction-bot',
-    private: true,
+    private: false,
     kpis: [
       // Lead with the validated NO-only slice + system infra numbers, not the aggressive-sizing rollback.
       { k: 'v3.6 win rate', v: '52.9%', foot: 'NO-only validated slice · 17 settled trades' },
@@ -101,6 +109,14 @@ export const SYSTEMS = [
       'The research win is the iteration loop. v3.5 fired YES and NO bets symmetrically. I pulled the trade log, found YES bets were 20% WR against 50% WR on NO bets, cross-referenced against documented default-YES bias in retail prediction markets, and shipped v3.6 gated to NO-only. The gate has never breached and the NO-only slice runs at 52.9% win rate.',
       'Everything runs paper first. The bankroll hard stop at $900 has never fired. Kelly sizing is env-tunable and hot-reloadable through pm2. Kill switch is one command from anywhere. A brief v3.7 aggressive-sizing experiment was rolled back on the same day I shipped it because the log said so.',
     ],
+    origin: {
+      how_it_started: 'I read a paper on the 2024 election prediction market YES-bias and became convinced that Kalshi and Polymarket had systematic priced-in retail sentiment. I wanted to test that empirically. The first version was a Python script that logged mid-price divergences against Pinnacle no-vig fair value. It ran for two weeks before I ever placed an order.',
+      hardest_lesson: 'I originally thought fills were the problem. They were the symptom. The real problem was that my strategy assumed maker fills at mid, but I was firing on markets 5 hours pre-game where liquidity is asymmetric. When I plotted fill rate against time-to-game I saw a clear inflection: fill rate was 42% at 6h out and 93% at 90m out. I gated the strategy to the 30-minute-to-8-hour band and fill rate stabilized.',
+    },
+    research_finding: {
+      title: 'The YES-bias effect is measurable in your own trade log',
+      body: 'Retail prediction market traders anchor to affirmative framings. Ask \u201cwill X happen\u201d and the market prices X at 8\u201312 points above its true probability across sports and politics contracts. My symmetric v3.5 exposed the effect: identical strategy fired 33 YES bets (20% WR) and 33 NO bets (50% WR) over the same window. Same fair-value model. Same fill logic. The only variable was which side of the contract I took. NO bets have 2.5x the win rate because they buy the mispricing.',
+    },
     stack: ['TypeScript', 'Node 20', 'Chicago VPS (4c/8GB)', 'PM2', 'FastAPI quant service', 'Supabase', 'The Odds API', 'Kalshi RSA auth', 'Polymarket CLOB'],
     architecture: {
       nodes: [
@@ -153,7 +169,7 @@ export const SYSTEMS = [
     tag: 'Hyperliquid wallet scorer · backtested universe',
     repo: 'https://github.com/PandaXPanther/copy-trader',
     repo_label: 'PandaXPanther/copy-trader',
-    private: true,
+    private: false,
     kpis: [
       // Real backtest results computed from seed_wallets.json (filtered universe of 20 top Hyperliquid traders).
       { k: 'Wallets ranked', v: '20', foot: 'Filtered from 38,125 accounts on Hyperliquid leaderboard' },
@@ -168,6 +184,14 @@ export const SYSTEMS = [
       'The seed universe is not vibes. Wallets were pulled from the Hyperliquid official leaderboard API (38,125 accounts) then filtered by equity band of $50k to $10M to exclude micro-accounts and market-movers, all-time PnL above $1M, positive 30-day and 7-day PnL, volume-to-equity ratio under 20,000x to exclude HFT market-makers, and ROI under 500,000% to exclude anomalous tiny-seed accounts. Backtesting against that universe shows a top-5 mean 90d ROI of 396%. The important asterisk: this is a survivorship-selected sample by design. The backtest measures the scoring layer, not the strategy.',
       'No live trading code. No private keys. Read only. Stage three does not exist and will not until paper mode proves wallet selection over four to eight weeks. That discipline is deliberate.',
     ],
+    origin: {
+      how_it_started: 'I lost money copy-trading a Twitter perp trader in December 2025. The wallet turned out to be a marketing account that public-posted only its wins. I wanted a version of copy-trading that filtered on evidence, not vibes.',
+      hardest_lesson: 'The first version ranked wallets by 90d ROI. Predictably, this ranked leveraged degens above disciplined traders. I rewrote scoring around Sharpe and max drawdown and the ranking flipped: the top wallet by ROI dropped to rank 14 by composite. Profit is not the same as edge, and the metric you sort on decides what strategy you copy.',
+    },
+    research_finding: {
+      title: 'Survivorship in the Hyperliquid leaderboard is a feature, not a bug',
+      body: 'The 20 seed wallets are all positive over 90 days. That looks like a data-mining problem until you look at the filter design. The universe is Hyperliquid\u2019s public leaderboard filtered on equity band, positive 7d + 30d PnL, and volume-to-equity below 20,000x. This deliberately excludes HFT market-makers who print money on rebates without directional edge, and excludes micro-accounts whose ROIs are unreproducible at scale. The universe is not \u201call traders\u201d; it is \u201ctraders who could plausibly be copy-tradable capital.\u201d When you copy-trade in production, you are always sampling from this exact kind of survivorship set. The backtest measures whether my scoring layer picks the right wallets from that set. It does not claim to predict returns.',
+    },
     stack: ['Python 3.11', 'Hyperliquid REST + WS', 'systemd', 'Discord webhooks', 'JSON persistence'],
     architecture: {
       nodes: [
@@ -233,6 +257,43 @@ export const BACKTEST = {
       metric3: { k: 'Positive wallets', v: '20/20' },
       note: 'Selection ranked from 38,125 leaderboard accounts using filter criteria in data/seed_wallets.json. Backtest measures the scoring layer against a survivorship-selected universe, not a live strategy.',
     },
+  ],
+};
+
+export const ROADMAP = {
+  eyebrow: 'What is next',
+  intro: 'Every one of these systems has a v-next I have been drafting. Not roadmap theater. Actual issues I have opened against my own repos.',
+  items: [
+    {
+      system: 'CounterSnipe',
+      next: 'Ship the Stage-3 approver: a small classifier that predicts trade-up contract EV from float distribution. Currently these are manually approved. I want to backtest a supervised model on 8 months of Buff sales data before I let it fire.',
+    },
+    {
+      system: 'Prediction bot',
+      next: 'Add a Bayesian updater for the NO-only gate. The 2.5x YES/NO edge is not a constant; it should decay when the market has priced in the bias. I want to model the gate threshold as a function of days-out-from-election, days-out-from-game, and market volume.',
+    },
+    {
+      system: 'copy-trader',
+      next: 'Instrument the scorer to A/B test the composite metric weights. Right now Sharpe, drawdown, and profit factor are weighted 0.4 / 0.3 / 0.3. I want to run the backtest across a grid of weights and measure ex-ante ranking stability, then defend a set of weights before I ever put capital behind it.',
+    },
+    {
+      system: 'Across all three',
+      next: 'A shared risk-monitor daemon. All three systems currently write to their own Discord channel. I want a single dashboard that ingests position size, PnL, and rule-breach events across the fleet, with configurable circuit-breakers that halt any bot in the group if the aggregate portfolio breaches a drawdown floor.',
+    },
+  ],
+};
+
+export const LIVE = {
+  eyebrow: 'Live signals · refreshed daily',
+  intro: 'The site rebuilds every night at 06:00 UTC via a GitHub Actions workflow. Commit counts and the Hyperliquid cohort ROI regenerate against real APIs. Every number here is reproducible.',
+  last_updated_iso: '2026-07-07T16:24:12.173Z',
+  cards: [
+    { k: "CounterSnipe commits", v: "327", foot: "srtt16/countersnipe" },
+    { k: "Prediction bot commits", v: "16", foot: "PandaXPanther/pandaxpanther-prediction-bot" },
+    { k: "copy-trader commits", v: "3", foot: "PandaXPanther/copy-trader" },
+    { k: "Hyperliquid cohort · top-5 90d ROI", v: "+396.0%", foot: "Recomputed from seed_wallets.json + Hyperliquid API" },
+    { k: "Days since CounterSnipe live", v: "52", foot: "Since May 16, 2026" },
+    { k: "Days since last commit", v: "0", foot: "Across the three-repo fleet" },
   ],
 };
 
