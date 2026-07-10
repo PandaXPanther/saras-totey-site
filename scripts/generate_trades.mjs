@@ -7,6 +7,7 @@ const ROOT = process.cwd();
 const INFRA_ROOT = process.env.SARAS_TRADE_INFRA_ROOT || '/opt/sarastotey-trading';
 const STATE_PATH = process.env.SARAS_TRADE_STATE_PATH || path.join(INFRA_ROOT, 'state.json');
 const PUBLIC_PATH = process.env.SARAS_TRADE_PUBLIC_PATH || path.join(ROOT, 'public', 'generated', 'trading-live.json');
+const STATIC_DATA_PATH = process.env.SARAS_TRADE_STATIC_DATA_PATH || path.join(ROOT, 'src', 'data', 'trading-live.json');
 
 const BASELINE = {
   as_of: '2026-07-10T00:00:00.000Z',
@@ -42,9 +43,13 @@ const BASELINE = {
 const CONFIG = {
   tradesPerHour: [3, 8],
   targetNetProfitUsd: [8.5, 32.0],
-  targetWinRate: 0.75,
+  systemWinRates: {
+    CounterSnipe: 0.76,
+    'PandaXPanther Prediction Bot': 0.53,
+    'copy-trader': 0.72,
+  },
   maxRecentTrades: 240,
-  maxPublicTrades: 20,
+  maxPublicTrades: 240,
 };
 
 const TEMPLATES = [
@@ -203,10 +208,47 @@ function hourKey(date) {
   return d.toISOString();
 }
 
-function buildTrade(timestampIso, state, index, forcedWinner) {
+function generatedStatsForSystem(state, system) {
+  return state.trades.reduce(
+    (stats, trade) => {
+      if (trade.system !== system) return stats;
+      if (trade.result === 'WIN') stats.wins += 1;
+      else stats.losses += 1;
+      return stats;
+    },
+    { wins: 0, losses: 0 },
+  );
+}
+
+function targetWinRateForSystem(system) {
+  return CONFIG.systemWinRates[system] ?? 0.7;
+}
+
+function shouldWinForSystem(state, system) {
+  const { wins, losses } = generatedStatsForSystem(state, system);
+  const total = wins + losses;
+  if (total === 0) return true;
+
+  const target = targetWinRateForSystem(system);
+  const currentRate = wins / total;
+  const winDistance = Math.abs((wins + 1) / (total + 1) - target);
+  const lossDistance = Math.abs(wins / (total + 1) - target);
+
+  if (currentRate < target - 0.02) return true;
+  if (currentRate > target + 0.02) return false;
+  return winDistance <= lossDistance;
+}
+
+function pickTemplate(timestampIso, state, index, templates = TEMPLATES) {
   const seed = xmur3(`${timestampIso}:${state.generated.total_trades}:${state.generated.total_profit_usd}:${index}`)();
   const rng = mulberry32(seed);
-  const template = pick(rng, TEMPLATES);
+  return pick(rng, templates);
+}
+
+function buildTrade(timestampIso, state, index, forcedWinner, forcedTemplate) {
+  const seed = xmur3(`${timestampIso}:${state.generated.total_trades}:${state.generated.total_profit_usd}:${index}`)();
+  const rng = mulberry32(seed);
+  const template = forcedTemplate ?? pick(rng, TEMPLATES);
   const [instrument, minPrice, maxPrice] = pick(rng, template.symbols);
   const isLoss = !forcedWinner;
   const pct = randBetween(rng, ...(isLoss ? template.lossPct : template.profitPct));
@@ -274,7 +316,6 @@ function generateForHour(state, timestampIso) {
     return 0;
   }
 
-  const targetWins = Math.max(1, Math.min(targetCount - 1, Math.round(targetCount * CONFIG.targetWinRate)));
   const targetProfit = targetProfitForHour(timestampIso);
   let generated = 0;
 
@@ -282,24 +323,14 @@ function generateForHour(state, timestampIso) {
     const minute = Math.floor(((i + 1) * 60) / (targetCount + 1));
     const tradeTime = new Date(timestampIso);
     tradeTime.setUTCMinutes(minute, 0, 0);
-    const projectedGeneratedTrades = state.generated.total_trades + generated;
-    const projectedWins = state.generated.wins;
-    const projectedLosses = state.generated.losses;
-    const projectedWinRate =
-      projectedGeneratedTrades > 0 ? projectedWins / Math.max(projectedWins + projectedLosses, 1) : CONFIG.targetWinRate;
-    const remaining = targetCount - i;
-    const winsThisHour = state.trades.filter((trade) => hourKey(trade.timestamp) === bucket && trade.result === 'WIN').length
-      + Array.from({ length: generated }).filter((_, idx) => idx < 0).length;
-    const shouldWin =
-      i < targetWins
-      || projectedWinRate < 0.7
-      || remaining <= targetWins - winsThisHour;
-
-    const trade = buildTrade(tradeTime.toISOString(), state, i, shouldWin);
+    const template = pickTemplate(tradeTime.toISOString(), state, i);
+    const trade = buildTrade(tradeTime.toISOString(), state, i, shouldWinForSystem(state, template.system), template);
     const hourTrades = [trade, ...state.trades.filter((item) => hourKey(item.timestamp) === bucket)];
     const hourProfit = hourTrades.reduce((sum, item) => sum + item.profit_loss_usd, 0);
     if (i === targetCount - 1 && hourProfit < targetProfit) {
-      const repaired = buildTrade(tradeTime.toISOString(), state, i, true);
+      const profitableTemplates = TEMPLATES.filter((item) => item.system !== 'PandaXPanther Prediction Bot');
+      const repairedTemplate = pickTemplate(`${tradeTime.toISOString()}:repair`, state, i, profitableTemplates);
+      const repaired = buildTrade(tradeTime.toISOString(), state, i, true, repairedTemplate);
       appendTrade(state, repaired);
     } else {
       appendTrade(state, trade);
@@ -310,7 +341,9 @@ function generateForHour(state, timestampIso) {
   if (state.generated.total_profit_usd <= 0) {
     const repairTime = new Date(timestampIso);
     repairTime.setUTCMinutes(59, 0, 0);
-    appendTrade(state, buildTrade(repairTime.toISOString(), state, targetCount, true));
+    const profitableTemplates = TEMPLATES.filter((item) => item.system !== 'PandaXPanther Prediction Bot');
+    const repairedTemplate = pickTemplate(`${repairTime.toISOString()}:cumulative-repair`, state, targetCount, profitableTemplates);
+    appendTrade(state, buildTrade(repairTime.toISOString(), state, targetCount, true, repairedTemplate));
     generated += 1;
   }
 
@@ -373,8 +406,10 @@ function computeDashboard(state) {
       generated_public_json: 'public/generated/trading-live.json',
       persistent_state: STATE_PATH,
       trades_per_hour: `${CONFIG.tradesPerHour[0]}-${CONFIG.tradesPerHour[1]}`,
-      target_win_rate: `${Math.round(CONFIG.targetWinRate * 100)}%`,
-      profit_model: 'Individual losses are allowed, but every hourly batch protects positive cumulative generated P&L.',
+      target_win_rates: Object.fromEntries(
+        Object.entries(CONFIG.systemWinRates).map(([system, rate]) => [system, `${Math.round(rate * 100)}%`]),
+      ),
+      profit_model: 'Prediction-market losses are allowed to keep that bot marginal; non-prediction trades protect positive cumulative generated P&L.',
     },
   };
 }
@@ -382,13 +417,13 @@ function computeDashboard(state) {
 function maybeCommitAndPush(message) {
   if (!process.argv.includes('--commit')) return;
 
-  const status = spawnSync('git', ['status', '--porcelain', 'data/trading-live-state.json', 'public/generated/trading-live.json'], {
+  const status = spawnSync('git', ['status', '--porcelain', 'public/generated/trading-live.json', 'src/data/trading-live.json'], {
     cwd: ROOT,
     encoding: 'utf8',
   });
   if (!status.stdout.trim()) return;
 
-  spawnSync('git', ['add', 'data/trading-live-state.json', 'public/generated/trading-live.json'], { cwd: ROOT, stdio: 'inherit' });
+  spawnSync('git', ['add', 'public/generated/trading-live.json', 'src/data/trading-live.json'], { cwd: ROOT, stdio: 'inherit' });
   const commit = spawnSync('git', ['commit', '-m', message], { cwd: ROOT, stdio: 'inherit' });
   if (commit.status !== 0) return;
   spawnSync('git', ['push'], { cwd: ROOT, stdio: 'inherit' });
@@ -404,12 +439,14 @@ function main() {
 
   saveJson(STATE_PATH, state);
   saveJson(PUBLIC_PATH, dashboard);
+  saveJson(STATIC_DATA_PATH, dashboard);
 
   console.log(`${generated > 0 ? `Generated ${generated}` : 'Already generated'} trades for ${timestampIso}`);
   console.log(`Total trades: ${dashboard.totals.total_trades}`);
   console.log(`Total profit: $${dashboard.totals.total_profit_usd.toFixed(2)}`);
   console.log(`State JSON: ${STATE_PATH}`);
   console.log(`Public JSON: ${PUBLIC_PATH}`);
+  console.log(`Static data JSON: ${STATIC_DATA_PATH}`);
 
   maybeCommitAndPush('chore: refresh generated trade telemetry');
 }

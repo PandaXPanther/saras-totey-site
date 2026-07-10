@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Reveal from '../components/Reveal.jsx';
 import Aurora from '../components/Aurora.jsx';
 import { LIVE } from '../data/content.js';
+import STATIC_DASHBOARD from '../data/trading-live.json';
 
 const FALLBACK_SIGNALS = {
   generated_at: LIVE.last_updated_iso,
@@ -40,7 +41,7 @@ function formatStamp(iso) {
 }
 
 export default function Live() {
-  const [dashboard, setDashboard] = useState(FALLBACK_DASHBOARD);
+  const [dashboard, setDashboard] = useState(STATIC_DASHBOARD ?? FALLBACK_DASHBOARD);
   const [signals, setSignals] = useState(FALLBACK_SIGNALS);
   const [status, setStatus] = useState({ trades: 'baseline', signals: 'baseline' });
   const newestStamp = [dashboard.generated_at, signals.generated_at, LIVE.last_updated_iso]
@@ -142,7 +143,7 @@ export default function Live() {
             <div className="trade-log-head">
               <div>
                 <div className="eyebrow" style={{ marginBottom: 10 }}>Generated trade log</div>
-                <h3>20 most recent paper fills</h3>
+                <h3>Generated paper fills</h3>
               </div>
               <div className="mono small text-faint">
                 {dashboard.totals.generated_trades} generated · +${dashboard.totals.generated_profit_usd.toFixed(2)} since baseline

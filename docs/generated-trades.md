@@ -5,6 +5,7 @@ The site now has an hourly generated paper-trade feed. It is intentionally stati
 - `scripts/generate_trades.mjs` creates 3-8 realistic paper trades for the current UTC hour.
 - `/opt/sarastotey-trading/state.json` stores durable state and survives VPS restarts.
 - `public/generated/trading-live.json` is the frontend-facing JSON copied into `dist/`.
+- `src/data/trading-live.json` is the build-time copy used for prerendered receipts before the browser fetch completes.
 - A VPS cron job runs the generator hourly, commits both JSON files, and pushes to `main`.
 
 ## Architecture
@@ -41,7 +42,7 @@ Generated trades use only instruments and strategies already present on the site
 - Kalshi/Polymarket contracts: sports contract-line value NO-only, sum-to-one arbitrage, crypto latency.
 - Hyperliquid perpetuals: BTC, ETH, SOL, and HYPE copy-trader paper mirrors.
 
-The generator targets roughly a 75% generated win rate. Some individual generated trades may lose money for realism, but cumulative generated P&L is protected so the feed trends positive.
+The generator balances win rates by system. CounterSnipe and copy-trader can stay meaningfully profitable, while PandaXPanther Prediction Bot targets a marginal 53% generated win rate to reflect thin prediction-market edges. Individual losses are allowed for realism; non-prediction trades protect positive cumulative generated P&L.
 
 ## Manual Commands
 
@@ -83,9 +84,9 @@ Edit `CONFIG` in `scripts/generate_trades.mjs`:
 
 - `targetNetProfitUsd`: expected positive drift range per generated hour.
 - `tradesPerHour`: min/max generated fills per hourly batch.
-- `targetWinRate`: generated win-rate target, currently 75%.
+- `systemWinRates`: per-system generated win-rate targets. Prediction markets are intentionally marginal at 53%.
 - `maxRecentTrades`: retained durable history.
-- `maxPublicTrades`: rows exposed to the frontend.
+- `maxPublicTrades`: rows exposed to the frontend receipts table.
 
 Edit `TEMPLATES` in the same file to add instruments, price ranges, sides, quantities, or strategy labels.
 
