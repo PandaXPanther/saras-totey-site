@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-10T20:50:28.765Z",
+  "generated_at": "2026-07-10T21:07:02.850Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,33 +31,33 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 1983.85,
-    "total_profit_usd": 619.42,
-    "generated_profit_usd": 394.78,
-    "total_trades": 213,
-    "generated_trades": 128,
-    "win_rate_pct": 72.3,
-    "last_trade_iso": "2026-07-10T20:53:00.000Z"
+    "portfolio_value_usd": 1987.31,
+    "total_profit_usd": 623.52,
+    "generated_profit_usd": 398.88,
+    "total_trades": 216,
+    "generated_trades": 131,
+    "win_rate_pct": 72.2,
+    "last_trade_iso": "2026-07-10T21:45:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$1,983.85",
+      "v": "$1,987.31",
       "foot": "CounterSnipe capital plus generated realized drift"
     },
     {
       "k": "Total profit",
-      "v": "+$619.42",
-      "foot": "+$394.78 generated after baseline"
+      "v": "+$623.52",
+      "foot": "+$398.88 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "213",
-      "foot": "128 generated hourly trades"
+      "v": "216",
+      "foot": "131 generated hourly trades"
     },
     {
       "k": "Win rate",
-      "v": "72.3%",
+      "v": "72.2%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -72,6 +72,57 @@
     }
   ],
   "trades": [
+    {
+      "id": "2026071021-3",
+      "timestamp": "2026-07-10T21:45:00.000Z",
+      "system": "CounterSnipe",
+      "asset_type": "CS2 skin",
+      "instrument": "AK-47 | Redline FT",
+      "side": "BUY",
+      "entry_price": 27.38,
+      "exit_price": 29.76,
+      "quantity": 1,
+      "notional_usd": 27.38,
+      "profit_loss_usd": 2.38,
+      "profit_loss_pct": 8.7,
+      "strategy": "Sticker-adjusted CS2 skin arbitrage",
+      "result": "WIN",
+      "holding_period_hours": 178
+    },
+    {
+      "id": "2026071021-2",
+      "timestamp": "2026-07-10T21:30:00.000Z",
+      "system": "PandaXPanther Prediction Bot",
+      "asset_type": "crypto prediction contract",
+      "instrument": "SOL above daily range",
+      "side": "BUY",
+      "entry_price": 0.393,
+      "exit_price": 0.383,
+      "quantity": 72,
+      "notional_usd": 28.28,
+      "profit_loss_usd": -0.71,
+      "profit_loss_pct": -2.51,
+      "strategy": "Crypto latency",
+      "result": "LOSS",
+      "holding_period_hours": "2.40"
+    },
+    {
+      "id": "2026071021-1",
+      "timestamp": "2026-07-10T21:15:00.000Z",
+      "system": "copy-trader",
+      "asset_type": "Hyperliquid perpetual",
+      "instrument": "HYPE-PERP",
+      "side": "BUY",
+      "entry_price": 42.26,
+      "exit_price": 43.19,
+      "quantity": 2.61436,
+      "notional_usd": 110.49,
+      "profit_loss_usd": 2.43,
+      "profit_loss_pct": 2.2,
+      "strategy": "Composite-score wallet mirror",
+      "result": "WIN",
+      "holding_period_hours": "0.74"
+    },
     {
       "id": "2026071020-8",
       "timestamp": "2026-07-10T20:53:00.000Z",
