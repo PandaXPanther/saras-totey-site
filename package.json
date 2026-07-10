@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "refresh": "node scripts/refresh_live.mjs",
+    "generate-trade": "node scripts/generate_trades.mjs",
+    "generate-trade:commit": "node scripts/generate_trades.mjs --commit",
     "build": "node scripts/refresh_live.mjs && vite build && node scripts/prerender.mjs",
     "preview": "vite preview"
   },

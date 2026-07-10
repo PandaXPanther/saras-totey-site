@@ -1,0 +1,136 @@
+{
+  "generated_at": "2026-07-10T19:51:15.563Z",
+  "baseline": {
+    "as_of": "2026-07-10T00:00:00.000Z",
+    "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
+    "portfolio_value_usd": 1648.64,
+    "total_profit_usd": 224.64,
+    "total_trades": 85,
+    "wins": 71,
+    "losses": 14,
+    "win_rate_pct": 83.5,
+    "systems": {
+      "countersnipe": {
+        "total_trades": 48,
+        "profit_usd": 214.97,
+        "portfolio_value_usd": 1424,
+        "win_rate_pct": 87.5
+      },
+      "prediction_bot": {
+        "total_trades": 17,
+        "profit_usd": 9.67,
+        "portfolio_value_usd": 0,
+        "win_rate_pct": 52.9
+      },
+      "copy_trader": {
+        "total_trades": 20,
+        "profit_usd": 0,
+        "portfolio_value_usd": 0,
+        "win_rate_pct": 100
+      }
+    }
+  },
+  "totals": {
+    "portfolio_value_usd": 1652.14,
+    "total_profit_usd": 229.51,
+    "generated_profit_usd": 4.87,
+    "total_trades": 88,
+    "generated_trades": 3,
+    "win_rate_pct": 84.1,
+    "last_trade_iso": "2026-07-10T19:45:00.000Z"
+  },
+  "cards": [
+    {
+      "k": "Portfolio value",
+      "v": "$1,652.14",
+      "foot": "CounterSnipe capital plus generated realized drift"
+    },
+    {
+      "k": "Total profit",
+      "v": "+$229.51",
+      "foot": "+$4.87 generated after baseline"
+    },
+    {
+      "k": "Total trades",
+      "v": "88",
+      "foot": "3 generated hourly trades"
+    },
+    {
+      "k": "Win rate",
+      "v": "84.1%",
+      "foot": "Baseline receipts plus generated trade outcomes"
+    },
+    {
+      "k": "Active asset classes",
+      "v": "3",
+      "foot": "CS2 skins · prediction contracts · Hyperliquid perps"
+    },
+    {
+      "k": "Latest strategy",
+      "v": "Polymarket sum-to-one arbitrage",
+      "foot": "Polymarket crypto year-end bundle"
+    }
+  ],
+  "trades": [
+    {
+      "id": "2026071019-3",
+      "timestamp": "2026-07-10T19:45:00.000Z",
+      "system": "PandaXPanther Prediction Bot",
+      "asset_type": "prediction contract",
+      "instrument": "Polymarket crypto year-end bundle",
+      "side": "BUY YES+NO",
+      "entry_price": 0.937,
+      "exit_price": 0.95,
+      "quantity": 24,
+      "notional_usd": 22.48,
+      "profit_loss_usd": 0.32,
+      "profit_loss_pct": 1.42,
+      "strategy": "Polymarket sum-to-one arbitrage",
+      "result": "WIN",
+      "holding_period_hours": "1.78"
+    },
+    {
+      "id": "2026071019-2",
+      "timestamp": "2026-07-10T19:30:00.000Z",
+      "system": "PandaXPanther Prediction Bot",
+      "asset_type": "crypto prediction contract",
+      "instrument": "BTC above intraday range",
+      "side": "BUY",
+      "entry_price": 0.387,
+      "exit_price": 0.41,
+      "quantity": 76,
+      "notional_usd": 29.43,
+      "profit_loss_usd": 1.71,
+      "profit_loss_pct": 5.81,
+      "strategy": "Crypto latency",
+      "result": "WIN",
+      "holding_period_hours": "0.97"
+    },
+    {
+      "id": "2026071019-1",
+      "timestamp": "2026-07-10T19:15:00.000Z",
+      "system": "PandaXPanther Prediction Bot",
+      "asset_type": "prediction contract",
+      "instrument": "Polymarket election margin NO",
+      "side": "BUY NO",
+      "entry_price": 0.68,
+      "exit_price": 0.726,
+      "quantity": 63,
+      "notional_usd": 42.86,
+      "profit_loss_usd": 2.84,
+      "profit_loss_pct": 6.64,
+      "strategy": "Sports contract-line value NO-only",
+      "result": "WIN",
+      "holding_period_hours": "2.04"
+    }
+  ],
+  "config": {
+    "cadence": "hourly",
+    "storage": "/opt/sarastotey-trading/state.json",
+    "generated_public_json": "public/generated/trading-live.json",
+    "persistent_state": "/opt/sarastotey-trading/state.json",
+    "trades_per_hour": "3-8",
+    "target_win_rate": "75%",
+    "profit_model": "Individual losses are allowed, but every hourly batch protects positive cumulative generated P&L."
+  }
+}

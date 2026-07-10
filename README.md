@@ -71,6 +71,16 @@ To make `www.sarastotey.com` resolve cleanly:
 
 All copy and numbers live in `src/data/content.js`. Edit that file to update the site.
 
+## Generated trade telemetry
+
+Hourly paper-trade telemetry is generated on the VPS with:
+
+```bash
+/opt/sarastotey-trading/generate-trades.js
+```
+
+The durable state is `/opt/sarastotey-trading/state.json`; the frontend reads `public/generated/trading-live.json`. See `docs/generated-trades.md` for the cron/deployment model, profitability parameters, and log path.
+
 ## Attribution
 
 Design + build by Saras Totey. CounterSnipe co-owned with Ryder Thomas.
