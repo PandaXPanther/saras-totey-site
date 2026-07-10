@@ -99,7 +99,7 @@ export default function Live() {
         <div className="live-header">
           <Reveal i={1}>
             <h2 style={{ maxWidth: '20ch' }}>
-              These numbers <span className="grad">refresh hourly.</span>
+              These numbers <span className="grad">refresh on schedule.</span>
             </h2>
           </Reveal>
           <Reveal i={2}>
