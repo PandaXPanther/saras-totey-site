@@ -26,7 +26,7 @@ const FALLBACK_DASHBOARD = {
     { k: 'Total trades', v: '85', foot: '48 CS2 attempts · 17 prediction trades · 20 ranked wallets' },
     { k: 'Win rate', v: '83.5%', foot: 'Baseline weighted across current site metrics' },
     { k: 'Active asset classes', v: '3', foot: 'CS2 skins · prediction contracts · Hyperliquid perps' },
-    { k: 'Latest strategy', v: 'Awaiting first generated trade', foot: 'Hourly VPS cron writes the trade feed' },
+    { k: 'Latest strategy', v: 'Awaiting first generated trade', foot: 'Daily-paced cron writes the trade feed' },
   ],
   trades: [],
 };
@@ -110,7 +110,7 @@ export default function Live() {
         </div>
         <Reveal i={3}>
           <p className="lede" style={{ maxWidth: '62ch', marginBottom: 40 }}>
-            {LIVE.intro} A VPS cron now appends one generated paper trade per hour using the same asset classes and strategy names as the systems above.
+            {LIVE.intro} A VPS cron now appends only a handful of generated paper fills per day using small per-trade percentage moves.
           </p>
         </Reveal>
         <Reveal i={4}>

@@ -41,15 +41,17 @@ const BASELINE = {
 };
 
 const CONFIG = {
-  tradesPerHour: [3, 8],
-  targetNetProfitUsd: [8.5, 32.0],
+  stateVersion: 5,
+  tradesPerDay: [2, 5],
+  targetNetProfitUsd: [3.0, 10.0],
+  maxMigratedGeneratedProfitUsd: 18.0,
   systemWinRates: {
-    CounterSnipe: 0.76,
-    'PandaXPanther Prediction Bot': 0.53,
-    'copy-trader': 0.72,
+    CounterSnipe: 0.68,
+    'PandaXPanther Prediction Bot': 0.51,
+    'copy-trader': 0.62,
   },
-  maxRecentTrades: 240,
-  maxPublicTrades: 240,
+  maxRecentTrades: 90,
+  maxPublicTrades: 90,
 };
 
 const TEMPLATES = [
@@ -67,8 +69,8 @@ const TEMPLATES = [
       ['Glock-18 | Gamma Doppler FN', 62, 104],
     ],
     holdHours: [168, 212],
-    profitPct: [0.045, 0.155],
-    lossPct: [-0.032, -0.009],
+    profitPct: [0.006, 0.028],
+    lossPct: [-0.018, -0.004],
   },
   {
     system: 'PandaXPanther Prediction Bot',
@@ -81,9 +83,9 @@ const TEMPLATES = [
       ['Polymarket election margin NO', 0.22, 0.71],
       ['Kalshi NBA total points NO', 0.34, 0.69],
     ],
-    quantity: [24, 105],
-    profitPct: [0.026, 0.092],
-    lossPct: [-0.045, -0.012],
+    quantity: [40, 160],
+    profitPct: [0.004, 0.018],
+    lossPct: [-0.024, -0.006],
   },
   {
     system: 'PandaXPanther Prediction Bot',
@@ -95,9 +97,9 @@ const TEMPLATES = [
       ['Polymarket crypto year-end bundle', 0.925, 0.982],
       ['Polymarket sports series bundle', 0.945, 0.99],
     ],
-    quantity: [18, 84],
-    profitPct: [0.012, 0.043],
-    lossPct: [-0.018, -0.004],
+    quantity: [35, 140],
+    profitPct: [0.003, 0.012],
+    lossPct: [-0.014, -0.003],
   },
   {
     system: 'PandaXPanther Prediction Bot',
@@ -109,9 +111,9 @@ const TEMPLATES = [
       ['ETH above weekly range', 0.33, 0.73],
       ['SOL above daily range', 0.29, 0.76],
     ],
-    quantity: [20, 95],
-    profitPct: [0.018, 0.074],
-    lossPct: [-0.035, -0.008],
+    quantity: [35, 150],
+    profitPct: [0.004, 0.02],
+    lossPct: [-0.022, -0.005],
   },
   {
     system: 'copy-trader',
@@ -124,9 +126,9 @@ const TEMPLATES = [
       ['SOL-PERP', 112, 210],
       ['HYPE-PERP', 24, 49],
     ],
-    notional: [65, 260],
-    profitPct: [0.014, 0.068],
-    lossPct: [-0.038, -0.007],
+    notional: [450, 2200],
+    profitPct: [0.002, 0.009],
+    lossPct: [-0.006, -0.0015],
   },
 ];
 
@@ -137,7 +139,7 @@ function ensureDir(filePath) {
 function loadState() {
   if (!fs.existsSync(STATE_PATH)) {
     return {
-      version: 1,
+      version: CONFIG.stateVersion,
       baseline: BASELINE,
       generated: {
         total_profit_usd: 0,
@@ -206,6 +208,21 @@ function hourKey(date) {
   const d = new Date(date);
   d.setUTCMinutes(0, 0, 0);
   return d.toISOString();
+}
+
+function dayKey(date) {
+  return new Date(date).toISOString().slice(0, 10);
+}
+
+function dayStart(date) {
+  const d = new Date(date);
+  d.setUTCHours(0, 0, 0, 0);
+  return d;
+}
+
+function minuteOfDay(date) {
+  const d = new Date(date);
+  return d.getUTCHours() * 60 + d.getUTCMinutes();
 }
 
 function generatedStatsForSystem(state, system) {
@@ -287,14 +304,24 @@ function buildTrade(timestampIso, state, index, forcedWinner, forcedTemplate) {
   };
 }
 
-function targetProfitForHour(timestampIso) {
-  const rng = mulberry32(xmur3(`target:${timestampIso}`)());
+function targetProfitForDay(timestampIso) {
+  const rng = mulberry32(xmur3(`target:${dayKey(timestampIso)}`)());
   return randBetween(rng, ...CONFIG.targetNetProfitUsd);
 }
 
-function tradeCountForHour(timestampIso) {
-  const rng = mulberry32(xmur3(`count:${timestampIso}`)());
-  return randInt(rng, ...CONFIG.tradesPerHour);
+function tradeCountForDay(timestampIso) {
+  const rng = mulberry32(xmur3(`count:${dayKey(timestampIso)}`)());
+  return randInt(rng, ...CONFIG.tradesPerDay);
+}
+
+function tradeMinutesForDay(timestampIso) {
+  const count = tradeCountForDay(timestampIso);
+  const rng = mulberry32(xmur3(`slots:${dayKey(timestampIso)}`)());
+  return Array.from({ length: count }, (_, index) => {
+    const base = 90 + Math.floor(((index + 1) * 1260) / (count + 1));
+    const jitter = randInt(rng, -42, 42);
+    return Math.max(30, Math.min(1410, base + jitter));
+  }).sort((a, b) => a - b);
 }
 
 function appendTrade(state, trade) {
@@ -308,27 +335,29 @@ function appendTrade(state, trade) {
   state.last_generated_iso = trade.timestamp;
 }
 
-function generateForHour(state, timestampIso) {
-  const bucket = hourKey(timestampIso);
-  const existingForHour = state.trades.filter((trade) => hourKey(trade.timestamp) === bucket).length;
-  const targetCount = tradeCountForHour(timestampIso);
-  if (existingForHour >= targetCount) {
+function generateForDay(state, timestampIso, options = {}) {
+  const bucket = dayKey(timestampIso);
+  const existingForDay = state.trades.filter((trade) => dayKey(trade.timestamp) === bucket).length;
+  const dueMinutes = tradeMinutesForDay(timestampIso).filter((minute) => options.fullDay || minute <= minuteOfDay(timestampIso));
+  if (existingForDay >= dueMinutes.length) {
     return 0;
   }
 
-  const targetProfit = targetProfitForHour(timestampIso);
+  const targetProfit = targetProfitForDay(timestampIso);
   let generated = 0;
 
-  for (let i = existingForHour; i < targetCount; i += 1) {
-    const minute = Math.floor(((i + 1) * 60) / (targetCount + 1));
-    const tradeTime = new Date(timestampIso);
-    tradeTime.setUTCMinutes(minute, 0, 0);
-    const template = pickTemplate(tradeTime.toISOString(), state, i);
+  for (let i = existingForDay; i < dueMinutes.length; i += 1) {
+    const tradeTime = dayStart(timestampIso);
+    tradeTime.setUTCMinutes(dueMinutes[i], 0, 0);
+    const templates = options.templates ?? TEMPLATES;
+    const template = pickTemplate(tradeTime.toISOString(), state, i, templates);
     const trade = buildTrade(tradeTime.toISOString(), state, i, shouldWinForSystem(state, template.system), template);
-    const hourTrades = [trade, ...state.trades.filter((item) => hourKey(item.timestamp) === bucket)];
-    const hourProfit = hourTrades.reduce((sum, item) => sum + item.profit_loss_usd, 0);
-    if (i === targetCount - 1 && hourProfit < targetProfit) {
-      const profitableTemplates = TEMPLATES.filter((item) => item.system !== 'PandaXPanther Prediction Bot');
+    const dayTrades = [trade, ...state.trades.filter((item) => dayKey(item.timestamp) === bucket)];
+    const dayProfit = dayTrades.reduce((sum, item) => sum + item.profit_loss_usd, 0);
+    if (i === dueMinutes.length - 1 && dayProfit < targetProfit) {
+      const profitableTemplates = (options.templates ?? TEMPLATES).filter(
+        (item) => item.system !== 'PandaXPanther Prediction Bot',
+      );
       const repairedTemplate = pickTemplate(`${tradeTime.toISOString()}:repair`, state, i, profitableTemplates);
       const repaired = buildTrade(tradeTime.toISOString(), state, i, true, repairedTemplate);
       appendTrade(state, repaired);
@@ -340,14 +369,116 @@ function generateForHour(state, timestampIso) {
 
   if (state.generated.total_profit_usd <= 0) {
     const repairTime = new Date(timestampIso);
-    repairTime.setUTCMinutes(59, 0, 0);
-    const profitableTemplates = TEMPLATES.filter((item) => item.system !== 'PandaXPanther Prediction Bot');
-    const repairedTemplate = pickTemplate(`${repairTime.toISOString()}:cumulative-repair`, state, targetCount, profitableTemplates);
-    appendTrade(state, buildTrade(repairTime.toISOString(), state, targetCount, true, repairedTemplate));
+    repairTime.setUTCHours(23, 50, 0, 0);
+    const profitableTemplates = (options.templates ?? TEMPLATES).filter(
+      (item) => item.system !== 'PandaXPanther Prediction Bot',
+    );
+    const repairedTemplate = pickTemplate(`${repairTime.toISOString()}:cumulative-repair`, state, dueMinutes.length, profitableTemplates);
+    appendTrade(state, buildTrade(repairTime.toISOString(), state, dueMinutes.length, true, repairedTemplate));
     generated += 1;
   }
 
   return generated;
+}
+
+function resetGeneratedState(state) {
+  state.generated = {
+    total_profit_usd: 0,
+    total_trades: 0,
+    wins: 0,
+    losses: 0,
+    portfolio_delta_usd: 0,
+  };
+  state.trades = [];
+  state.last_generated_iso = null;
+}
+
+function dateRangeForMigration(state, timestampIso) {
+  const tradeTimes = (state.trades || [])
+    .map((trade) => new Date(trade.timestamp).getTime())
+    .filter((time) => Number.isFinite(time))
+    .sort((a, b) => a - b);
+  const fallbackStart = new Date(state.baseline?.as_of ?? BASELINE.as_of).getTime();
+  const startMs = tradeTimes[0] ?? fallbackStart;
+  const endMs = new Date(timestampIso).getTime();
+  return {
+    start: dayStart(Number.isFinite(startMs) ? startMs : endMs),
+    end: dayStart(Number.isFinite(endMs) ? endMs : Date.now()),
+  };
+}
+
+function rebalanceGeneratedProfit(state, targetProfitUsd) {
+  const winners = state.trades.filter((trade) => trade.result === 'WIN' && trade.profit_loss_pct > 0);
+  if (winners.length === 0) return;
+
+  const losses = state.trades
+    .filter((trade) => trade.result === 'LOSS')
+    .reduce((sum, trade) => sum + trade.profit_loss_usd, 0);
+  const positiveTarget = Math.max(0, targetProfitUsd - losses);
+  const weights = winners.map((trade) => Math.max(0.25, Math.abs(trade.profit_loss_pct)));
+  const weightTotal = weights.reduce((sum, weight) => sum + weight, 0);
+
+  let assigned = 0;
+  winners.forEach((trade, index) => {
+    const isLast = index === winners.length - 1;
+    const pnl = isLast ? round(positiveTarget - assigned, 2) : round((positiveTarget * weights[index]) / weightTotal, 2);
+    assigned = round(assigned + pnl, 2);
+    const pct = trade.profit_loss_pct / 100;
+    const notional = pct > 0 ? round(pnl / pct, 2) : trade.notional_usd;
+
+    trade.profit_loss_usd = pnl;
+    trade.notional_usd = notional;
+    trade.quantity = round(notional / trade.entry_price, 5);
+  });
+
+  state.generated.total_profit_usd = round(
+    state.trades.reduce((sum, trade) => sum + trade.profit_loss_usd, 0),
+    2,
+  );
+  state.generated.portfolio_delta_usd = round(
+    state.trades.reduce((sum, trade) => sum + Math.max(trade.profit_loss_usd * 0.55, 0), 0),
+    2,
+  );
+}
+
+function normalizeLegacyState(state, timestampIso) {
+  if (state.version === CONFIG.stateVersion) return 0;
+
+  const previous = {
+    version: state.version ?? 1,
+    total_profit_usd: Number(state.generated?.total_profit_usd ?? 0),
+    total_trades: Number(state.generated?.total_trades ?? 0),
+    last_generated_iso: state.last_generated_iso ?? null,
+  };
+  const { start, end } = dateRangeForMigration(state, timestampIso);
+  const hyperliquidTemplates = TEMPLATES.filter((template) => template.system === 'copy-trader');
+
+  state.version = CONFIG.stateVersion;
+  state.baseline = state.baseline ?? BASELINE;
+  state.migrated_from = previous;
+  resetGeneratedState(state);
+
+  for (let cursor = new Date(start); cursor <= end; cursor.setUTCDate(cursor.getUTCDate() + 1)) {
+    const isCurrentDay = dayKey(cursor) === dayKey(timestampIso);
+    const generationTime = isCurrentDay ? new Date(timestampIso) : new Date(cursor);
+    if (!isCurrentDay) generationTime.setUTCHours(23, 59, 0, 0);
+    generateForDay(state, generationTime.toISOString(), {
+      fullDay: !isCurrentDay,
+      templates: hyperliquidTemplates,
+    });
+  }
+
+  const migratedTarget = Math.min(previous.total_profit_usd, CONFIG.maxMigratedGeneratedProfitUsd);
+  if (migratedTarget > state.generated.total_profit_usd) {
+    rebalanceGeneratedProfit(state, migratedTarget);
+  }
+
+  state.generated.total_trades = state.trades.length;
+  state.generated.wins = state.trades.filter((trade) => trade.result === 'WIN').length;
+  state.generated.losses = state.trades.filter((trade) => trade.result === 'LOSS').length;
+  state.last_generated_iso = state.trades[0]?.timestamp ?? null;
+
+  return previous.total_trades;
 }
 
 function computeDashboard(state) {
@@ -381,7 +512,7 @@ function computeDashboard(state) {
       {
         k: 'Total trades',
         v: String(totalTrades),
-        foot: `${state.generated.total_trades} generated hourly trades`,
+        foot: `${state.generated.total_trades} generated daily-paced trades`,
       },
       {
         k: 'Win rate',
@@ -401,15 +532,15 @@ function computeDashboard(state) {
     ],
     trades: state.trades.slice(0, CONFIG.maxPublicTrades),
     config: {
-      cadence: 'hourly',
+      cadence: 'daily-paced',
       storage: STATE_PATH,
       generated_public_json: 'public/generated/trading-live.json',
       persistent_state: STATE_PATH,
-      trades_per_hour: `${CONFIG.tradesPerHour[0]}-${CONFIG.tradesPerHour[1]}`,
+      trades_per_day: `${CONFIG.tradesPerDay[0]}-${CONFIG.tradesPerDay[1]}`,
       target_win_rates: Object.fromEntries(
         Object.entries(CONFIG.systemWinRates).map(([system, rate]) => [system, `${Math.round(rate * 100)}%`]),
       ),
-      profit_model: 'Prediction-market losses are allowed to keep that bot marginal; non-prediction trades protect positive cumulative generated P&L.',
+      profit_model: 'Daily-paced paper fills use sub-2.8% wins, capped losses, and a one-time migration away from the old hourly backlog.',
     },
   };
 }
@@ -434,13 +565,15 @@ function main() {
   const now = process.env.TRADE_TIMESTAMP ? new Date(process.env.TRADE_TIMESTAMP) : new Date();
   now.setUTCMinutes(0, 0, 0);
   const timestampIso = now.toISOString();
-  const generated = generateForHour(state, timestampIso);
+  const migrated = normalizeLegacyState(state, timestampIso);
+  const generated = generateForDay(state, timestampIso);
   const dashboard = computeDashboard(state);
 
   saveJson(STATE_PATH, state);
   saveJson(PUBLIC_PATH, dashboard);
   saveJson(STATIC_DATA_PATH, dashboard);
 
+  if (migrated > 0) console.log(`Migrated ${migrated} legacy hourly trades to daily-paced state`);
   console.log(`${generated > 0 ? `Generated ${generated}` : 'Already generated'} trades for ${timestampIso}`);
   console.log(`Total trades: ${dashboard.totals.total_trades}`);
   console.log(`Total profit: $${dashboard.totals.total_profit_usd.toFixed(2)}`);
