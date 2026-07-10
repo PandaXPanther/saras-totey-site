@@ -3,6 +3,11 @@ import Reveal from '../components/Reveal.jsx';
 import Aurora from '../components/Aurora.jsx';
 import { LIVE } from '../data/content.js';
 
+const FALLBACK_SIGNALS = {
+  generated_at: LIVE.last_updated_iso,
+  cards: LIVE.cards,
+};
+
 const FALLBACK_DASHBOARD = {
   generated_at: LIVE.last_updated_iso,
   totals: {
@@ -36,11 +41,18 @@ function formatStamp(iso) {
 
 export default function Live() {
   const [dashboard, setDashboard] = useState(FALLBACK_DASHBOARD);
-  const [status, setStatus] = useState('baseline');
-  const stamp = formatStamp(dashboard.generated_at || LIVE.last_updated_iso);
+  const [signals, setSignals] = useState(FALLBACK_SIGNALS);
+  const [status, setStatus] = useState({ trades: 'baseline', signals: 'baseline' });
+  const newestStamp = [dashboard.generated_at, signals.generated_at, LIVE.last_updated_iso]
+    .map((iso) => new Date(iso).getTime())
+    .filter((time) => Number.isFinite(time))
+    .sort((a, b) => b - a)[0];
+  const stamp = formatStamp(new Date(newestStamp).toISOString());
+  const hasLiveData = status.trades === 'live' || status.signals === 'live';
 
   useEffect(() => {
     let cancelled = false;
+
     fetch(`/generated/trading-live.json?ts=${Date.now()}`, { cache: 'no-store' })
       .then((res) => {
         if (!res.ok) throw new Error(`trade feed ${res.status}`);
@@ -49,12 +61,28 @@ export default function Live() {
       .then((data) => {
         if (!cancelled) {
           setDashboard(data);
-          setStatus('live');
+          setStatus((current) => ({ ...current, trades: 'live' }));
         }
       })
       .catch(() => {
-        if (!cancelled) setStatus('baseline');
+        if (!cancelled) setStatus((current) => ({ ...current, trades: 'baseline' }));
       });
+
+    fetch(`/generated/live-signals.json?ts=${Date.now()}`, { cache: 'no-store' })
+      .then((res) => {
+        if (!res.ok) throw new Error(`live signals ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        if (!cancelled && Array.isArray(data.cards)) {
+          setSignals(data);
+          setStatus((current) => ({ ...current, signals: 'live' }));
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setStatus((current) => ({ ...current, signals: 'baseline' }));
+      });
+
     return () => {
       cancelled = true;
     };
@@ -75,7 +103,7 @@ export default function Live() {
           </Reveal>
           <Reveal i={2}>
             <div className="mono small text-faint" style={{ letterSpacing: '0.08em' }}>
-              Last update · {stamp} · {status === 'live' ? 'generated feed' : 'baseline fallback'}
+              Last update · {stamp} · {hasLiveData ? 'generated feed' : 'baseline fallback'}
             </div>
           </Reveal>
         </div>
@@ -96,6 +124,20 @@ export default function Live() {
           </div>
         </Reveal>
         <Reveal i={5}>
+          <div className="mt-12">
+            <div className="eyebrow" style={{ marginBottom: 18 }}>Repository + API signals</div>
+            <div className="grid grid-3">
+              {signals.cards.map((c, i) => (
+                <div key={i} className="kpi">
+                  <div className="kpi-k">{c.k}</div>
+                  <div className="kpi-v">{c.v}</div>
+                  <div className="kpi-foot">{c.foot}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Reveal>
+        <Reveal i={6}>
           <div className="trade-log mt-12">
             <div className="trade-log-head">
               <div>
