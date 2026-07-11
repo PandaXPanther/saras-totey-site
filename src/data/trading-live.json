@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-11T18:07:03.576Z",
+  "generated_at": "2026-07-11T19:07:02.670Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -32,12 +32,12 @@
   },
   "totals": {
     "portfolio_value_usd": 1668.12,
-    "total_profit_usd": 249.29,
-    "generated_profit_usd": 24.65,
-    "total_trades": 93,
-    "generated_trades": 8,
-    "win_rate_pct": 82.8,
-    "last_trade_iso": "2026-07-11T13:32:00.000Z"
+    "total_profit_usd": 248.45,
+    "generated_profit_usd": 23.81,
+    "total_trades": 94,
+    "generated_trades": 9,
+    "win_rate_pct": 81.9,
+    "last_trade_iso": "2026-07-11T18:11:00.000Z"
   },
   "cards": [
     {
@@ -47,17 +47,17 @@
     },
     {
       "k": "Total profit",
-      "v": "+$249.29",
-      "foot": "+$24.65 generated after baseline"
+      "v": "+$248.45",
+      "foot": "+$23.81 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "93",
-      "foot": "8 generated daily-paced trades"
+      "v": "94",
+      "foot": "9 generated daily-paced trades"
     },
     {
       "k": "Win rate",
-      "v": "82.8%",
+      "v": "81.9%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -67,11 +67,28 @@
     },
     {
       "k": "Latest strategy",
-      "v": "Sports contract-line value NO-only",
-      "foot": "Kalshi NFL game winner NO"
+      "v": "Crypto latency",
+      "foot": "SOL above daily range"
     }
   ],
   "trades": [
+    {
+      "id": "2026071118-4",
+      "timestamp": "2026-07-11T18:11:00.000Z",
+      "system": "PandaXPanther Prediction Bot",
+      "asset_type": "crypto prediction contract",
+      "instrument": "SOL above daily range",
+      "side": "BUY",
+      "entry_price": 0.457,
+      "exit_price": 0.447,
+      "quantity": 84,
+      "notional_usd": 38.37,
+      "profit_loss_usd": -0.84,
+      "profit_loss_pct": -2.18,
+      "strategy": "Crypto latency",
+      "result": "LOSS",
+      "holding_period_hours": "1.24"
+    },
     {
       "id": "2026071113-3",
       "timestamp": "2026-07-11T13:32:00.000Z",
