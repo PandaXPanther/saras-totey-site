@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-12T15:07:04.953Z",
+  "generated_at": "2026-07-12T16:07:04.511Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,33 +31,33 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 1675.77,
-    "total_profit_usd": 256.68,
-    "generated_profit_usd": 32.04,
-    "total_trades": 97,
-    "generated_trades": 12,
-    "win_rate_pct": 81.4,
-    "last_trade_iso": "2026-07-12T12:19:00.000Z"
+    "portfolio_value_usd": 1678.58,
+    "total_profit_usd": 260.58,
+    "generated_profit_usd": 35.94,
+    "total_trades": 98,
+    "generated_trades": 13,
+    "win_rate_pct": 81.6,
+    "last_trade_iso": "2026-07-12T15:38:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$1,675.77",
+      "v": "$1,678.58",
       "foot": "CounterSnipe capital plus generated realized drift"
     },
     {
       "k": "Total profit",
-      "v": "+$256.68",
-      "foot": "+$32.04 generated after baseline"
+      "v": "+$260.58",
+      "foot": "+$35.94 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "97",
-      "foot": "12 generated daily-paced trades"
+      "v": "98",
+      "foot": "13 generated daily-paced trades"
     },
     {
       "k": "Win rate",
-      "v": "81.4%",
+      "v": "81.6%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -72,6 +72,23 @@
     }
   ],
   "trades": [
+    {
+      "id": "2026071215-4",
+      "timestamp": "2026-07-12T15:38:00.000Z",
+      "system": "copy-trader",
+      "asset_type": "Hyperliquid perpetual",
+      "instrument": "HYPE-PERP",
+      "side": "BUY",
+      "entry_price": 28.32,
+      "exit_price": 28.39,
+      "quantity": 56.51233,
+      "notional_usd": 1600.57,
+      "profit_loss_usd": 3.9,
+      "profit_loss_pct": 0.24,
+      "strategy": "Composite-score wallet mirror",
+      "result": "WIN",
+      "holding_period_hours": "0.59"
+    },
     {
       "id": "2026071212-3",
       "timestamp": "2026-07-12T12:19:00.000Z",
