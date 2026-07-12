@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-12T18:07:02.804Z",
+  "generated_at": "2026-07-12T19:07:03.247Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -32,12 +32,12 @@
   },
   "totals": {
     "portfolio_value_usd": 1678.58,
-    "total_profit_usd": 260.58,
-    "generated_profit_usd": 35.94,
-    "total_trades": 98,
-    "generated_trades": 13,
-    "win_rate_pct": 81.6,
-    "last_trade_iso": "2026-07-12T15:38:00.000Z"
+    "total_profit_usd": 259.49,
+    "generated_profit_usd": 34.85,
+    "total_trades": 99,
+    "generated_trades": 14,
+    "win_rate_pct": 80.8,
+    "last_trade_iso": "2026-07-12T18:22:00.000Z"
   },
   "cards": [
     {
@@ -47,17 +47,17 @@
     },
     {
       "k": "Total profit",
-      "v": "+$260.58",
-      "foot": "+$35.94 generated after baseline"
+      "v": "+$259.49",
+      "foot": "+$34.85 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "98",
-      "foot": "13 generated daily-paced trades"
+      "v": "99",
+      "foot": "14 generated daily-paced trades"
     },
     {
       "k": "Win rate",
-      "v": "81.6%",
+      "v": "80.8%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -67,11 +67,28 @@
     },
     {
       "k": "Latest strategy",
-      "v": "Composite-score wallet mirror",
-      "foot": "HYPE-PERP"
+      "v": "Polymarket sum-to-one arbitrage",
+      "foot": "Polymarket crypto year-end bundle"
     }
   ],
   "trades": [
+    {
+      "id": "2026071218-5",
+      "timestamp": "2026-07-12T18:22:00.000Z",
+      "system": "PandaXPanther Prediction Bot",
+      "asset_type": "prediction contract",
+      "instrument": "Polymarket crypto year-end bundle",
+      "side": "BUY YES+NO",
+      "entry_price": 0.975,
+      "exit_price": 0.967,
+      "quantity": 124,
+      "notional_usd": 120.96,
+      "profit_loss_usd": -1.09,
+      "profit_loss_pct": -0.9,
+      "strategy": "Polymarket sum-to-one arbitrage",
+      "result": "LOSS",
+      "holding_period_hours": "1.78"
+    },
     {
       "id": "2026071215-4",
       "timestamp": "2026-07-12T15:38:00.000Z",
