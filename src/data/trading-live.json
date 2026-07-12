@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-12T12:07:05.116Z",
+  "generated_at": "2026-07-12T13:07:03.778Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -32,12 +32,12 @@
   },
   "totals": {
     "portfolio_value_usd": 1675.77,
-    "total_profit_usd": 259.07,
-    "generated_profit_usd": 34.43,
-    "total_trades": 96,
-    "generated_trades": 11,
-    "win_rate_pct": 82.3,
-    "last_trade_iso": "2026-07-12T08:05:00.000Z"
+    "total_profit_usd": 256.68,
+    "generated_profit_usd": 32.04,
+    "total_trades": 97,
+    "generated_trades": 12,
+    "win_rate_pct": 81.4,
+    "last_trade_iso": "2026-07-12T12:19:00.000Z"
   },
   "cards": [
     {
@@ -47,17 +47,17 @@
     },
     {
       "k": "Total profit",
-      "v": "+$259.07",
-      "foot": "+$34.43 generated after baseline"
+      "v": "+$256.68",
+      "foot": "+$32.04 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "96",
-      "foot": "11 generated daily-paced trades"
+      "v": "97",
+      "foot": "12 generated daily-paced trades"
     },
     {
       "k": "Win rate",
-      "v": "82.3%",
+      "v": "81.4%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -67,11 +67,28 @@
     },
     {
       "k": "Latest strategy",
-      "v": "Polymarket sum-to-one arbitrage",
-      "foot": "Polymarket crypto year-end bundle"
+      "v": "Composite-score wallet mirror",
+      "foot": "HYPE-PERP"
     }
   ],
   "trades": [
+    {
+      "id": "2026071212-3",
+      "timestamp": "2026-07-12T12:19:00.000Z",
+      "system": "copy-trader",
+      "asset_type": "Hyperliquid perpetual",
+      "instrument": "HYPE-PERP",
+      "side": "BUY",
+      "entry_price": 43.81,
+      "exit_price": 43.71,
+      "quantity": 23.43668,
+      "notional_usd": 1026.7,
+      "profit_loss_usd": -2.39,
+      "profit_loss_pct": -0.23,
+      "strategy": "Composite-score wallet mirror",
+      "result": "LOSS",
+      "holding_period_hours": "0.71"
+    },
     {
       "id": "2026071208-2",
       "timestamp": "2026-07-12T08:05:00.000Z",
