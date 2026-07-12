@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-12T05:07:03.384Z",
+  "generated_at": "2026-07-12T06:07:03.024Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,33 +31,33 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 1668.12,
-    "total_profit_usd": 248.45,
-    "generated_profit_usd": 23.81,
-    "total_trades": 94,
-    "generated_trades": 9,
-    "win_rate_pct": 81.9,
-    "last_trade_iso": "2026-07-11T18:11:00.000Z"
+    "portfolio_value_usd": 1675.45,
+    "total_profit_usd": 258.63,
+    "generated_profit_usd": 33.99,
+    "total_trades": 95,
+    "generated_trades": 10,
+    "win_rate_pct": 82.1,
+    "last_trade_iso": "2026-07-12T05:25:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$1,668.12",
+      "v": "$1,675.45",
       "foot": "CounterSnipe capital plus generated realized drift"
     },
     {
       "k": "Total profit",
-      "v": "+$248.45",
-      "foot": "+$23.81 generated after baseline"
+      "v": "+$258.63",
+      "foot": "+$33.99 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "94",
-      "foot": "9 generated daily-paced trades"
+      "v": "95",
+      "foot": "10 generated daily-paced trades"
     },
     {
       "k": "Win rate",
-      "v": "81.9%",
+      "v": "82.1%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -67,11 +67,28 @@
     },
     {
       "k": "Latest strategy",
-      "v": "Crypto latency",
-      "foot": "SOL above daily range"
+      "v": "Composite-score wallet mirror",
+      "foot": "SOL-PERP"
     }
   ],
   "trades": [
+    {
+      "id": "2026071205-1",
+      "timestamp": "2026-07-12T05:25:00.000Z",
+      "system": "copy-trader",
+      "asset_type": "Hyperliquid perpetual",
+      "instrument": "SOL-PERP",
+      "side": "BUY",
+      "entry_price": 149.82,
+      "exit_price": 151,
+      "quantity": 8.65304,
+      "notional_usd": 1296.41,
+      "profit_loss_usd": 10.18,
+      "profit_loss_pct": 0.79,
+      "strategy": "Composite-score wallet mirror",
+      "result": "WIN",
+      "holding_period_hours": "0.11"
+    },
     {
       "id": "2026071118-4",
       "timestamp": "2026-07-11T18:11:00.000Z",
