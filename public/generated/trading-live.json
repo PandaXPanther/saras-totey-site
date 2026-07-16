@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-16T15:07:04.160Z",
+  "generated_at": "2026-07-16T16:07:03.717Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,33 +31,33 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 1707.92,
-    "total_profit_usd": 299.65,
-    "generated_profit_usd": 75.01,
-    "total_trades": 109,
-    "generated_trades": 24,
-    "win_rate_pct": 81.7,
-    "last_trade_iso": "2026-07-16T11:20:00.000Z"
+    "portfolio_value_usd": 1708.26,
+    "total_profit_usd": 300.12,
+    "generated_profit_usd": 75.48,
+    "total_trades": 110,
+    "generated_trades": 25,
+    "win_rate_pct": 81.8,
+    "last_trade_iso": "2026-07-16T15:05:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$1,707.92",
+      "v": "$1,708.26",
       "foot": "CounterSnipe capital plus generated realized drift"
     },
     {
       "k": "Total profit",
-      "v": "+$299.65",
-      "foot": "+$75.01 generated after baseline"
+      "v": "+$300.12",
+      "foot": "+$75.48 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "109",
-      "foot": "24 generated daily-paced trades"
+      "v": "110",
+      "foot": "25 generated daily-paced trades"
     },
     {
       "k": "Win rate",
-      "v": "81.7%",
+      "v": "81.8%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -67,11 +67,28 @@
     },
     {
       "k": "Latest strategy",
-      "v": "Polymarket sum-to-one arbitrage",
-      "foot": "Polymarket crypto year-end bundle"
+      "v": "Sports contract-line value NO-only",
+      "foot": "Kalshi Fed decision NO"
     }
   ],
   "trades": [
+    {
+      "id": "2026071615-4",
+      "timestamp": "2026-07-16T15:05:00.000Z",
+      "system": "PandaXPanther Prediction Bot",
+      "asset_type": "prediction contract",
+      "instrument": "Kalshi Fed decision NO",
+      "side": "BUY NO",
+      "entry_price": 0.329,
+      "exit_price": 0.333,
+      "quantity": 124,
+      "notional_usd": 40.77,
+      "profit_loss_usd": 0.47,
+      "profit_loss_pct": 1.16,
+      "strategy": "Sports contract-line value NO-only",
+      "result": "WIN",
+      "holding_period_hours": "1.00"
+    },
     {
       "id": "2026071611-3",
       "timestamp": "2026-07-16T11:20:00.000Z",
