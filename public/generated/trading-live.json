@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-16T18:07:04.011Z",
+  "generated_at": "2026-07-16T19:07:06.867Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -32,12 +32,12 @@
   },
   "totals": {
     "portfolio_value_usd": 1708.26,
-    "total_profit_usd": 300.12,
-    "generated_profit_usd": 75.48,
-    "total_trades": 110,
-    "generated_trades": 25,
-    "win_rate_pct": 81.8,
-    "last_trade_iso": "2026-07-16T15:05:00.000Z"
+    "total_profit_usd": 296.13,
+    "generated_profit_usd": 71.49,
+    "total_trades": 111,
+    "generated_trades": 26,
+    "win_rate_pct": 81.1,
+    "last_trade_iso": "2026-07-16T18:27:00.000Z"
   },
   "cards": [
     {
@@ -47,17 +47,17 @@
     },
     {
       "k": "Total profit",
-      "v": "+$300.12",
-      "foot": "+$75.48 generated after baseline"
+      "v": "+$296.13",
+      "foot": "+$71.49 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "110",
-      "foot": "25 generated daily-paced trades"
+      "v": "111",
+      "foot": "26 generated daily-paced trades"
     },
     {
       "k": "Win rate",
-      "v": "81.8%",
+      "v": "81.1%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -67,11 +67,28 @@
     },
     {
       "k": "Latest strategy",
-      "v": "Sports contract-line value NO-only",
-      "foot": "Kalshi Fed decision NO"
+      "v": "Sticker-adjusted CS2 skin arbitrage",
+      "foot": "M4A1-S | Printstream MW"
     }
   ],
   "trades": [
+    {
+      "id": "2026071618-5",
+      "timestamp": "2026-07-16T18:27:00.000Z",
+      "system": "CounterSnipe",
+      "asset_type": "CS2 skin",
+      "instrument": "M4A1-S | Printstream MW",
+      "side": "BUY",
+      "entry_price": 249.99,
+      "exit_price": 246,
+      "quantity": 1,
+      "notional_usd": 249.99,
+      "profit_loss_usd": -3.99,
+      "profit_loss_pct": -1.6,
+      "strategy": "Sticker-adjusted CS2 skin arbitrage",
+      "result": "LOSS",
+      "holding_period_hours": 174
+    },
     {
       "id": "2026071615-4",
       "timestamp": "2026-07-16T15:05:00.000Z",
