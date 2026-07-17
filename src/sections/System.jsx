@@ -42,7 +42,7 @@ export default function System({ system }) {
           </Reveal>
         </div>
 
-        {/* TL;DR strip — plain English summary */}
+        {/* TL;DR strip : plain English summary */}
         {system.tldr && (
           <Reveal>
             <div style={{
@@ -199,7 +199,7 @@ export default function System({ system }) {
                 {system.citations.map((c, i) => (
                   <li key={i} style={{ marginBottom: 14, lineHeight: 1.55, maxWidth: '76ch' }}>
                     <a href={c.href} target="_blank" rel="noreferrer" style={{ color: 'var(--text)', borderBottom: '1px solid var(--line-strong)' }}>{c.title}</a>
-                    {c.note && <span style={{ color: 'var(--text-dim)' }}> — {c.note}</span>}
+                    {c.note && <span style={{ color: 'var(--text-dim)' }}> : {c.note}</span>}
                   </li>
                 ))}
               </ol>
