@@ -11,7 +11,7 @@ const chapters = [
   { id: 'trading', media: 'countersnipe', label: 'Trading systems', eyebrow: 'Markets, then code', title: 'I like finding the moment a market disagrees with itself.', body: 'That puzzle is why I build trading bots. What began with Roblox items became live CS2 arbitrage, prediction-market research, and systems where the logs and mistakes are as interesting as the wins.', href: '/quant', side: 'left' },
   { id: 'econ-mom', media: 'prediction', label: 'Econ.mom', eyebrow: 'Twelve tools, every source shown', title: 'I wanted economics to feel touchable.', body: 'I built Econ.mom because changing an assumption and seeing the result makes a model click faster than memorizing one. Its free tools keep every formula and dataset visible.', href: '/econ-mom', side: 'left' },
   { id: 'local-ledger', media: 'ventures', label: 'Local Ledger', eyebrow: 'A public-data observatory', title: 'I wanted to see a place as a living system.', body: 'That curiosity became Local Ledger: jobs, income, housing, schools, and public spending on one research desk, plus a simulator for asking what might change next.', href: '/local-ledger', side: 'right' },
-  { id: 'att', media: 'att', label: 'ATT Agency', eyebrow: 'Want a site like this?', title: 'I co-founded the studio that builds them.', body: 'At ATT Agency, I help turn a business into a brand, website, campaign, and measurement system without passing the work between disconnected vendors.', href: '/att-agency', side: 'right' },
+  { id: 'att', media: 'att', label: 'ATT Agency', eyebrow: 'ATT Agency', title: 'One studio, accountable for the whole outcome.', body: 'Want a site like this? I co-founded the studio that builds them. At ATT Agency, I help turn a business into a brand, website, campaign, and measurement system without passing the work between disconnected vendors.', href: '/att-agency', side: 'right' },
   { id: 'contact', media: 'contact', label: 'Contact', eyebrow: 'Boulder to anywhere', title: 'Contact me.', body: 'Discord: PandaXPanther · sarastotey@icloud.com · 720-415-9085', side: 'center', cta: true },
 ];
 
@@ -25,6 +25,7 @@ const useBrowserLayoutEffect = typeof window === 'undefined' ? useEffect : useLa
 export default function ScrollWorld() {
   const root = useRef(null);
   const videoRef = useRef(null);
+  const pendingVideoProgressRef = useRef(0);
   const activeRef = useRef(0);
   const [active, setActive] = useState(0);
   const [visibleChapter, setVisibleChapter] = useState(0);
@@ -89,6 +90,18 @@ export default function ScrollWorld() {
     if (!node) return undefined;
     const starts = chain.map((_, index) => chain.slice(0, index).reduce((sum, segment) => sum + segment.scroll, 0));
     let ticking = false;
+    let seekFrame = 0;
+    const syncVideo = () => {
+      const video = videoRef.current;
+      if (!video || video.readyState < 1 || !Number.isFinite(video.duration) || video.duration <= 0) return;
+      const target = pendingVideoProgressRef.current * Math.max(0, video.duration - 0.04);
+      if (Math.abs(video.currentTime - target) <= 0.025) return;
+      try { video.currentTime = target; } catch { /* The next media readiness event retries it. */ }
+    };
+    const queueVideoSync = () => {
+      cancelAnimationFrame(seekFrame);
+      seekFrame = requestAnimationFrame(syncVideo);
+    };
     const update = () => {
       const y = clamp(scrollY - node.offsetTop, 0, node.offsetHeight - innerHeight);
       let currentIndex = chain.length - 1;
@@ -98,11 +111,8 @@ export default function ScrollWorld() {
         if (y >= start && y <= end) currentIndex = index;
       });
       const local = clamp((y - starts[currentIndex] * innerHeight) / (chain[currentIndex].scroll * innerHeight));
-      const video = videoRef.current;
-      if (video?.readyState >= 2 && video.duration && !video.seeking) {
-        const target = clamp(y / Math.max(1, node.offsetHeight - innerHeight)) * Math.max(0, video.duration - 0.04);
-        if (Math.abs(video.currentTime - target) > 0.035) video.currentTime = target;
-      }
+      pendingVideoProgressRef.current = clamp(y / Math.max(1, node.offsetHeight - innerHeight));
+      queueVideoSync();
       const inBoundaryMask = currentIndex < chain.length - 1 && local > 1 - TEXT_MASK_FRACTION;
       const nextVisible = inBoundaryMask ? null : currentIndex;
       if (currentIndex !== activeRef.current) { activeRef.current = currentIndex; setActive(currentIndex); }
@@ -117,9 +127,11 @@ export default function ScrollWorld() {
     addEventListener('scroll', dismissHint, { passive: true, once: true });
     addEventListener('pagehide', rememberPosition);
     addEventListener('resize', requestUpdate, { passive: true });
-    video?.addEventListener('loadedmetadata', requestUpdate);
-    video?.addEventListener('seeked', requestUpdate);
-    return () => { rememberPosition(); removeEventListener('scroll', requestUpdate); removeEventListener('scroll', dismissHint); removeEventListener('pagehide', rememberPosition); removeEventListener('resize', requestUpdate); video?.removeEventListener('loadedmetadata', requestUpdate); video?.removeEventListener('seeked', requestUpdate); };
+    const mediaReady = () => { requestUpdate(); queueVideoSync(); };
+    video?.addEventListener('loadedmetadata', mediaReady);
+    video?.addEventListener('loadeddata', mediaReady);
+    video?.addEventListener('canplay', mediaReady);
+    return () => { cancelAnimationFrame(seekFrame); rememberPosition(); removeEventListener('scroll', requestUpdate); removeEventListener('scroll', dismissHint); removeEventListener('pagehide', rememberPosition); removeEventListener('resize', requestUpdate); video?.removeEventListener('loadedmetadata', mediaReady); video?.removeEventListener('loadeddata', mediaReady); video?.removeEventListener('canplay', mediaReady); };
   }, [chain]);
 
   const total = chain.reduce((sum, segment) => sum + segment.scroll, 0);
@@ -127,7 +139,7 @@ export default function ScrollWorld() {
     <main ref={root} className="scroll-world" data-marker={active} data-scroll-mode="free" style={{ '--world-height': `${total * 100 + 100}vh` }}>
       <div className="scroll-world__sticky">
         <div className="scroll-world__stage" aria-hidden="true">
-          <div className="scroll-world__scene"><img src={reduceMotion ? `/world/flight/${chapters[active].media}.webp` : '/world/flight/intro-4k.webp'} alt="" />{!reduceMotion && <video ref={videoRef} src="/world/flight/continuous-flight.mp4" muted playsInline preload="auto" />}</div>
+          <div className="scroll-world__scene"><img src={reduceMotion ? `/world/flight/${chapters[active].media}.webp` : '/world/flight/intro-4k.webp'} alt="" />{!reduceMotion && <video ref={videoRef} src="/world/flight/continuous-flight.mp4" muted playsInline preload="auto" disablePictureInPicture />}</div>
         </div>
         <div className="world-wash" aria-hidden="true" />
         {chapters.map((chapter, index) => <article key={chapter.id} className={`world-copy world-copy--${chapter.side} ${visibleChapter === index ? 'is-active' : ''}`}><span className="world-copy__count">{String(index + 1).padStart(2, '0')} / {chapters.length}</span><span className="world-copy__eyebrow">{chapter.eyebrow}</span><h1>{chapter.title}</h1><p>{chapter.body}</p>{chapter.note && <small className="world-copy__note">{chapter.note}</small>}{chapter.href && <a className="glass-button" href={chapter.href} data-world-cta="true" onClick={rememberPosition}>Take me there</a>}{chapter.cta && <div className="world-copy__contact"><a href="mailto:sarastotey@icloud.com">Email</a><a href={IDENTITY.linkedin} target="_blank" rel="noreferrer">LinkedIn</a><a href={`https://github.com/${IDENTITY.github_user}`} target="_blank" rel="noreferrer">GitHub</a><a href={IDENTITY.instagram} target="_blank" rel="noreferrer">Instagram</a></div>}</article>)}

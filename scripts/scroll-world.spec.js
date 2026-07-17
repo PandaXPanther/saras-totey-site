@@ -5,8 +5,8 @@ test.describe.configure({ timeout: 120_000 });
 const chapterPositions = [0, 0.2, 0.4, 0.6, 0.8, 1];
 
 const routes = [
-  { label: 'Home', path: '/home', marker: '.scroll-world' },
-  { label: 'Trading systems', path: '/', marker: '.project-page--quant' },
+  { label: 'Home', path: '/', marker: '.scroll-world' },
+  { label: 'Trading systems', path: '/quant', marker: '.project-page--quant' },
   { label: 'Econ.mom', path: '/econ-mom', marker: '.project-page--econ-mom' },
   { label: 'Local Ledger', path: '/local-ledger', marker: '.project-page--local-ledger' },
   { label: 'ATT Agency', path: '/att-agency', marker: '.project-page--att-agency' },
@@ -38,7 +38,7 @@ test('return link only exists on project entries created by a world CTA', async 
 
   const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
   const page = await context.newPage();
-  await page.goto('http://127.0.0.1:4174/home');
+  await page.goto('http://127.0.0.1:4174/');
   await page.getByRole('button', { name: 'Go to Trading systems' }).click();
   await expect(page.locator('.world-copy.is-active')).toContainText('Markets, then code');
   const expectedFrame = await page.evaluate(() => scrollY);
@@ -61,7 +61,7 @@ test('return link only exists on project entries created by a world CTA', async 
 
 test('desktop camera chain visits every marker and restores marker state', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('http://127.0.0.1:4174/home');
+  await page.goto('http://127.0.0.1:4174/');
   await page.waitForSelector('.scroll-world video');
   await page.waitForTimeout(2500);
   await page.locator('.audio-dock button').click();
@@ -70,7 +70,6 @@ test('desktop camera chain visits every marker and restores marker state', async
   for (const [index, position] of chapterPositions.entries()) {
     await page.evaluate(([height, progress]) => scrollTo(0, height * progress), [worldHeight, position]);
     await expect(page.locator('.scroll-world')).toHaveAttribute('data-marker', String(index));
-    await expect(page.locator('.scroll-world')).toHaveAttribute('data-transitioning', 'false', { timeout: 3000 });
     await page.screenshot({ path: `.scroll-world-work/desktop-${index + 1}.png` });
     const state = await page.evaluate(() => ({
       chapter: document.querySelector('.world-copy.is-active')?.textContent,
@@ -84,12 +83,10 @@ test('desktop camera chain visits every marker and restores marker state', async
   for (const [reverseIndex, progress] of [...chapterPositions].reverse().entries()) {
     await page.evaluate(([height, position]) => scrollTo(0, height * position), [worldHeight, progress]);
     await expect(page.locator('.scroll-world')).toHaveAttribute('data-marker', String(chapterPositions.length - 1 - reverseIndex));
-    await expect(page.locator('.scroll-world')).toHaveAttribute('data-transitioning', 'false', { timeout: 3000 });
     await expect(page.locator('.scroll-world video')).toHaveCount(1);
   }
   await page.getByRole('button', { name: 'Go to Econ.mom' }).click();
   await expect(page.locator('.scroll-world')).toHaveAttribute('data-marker', '2');
-  await expect(page.locator('.scroll-world')).toHaveAttribute('data-transitioning', 'false', { timeout: 3000 });
   await page.locator('.world-copy.is-active .glass-button').click();
   await expect(page).not.toHaveURL(/home/);
   await expect.poll(() => page.evaluate(() => !window.__sarasAmbientAudio.paused)).toBeTruthy();
@@ -99,7 +96,6 @@ test('desktop camera chain visits every marker and restores marker state', async
 
   await page.getByRole('button', { name: 'Go to Local Ledger' }).click();
   await expect(page.locator('.scroll-world')).toHaveAttribute('data-marker', '3');
-  await expect(page.locator('.scroll-world')).toHaveAttribute('data-transitioning', 'false', { timeout: 3000 });
   await page.locator('.world-copy.is-active .glass-button').click();
   await expect(page).not.toHaveURL(/home/);
   await page.goBack();
@@ -109,25 +105,25 @@ test('desktop camera chain visits every marker and restores marker state', async
 
 test('mobile world and project pages render cleanly', async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
-  await page.goto('http://127.0.0.1:4174/home');
+  await page.goto('http://127.0.0.1:4174/');
   const worldHeight = await page.locator('.scroll-world').evaluate((node) => node.offsetHeight - innerHeight);
   for (const [index, position] of chapterPositions.entries()) {
     await page.evaluate(([height, progress]) => scrollTo(0, height * progress), [worldHeight, position]);
     await page.waitForTimeout(400);
     await page.screenshot({ path: `.scroll-world-work/mobile-${index + 1}.png` });
   }
-  for (const slug of ['', 'econ-mom', 'local-ledger', 'att-agency']) {
+  for (const slug of ['quant', 'econ-mom', 'local-ledger', 'att-agency']) {
     await page.goto(`http://127.0.0.1:4174/${slug}`);
     await page.waitForTimeout(300);
-    await page.screenshot({ path: `.scroll-world-work/mobile-page-${slug || 'quant'}.png`, fullPage: true });
+    await page.screenshot({ path: `.scroll-world-work/mobile-page-${slug}.png`, fullPage: true });
   }
 });
 
 test('desktop project pages render', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
-  for (const slug of ['', 'econ-mom', 'local-ledger', 'att-agency']) {
+  for (const slug of ['quant', 'econ-mom', 'local-ledger', 'att-agency']) {
     await page.goto(`http://127.0.0.1:4174/${slug}`);
     await page.waitForTimeout(300);
-    await page.screenshot({ path: `.scroll-world-work/desktop-page-${slug || 'quant'}.png`, fullPage: true });
+    await page.screenshot({ path: `.scroll-world-work/desktop-page-${slug}.png`, fullPage: true });
   }
 });

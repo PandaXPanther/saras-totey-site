@@ -2,12 +2,11 @@ import { test, expect } from 'playwright/test';
 
 test.describe.configure({ timeout: 120_000 });
 
-const baseUrl = 'http://127.0.0.1:4174/home';
+const baseUrl = 'http://127.0.0.1:4174/';
 const markerTimes = [0, 6.041667, 12.083334, 18.125001, 22.166668, 28.208335];
 
 const waitForMarker = async (page, marker) => {
   await expect(page.locator('.scroll-world')).toHaveAttribute('data-marker', String(marker));
-  await expect(page.locator('.scroll-world')).toHaveAttribute('data-transitioning', 'false', { timeout: 3_000 });
 };
 
 test('wheel gestures step through every marker with eased intermediate frames and synced copy', async ({ page }) => {
