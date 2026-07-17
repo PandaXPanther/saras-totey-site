@@ -1,4 +1,4 @@
-import { readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { createServer } from 'vite';
 
@@ -33,16 +33,17 @@ const server = await createServer({
 try {
   const template = await inlineGlobalStyles(await readFile(distIndexPath, 'utf8'));
   const { render } = await server.ssrLoadModule('/src/entry-server.jsx');
-  const appHtml = render();
-
   if (!template.includes('<div id="root"></div>')) {
     throw new Error('Could not find empty root div in dist/index.html');
   }
-
-  await writeFile(
-    distIndexPath,
-    template.replace('<div id="root"></div>', `<div id="root">${appHtml}</div>`)
-  );
+  const routes = ['/', '/home', '/econ-mom', '/local-ledger', '/att-agency'];
+  for (const route of routes) {
+    const appHtml = render(route);
+    const html = template.replace('<div id="root"></div>', `<div id="root">${appHtml}</div>`);
+    const output = route === '/' ? distIndexPath : resolve(root, 'dist', route.slice(1), 'index.html');
+    await mkdir(resolve(output, '..'), { recursive: true });
+    await writeFile(output, html);
+  }
 } finally {
   await server.close();
 }

@@ -14,8 +14,8 @@ const metadata = {
 
 const setMeta = (selector, value) => document.querySelector(selector)?.setAttribute('content', value);
 
-export default function App() {
-  const [path, setPath] = useState(() => typeof window === 'undefined' ? '/' : (window.location.pathname.replace(/\/$/, '') || '/'));
+export default function App({ initialPath = '/' }) {
+  const [path, setPath] = useState(() => typeof window === 'undefined' ? initialPath : (window.location.pathname.replace(/\/$/, '') || '/'));
   useEffect(() => {
     const sync = () => setPath(window.location.pathname.replace(/\/$/, '') || '/');
     const navigate = (event) => {

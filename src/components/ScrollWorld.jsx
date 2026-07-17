@@ -19,6 +19,7 @@ const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 const flightDurations = [7.291667, 7.291667, 4.291667, 4.291667, 3.291667, 4.041667];
 const flightDuration = flightDurations.reduce((sum, duration) => sum + duration, 0);
 const scrollDuration = 9.4;
+const useBrowserLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect;
 
 export default function ScrollWorld() {
   const root = useRef(null);
@@ -41,7 +42,7 @@ export default function ScrollWorld() {
     return () => query.removeEventListener('change', sync);
   }, []);
 
-  useLayoutEffect(() => {
+  useBrowserLayoutEffect(() => {
     history.scrollRestoration = 'manual';
     const restore = () => {
       let snapshot = history.state?.worldSnapshot;
