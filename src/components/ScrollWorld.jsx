@@ -63,7 +63,11 @@ export default function ScrollWorld() {
     setVisibleChapter(index);
     window.scrollTo(0, markerScrollTop(index));
     const video = videoRef.current;
-    if (video?.readyState >= 1) video.currentTime = Math.min(markerTimes[index], Math.max(0, video.duration - 0.04));
+    if (video?.readyState >= 1) {
+      video.pause();
+      video.playbackRate = 1;
+      video.currentTime = Math.min(markerTimes[index], Math.max(0, video.duration - 0.04));
+    }
   };
 
   const rememberPosition = () => {
