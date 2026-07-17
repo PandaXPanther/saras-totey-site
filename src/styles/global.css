@@ -644,6 +644,7 @@ a,button { touch-action: manipulation; -webkit-tap-highlight-color: rgba(214,75,
   .recognition__grid { grid-template-columns: 1fr; }
   .recognition__grid article + article { padding-left: 0; border-left: 0; }
   .quant-wave { right: 16px; bottom: 4%; height: 80px; opacity: .3; }
+  .quant-orderbook { display: none; }
 }
 
 @media (prefers-reduced-motion:reduce) { .world-controls i,.quant-wave i { animation: none; } }
