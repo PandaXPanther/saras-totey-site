@@ -1,5 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { animate } from 'framer-motion';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { IDENTITY } from '../data/content.js';
 
 const getAge = (now = new Date()) => {
@@ -18,163 +17,28 @@ const chapters = [
 
 const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 const flightDurations = [6.041667, 6.041667, 6.041667, 4.041667, 6.041667, 6.041667];
-const markerTimes = flightDurations.map((_, index) => flightDurations.slice(0, index).reduce((sum, duration) => sum + duration, 0));
-const markerProgress = chapters.map((_, index) => index / (chapters.length - 1));
-const TRANSITION_SECONDS = 1.8;
-const TEXT_EXIT_END = 0.15;
-const TRAVEL_END = 0.817;
-const SETTLE_END = 0.9;
-const INTENT_THRESHOLD = 36;
+const flightDuration = flightDurations.reduce((sum, duration) => sum + duration, 0);
+const scrollDuration = 9.4;
+const TEXT_MASK_FRACTION = 0.035;
 const useBrowserLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect;
-
-const nearestMarker = (position) => markerProgress.reduce((nearest, progress, index) => (
-  Math.abs(progress - position) < Math.abs(markerProgress[nearest] - position) ? index : nearest
-), 0);
 
 export default function ScrollWorld() {
   const root = useRef(null);
   const videoRef = useRef(null);
-  const markerRef = useRef(0);
-  const transitionRef = useRef(null);
-  const queuedDirectionRef = useRef(0);
-  const intentRef = useRef(0);
-  const wheelGestureRef = useRef(false);
-  const wheelTimerRef = useRef(0);
-  const touchStartRef = useRef(null);
-  const programmaticScrollRef = useRef(false);
-  const scrollTimerRef = useRef(0);
-  const reduceMotionRef = useRef(false);
+  const activeRef = useRef(0);
   const [active, setActive] = useState(0);
   const [visibleChapter, setVisibleChapter] = useState(0);
   const [hasScrolled, setHasScrolled] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
-  const [transitioning, setTransitioning] = useState(false);
-  const [transitionPhase, setTransitionPhase] = useState('idle');
-
-  const markerScrollTop = (index) => {
-    const node = root.current;
-    if (!node) return 0;
-    return node.offsetTop + markerProgress[index] * Math.max(1, node.offsetHeight - innerHeight);
-  };
-
-  const applyMarker = (index) => {
-    markerRef.current = index;
-    setActive(index);
-    setVisibleChapter(index);
-    window.scrollTo(0, markerScrollTop(index));
-    const video = videoRef.current;
-    if (video?.readyState >= 1) {
-      video.pause();
-      video.playbackRate = 1;
-      video.currentTime = Math.min(markerTimes[index], Math.max(0, video.duration - 0.04));
-    }
-  };
-
-  const rememberPosition = () => {
-    const marker = markerRef.current;
-    const snapshot = {
-      marker,
-      position: markerProgress[marker],
-      scrollY: markerScrollTop(marker),
-      videoTime: markerTimes[marker],
-    };
-    sessionStorage.setItem('saras-world-snapshot', JSON.stringify(snapshot));
-    sessionStorage.setItem('saras-world-position', String(snapshot.position));
-    history.replaceState({ ...history.state, worldSnapshot: snapshot }, '');
-  };
-
-  const goToMarkerRef = useRef(() => {});
-  goToMarkerRef.current = (requestedIndex, { instant = false, userInitiated = false } = {}) => {
-    const nextIndex = clamp(requestedIndex, 0, chapters.length - 1);
-    if (userInitiated) setHasScrolled(true);
-    if (transitionRef.current) {
-      queuedDirectionRef.current = Math.sign(nextIndex - markerRef.current);
-      return;
-    }
-    if (nextIndex === markerRef.current && !instant) return;
-
-    const fromIndex = markerRef.current;
-    const toScroll = markerScrollTop(nextIndex);
-    const video = videoRef.current;
-    const fromTime = video?.readyState >= 1 ? video.currentTime : markerTimes[fromIndex];
-    const toTime = markerTimes[nextIndex];
-    const isForwardStep = nextIndex === fromIndex + 1;
-    const travelSeconds = TRANSITION_SECONDS * (TRAVEL_END - TEXT_EXIT_END);
-    let phase = 'text-exit';
-    let startedTravel = false;
-
-    markerRef.current = nextIndex;
-    programmaticScrollRef.current = true;
-    if (instant || reduceMotionRef.current) {
-      applyMarker(nextIndex);
-      programmaticScrollRef.current = false;
-      rememberPosition();
-      return;
-    }
-
-    setTransitioning(true);
-    setTransitionPhase('text-exit');
-    setVisibleChapter(null);
-    transitionRef.current = animate(0, 1, {
-      duration: TRANSITION_SECONDS,
-      ease: 'linear',
-      onUpdate: (progress) => {
-        if (progress >= TEXT_EXIT_END && progress < TRAVEL_END) {
-          if (phase !== 'travel') {
-            phase = 'travel';
-            setTransitionPhase('travel');
-          }
-          const linearTravel = clamp((progress - TEXT_EXIT_END) / (TRAVEL_END - TEXT_EXIT_END));
-          const easedTravel = 1 - ((1 - linearTravel) ** 3);
-          if (video?.readyState >= 1 && isForwardStep) {
-            if (!startedTravel) {
-              startedTravel = true;
-              video.currentTime = fromTime;
-              video.playbackRate = clamp((toTime - fromTime) / travelSeconds, 0.25, 16);
-              video.play().catch(() => { startedTravel = false; });
-            }
-          } else if (video?.readyState >= 1 && !video.seeking) {
-            const targetTime = fromTime + (toTime - fromTime) * easedTravel;
-            if (Math.abs(video.currentTime - targetTime) > 0.06) video.currentTime = targetTime;
-          }
-        } else if (progress >= TRAVEL_END && progress < SETTLE_END) {
-          if (phase !== 'settle') {
-            phase = 'settle';
-            setTransitionPhase('settle');
-            window.scrollTo(0, toScroll);
-            if (video?.readyState >= 1) {
-              video.pause();
-              video.playbackRate = 1;
-              if (Math.abs(video.currentTime - toTime) > 0.08) video.currentTime = toTime;
-            }
-          }
-        } else if (progress >= SETTLE_END && phase !== 'text-enter') {
-          phase = 'text-enter';
-          setTransitionPhase('text-enter');
-          setActive(nextIndex);
-          setVisibleChapter(nextIndex);
-        }
-      },
-      onComplete: () => {
-        transitionRef.current = null;
-        programmaticScrollRef.current = false;
-        setTransitioning(false);
-        setTransitionPhase('idle');
-        applyMarker(nextIndex);
-        rememberPosition();
-        const queuedDirection = queuedDirectionRef.current;
-        queuedDirectionRef.current = 0;
-        if (queuedDirection) goToMarkerRef.current(nextIndex + queuedDirection, { userInitiated: true });
-      },
-    });
-  };
+  const chain = useMemo(() => chapters.map((chapter, index) => ({
+    id: chapter.media,
+    chapter: index,
+    scroll: (flightDurations[index] / flightDuration) * scrollDuration,
+  })), []);
 
   useEffect(() => {
     const query = matchMedia('(prefers-reduced-motion: reduce)');
-    const sync = () => {
-      reduceMotionRef.current = query.matches;
-      setReduceMotion(query.matches);
-    };
+    const sync = () => setReduceMotion(query.matches);
     sync();
     query.addEventListener('change', sync);
     return () => query.removeEventListener('change', sync);
@@ -187,107 +51,88 @@ export default function ScrollWorld() {
       if (!snapshot) {
         try { snapshot = JSON.parse(sessionStorage.getItem('saras-world-snapshot')); } catch { snapshot = null; }
       }
-      if (!snapshot) return;
-      const marker = Number.isInteger(snapshot.marker)
-        ? clamp(snapshot.marker, 0, chapters.length - 1)
-        : nearestMarker(Number.isFinite(snapshot.position) ? clamp(snapshot.position) : 0);
-      goToMarkerRef.current(marker, { instant: true });
+      if (!snapshot || (!Number.isFinite(snapshot.position) && !Number.isFinite(snapshot.scrollY))) return;
+      const node = root.current;
+      if (!node) return;
+      const max = Math.max(1, node.offsetHeight - innerHeight);
+      const scrollTarget = Number.isFinite(snapshot.position) ? node.offsetTop + clamp(snapshot.position) * max : snapshot.scrollY;
+      window.scrollTo(0, scrollTarget);
       const video = videoRef.current;
-      if (video && video.readyState < 1) video.addEventListener('loadedmetadata', () => applyMarker(marker), { once: true });
+      if (!video) return;
+      const seek = () => { video.currentTime = clamp((scrollTarget - node.offsetTop) / max) * Math.max(0, video.duration - 0.04); };
+      if (video.readyState >= 1 && video.duration) seek();
+      else video.addEventListener('loadedmetadata', seek, { once: true });
     };
     restore();
     addEventListener('pageshow', restore);
     return () => removeEventListener('pageshow', restore);
   }, []);
 
+  const rememberPosition = () => {
+    const node = root.current;
+    if (!node) return;
+    const max = Math.max(1, node.offsetHeight - innerHeight);
+    const position = clamp((scrollY - node.offsetTop) / max);
+    const snapshot = { scrollY, videoTime: videoRef.current?.currentTime ?? position * flightDuration, position };
+    sessionStorage.setItem('saras-world-snapshot', JSON.stringify(snapshot));
+    sessionStorage.setItem('saras-world-position', String(position));
+    history.replaceState({ ...history.state, worldSnapshot: snapshot }, '');
+  };
+
+  const jumpTo = (chapterIndex) => {
+    const before = chain.slice(0, chapterIndex).reduce((sum, segment) => sum + segment.scroll, 0);
+    window.scrollTo({ top: root.current.offsetTop + before * innerHeight + 2, behavior: reduceMotion ? 'auto' : 'smooth' });
+  };
+
   useEffect(() => {
     const node = root.current;
     if (!node) return undefined;
+    const starts = chain.map((_, index) => chain.slice(0, index).reduce((sum, segment) => sum + segment.scroll, 0));
+    let ticking = false;
+    const update = () => {
+      const y = clamp(scrollY - node.offsetTop, 0, node.offsetHeight - innerHeight);
+      let currentIndex = chain.length - 1;
+      chain.forEach((segment, index) => {
+        const start = starts[index] * innerHeight;
+        const end = (starts[index] + segment.scroll) * innerHeight;
+        if (y >= start && y <= end) currentIndex = index;
+      });
+      const local = clamp((y - starts[currentIndex] * innerHeight) / (chain[currentIndex].scroll * innerHeight));
+      const video = videoRef.current;
+      if (video?.readyState >= 2 && video.duration && !video.seeking) {
+        const target = clamp(y / Math.max(1, node.offsetHeight - innerHeight)) * Math.max(0, video.duration - 0.04);
+        if (Math.abs(video.currentTime - target) > 0.035) video.currentTime = target;
+      }
+      const inBoundaryMask = currentIndex < chain.length - 1 && local > 1 - TEXT_MASK_FRACTION;
+      const nextVisible = inBoundaryMask ? null : currentIndex;
+      if (currentIndex !== activeRef.current) { activeRef.current = currentIndex; setActive(currentIndex); }
+      setVisibleChapter((previous) => previous === nextVisible ? previous : nextVisible);
+      ticking = false;
+    };
+    const requestUpdate = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+    const dismissHint = () => setHasScrolled(true);
+    const video = videoRef.current;
+    update();
+    addEventListener('scroll', requestUpdate, { passive: true });
+    addEventListener('scroll', dismissHint, { passive: true, once: true });
+    addEventListener('pagehide', rememberPosition);
+    addEventListener('resize', requestUpdate, { passive: true });
+    video?.addEventListener('loadedmetadata', requestUpdate);
+    video?.addEventListener('seeked', requestUpdate);
+    return () => { rememberPosition(); removeEventListener('scroll', requestUpdate); removeEventListener('scroll', dismissHint); removeEventListener('pagehide', rememberPosition); removeEventListener('resize', requestUpdate); video?.removeEventListener('loadedmetadata', requestUpdate); video?.removeEventListener('seeked', requestUpdate); };
+  }, [chain]);
 
-    const step = (direction) => goToMarkerRef.current(markerRef.current + direction, { userInitiated: true });
-    const onWheel = (event) => {
-      if (event.ctrlKey || Math.abs(event.deltaY) < Math.abs(event.deltaX)) return;
-      event.preventDefault();
-      clearTimeout(wheelTimerRef.current);
-      wheelTimerRef.current = window.setTimeout(() => {
-        wheelGestureRef.current = false;
-        intentRef.current = 0;
-      }, 180);
-      intentRef.current += event.deltaMode === 1 ? event.deltaY * 16 : event.deltaY;
-      if (wheelGestureRef.current || Math.abs(intentRef.current) < INTENT_THRESHOLD) return;
-      wheelGestureRef.current = true;
-      step(Math.sign(intentRef.current));
-    };
-    const onTouchStart = (event) => {
-      const touch = event.touches[0];
-      touchStartRef.current = touch ? { x: touch.clientX, y: touch.clientY } : null;
-    };
-    const onTouchMove = (event) => {
-      const start = touchStartRef.current;
-      const touch = event.touches[0];
-      if (start && touch && Math.abs(touch.clientY - start.y) > Math.abs(touch.clientX - start.x)) event.preventDefault();
-    };
-    const onTouchEnd = (event) => {
-      const start = touchStartRef.current;
-      const touch = event.changedTouches[0];
-      touchStartRef.current = null;
-      if (!start || !touch) return;
-      const deltaY = start.y - touch.clientY;
-      if (Math.abs(deltaY) >= 44 && Math.abs(deltaY) > Math.abs(start.x - touch.clientX)) step(Math.sign(deltaY));
-    };
-    const onKeyDown = (event) => {
-      if (event.target instanceof HTMLElement && /^(INPUT|TEXTAREA|SELECT|BUTTON|A)$/.test(event.target.tagName)) return;
-      const direction = event.key === 'ArrowDown' || event.key === 'PageDown' || event.key === ' ' ? 1
-        : event.key === 'ArrowUp' || event.key === 'PageUp' ? -1 : 0;
-      if (!direction) return;
-      event.preventDefault();
-      step(direction);
-    };
-    const onScroll = () => {
-      if (programmaticScrollRef.current) return;
-      clearTimeout(scrollTimerRef.current);
-      scrollTimerRef.current = window.setTimeout(() => {
-        const position = clamp((scrollY - node.offsetTop) / Math.max(1, node.offsetHeight - innerHeight));
-        goToMarkerRef.current(nearestMarker(position), { userInitiated: true });
-      }, 100);
-    };
-    const onResize = () => applyMarker(markerRef.current);
-    const onPageHide = () => rememberPosition();
-
-    addEventListener('wheel', onWheel, { passive: false });
-    addEventListener('touchstart', onTouchStart, { passive: true });
-    addEventListener('touchmove', onTouchMove, { passive: false });
-    addEventListener('touchend', onTouchEnd, { passive: true });
-    addEventListener('keydown', onKeyDown);
-    addEventListener('scroll', onScroll, { passive: true });
-    addEventListener('resize', onResize, { passive: true });
-    addEventListener('pagehide', onPageHide);
-    return () => {
-      transitionRef.current?.stop();
-      clearTimeout(wheelTimerRef.current);
-      clearTimeout(scrollTimerRef.current);
-      rememberPosition();
-      removeEventListener('wheel', onWheel);
-      removeEventListener('touchstart', onTouchStart);
-      removeEventListener('touchmove', onTouchMove);
-      removeEventListener('touchend', onTouchEnd);
-      removeEventListener('keydown', onKeyDown);
-      removeEventListener('scroll', onScroll);
-      removeEventListener('resize', onResize);
-      removeEventListener('pagehide', onPageHide);
-    };
-  }, []);
-
+  const total = chain.reduce((sum, segment) => sum + segment.scroll, 0);
   return (
-    <main ref={root} className="scroll-world" data-marker={active} data-transitioning={transitioning ? 'true' : 'false'} data-transition-phase={transitionPhase} style={{ '--world-height': `${chapters.length * 100}vh` }}>
+    <main ref={root} className="scroll-world" data-marker={active} data-scroll-mode="free" style={{ '--world-height': `${total * 100 + 100}vh` }}>
       <div className="scroll-world__sticky">
         <div className="scroll-world__stage" aria-hidden="true">
           <div className="scroll-world__scene"><img src={reduceMotion ? `/world/flight/${chapters[active].media}.webp` : '/world/flight/intro-4k.webp'} alt="" />{!reduceMotion && <video ref={videoRef} src="/world/flight/continuous-flight.mp4" muted playsInline preload="auto" />}</div>
         </div>
         <div className="world-wash" aria-hidden="true" />
         {chapters.map((chapter, index) => <article key={chapter.id} className={`world-copy world-copy--${chapter.side} ${visibleChapter === index ? 'is-active' : ''}`}><span className="world-copy__count">{String(index + 1).padStart(2, '0')} / {chapters.length}</span><span className="world-copy__eyebrow">{chapter.eyebrow}</span><h1>{chapter.title}</h1><p>{chapter.body}</p>{chapter.note && <small className="world-copy__note">{chapter.note}</small>}{chapter.href && <a className="glass-button" href={chapter.href} data-world-cta="true" onClick={rememberPosition}>Take me there</a>}{chapter.cta && <div className="world-copy__contact"><a href="mailto:sarastotey@icloud.com">Email</a><a href={IDENTITY.linkedin} target="_blank" rel="noreferrer">LinkedIn</a><a href={`https://github.com/${IDENTITY.github_user}`} target="_blank" rel="noreferrer">GitHub</a><a href={IDENTITY.instagram} target="_blank" rel="noreferrer">Instagram</a></div>}</article>)}
-        <div className={`world-controls ${hasScrolled ? 'is-dismissed' : ''}`}><button type="button" onClick={() => goToMarkerRef.current(Math.max(0, active - 1), { userInitiated: true })} aria-label="Back to previous section">↑</button><span>scroll to explore <i aria-hidden="true">⌄</i></span></div>
-        <nav className="world-route" aria-label="World chapters">{chapters.map((chapter, index) => <button key={chapter.id} className={active === index ? 'is-active' : ''} onClick={() => goToMarkerRef.current(index, { userInitiated: true })} aria-label={`Go to ${chapter.label}`}><i aria-hidden="true" /></button>)}</nav>
+        <div className={`world-controls ${hasScrolled ? 'is-dismissed' : ''}`}><button type="button" onClick={() => jumpTo(Math.max(0, active - 1))} aria-label="Back to previous section">↑</button><span>scroll to explore <i aria-hidden="true">⌄</i></span></div>
+        <nav className="world-route" aria-label="World chapters">{chapters.map((chapter, index) => <button key={chapter.id} className={active === index ? 'is-active' : ''} onClick={() => jumpTo(index)} aria-label={`Go to ${chapter.label}`}><i aria-hidden="true" /></button>)}</nav>
       </div>
     </main>
   );
