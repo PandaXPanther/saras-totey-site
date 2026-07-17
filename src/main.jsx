@@ -5,7 +5,7 @@ import App from './App.jsx';
 
 const root = document.getElementById('root');
 
-if (root.hasChildNodes() && window.location.pathname === '/') {
+if (root.hasChildNodes() && window.location.pathname === '/home') {
   hydrateRoot(root, <App />);
 } else {
   createRoot(root).render(<App />);

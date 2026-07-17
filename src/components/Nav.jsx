@@ -1,11 +1,11 @@
 import React from 'react';
 
 export const PROJECT_LINKS = [
-  { href: '/', label: 'World' },
-  { href: '/quant', label: 'Quant' },
+  { href: '/home', label: 'Home' },
+  { href: '/', label: 'Trading systems' },
   { href: '/econ-mom', label: 'econ.mom' },
   { href: '/local-ledger', label: 'Local Ledger' },
-  { href: '/att-agency', label: 'ATT' },
+  { href: '/att-agency', label: 'ATT Agency' },
 ];
 
 export default function Nav() {

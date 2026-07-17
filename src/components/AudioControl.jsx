@@ -1,24 +1,37 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const AMBIENT_AUDIO_SRC = '/ambient-fairy-fountain.ogg';
 const AMBIENT_VOLUME = 0.16;
+const AUDIO_KEY = '__sarasAmbientAudio';
+
+const getAudio = () => {
+  if (typeof window === 'undefined') return null;
+  if (!window[AUDIO_KEY]) {
+    const element = new Audio(AMBIENT_AUDIO_SRC);
+    element.loop = true;
+    element.preload = 'metadata';
+    element.volume = AMBIENT_VOLUME;
+    window[AUDIO_KEY] = element;
+  }
+  return window[AUDIO_KEY];
+};
 
 export default function AudioControl() {
-  const audio = useRef(null);
-  const [muted, setMuted] = useState(true);
+  const [muted, setMuted] = useState(() => getAudio()?.paused ?? true);
 
   useEffect(() => {
-    const element = audio.current;
+    const element = getAudio();
     if (!element) return undefined;
 
-    element.volume = AMBIENT_VOLUME;
-    element.pause();
-    element.muted = false;
-    return undefined;
+    const sync = () => setMuted(element.paused);
+    element.addEventListener('play', sync);
+    element.addEventListener('pause', sync);
+    sync();
+    return () => { element.removeEventListener('play', sync); element.removeEventListener('pause', sync); };
   }, []);
 
   const toggle = async () => {
-    const element = audio.current;
+    const element = getAudio();
     if (!element) return;
 
     if (!element.paused) {
@@ -38,16 +51,6 @@ export default function AudioControl() {
 
   return (
     <div className="audio-dock">
-      <audio
-        ref={audio}
-        className="audio-source"
-        src={AMBIENT_AUDIO_SRC}
-        loop
-        preload="metadata"
-        aria-hidden="true"
-        onPlay={() => setMuted(false)}
-        onPause={() => setMuted(true)}
-      />
       <button type="button" onClick={toggle} aria-label={muted ? 'Turn ambient sound on' : 'Mute ambient sound'}>
         <span className="audio-bars" aria-hidden="true"><i /><i /><i /></span>
         {muted ? 'sound off' : 'sound on'}
