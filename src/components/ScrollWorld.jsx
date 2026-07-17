@@ -90,7 +90,6 @@ export default function ScrollWorld() {
     if (nextIndex === markerRef.current && !instant) return;
 
     const fromIndex = markerRef.current;
-    const fromScroll = scrollY;
     const toScroll = markerScrollTop(nextIndex);
     const video = videoRef.current;
     const fromTime = video?.readyState >= 1 ? video.currentTime : markerTimes[fromIndex];
@@ -123,7 +122,6 @@ export default function ScrollWorld() {
           }
           const linearTravel = clamp((progress - TEXT_EXIT_END) / (TRAVEL_END - TEXT_EXIT_END));
           const easedTravel = 1 - ((1 - linearTravel) ** 3);
-          window.scrollTo(0, fromScroll + (toScroll - fromScroll) * easedTravel);
           if (video?.readyState >= 1 && isForwardStep) {
             if (!startedTravel) {
               startedTravel = true;
