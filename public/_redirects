@@ -1,11 +1,1 @@
-# Serve only known SPA routes. A catch-all rewrite makes a missing hashed Vite
-# asset look like HTML, which causes browsers to reject it as a stylesheet or
-# script and leaves the prerendered document unstyled.
-/home /index.html 200
-/home/ /index.html 200
-/econ-mom /index.html 200
-/econ-mom/ /index.html 200
-/local-ledger /index.html 200
-/local-ledger/ /index.html 200
-/att-agency /index.html 200
-/att-agency/ /index.html 200
+/* /index.html 200
