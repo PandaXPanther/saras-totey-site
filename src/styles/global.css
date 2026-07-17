@@ -668,15 +668,15 @@ html,body { min-height: 100%; overscroll-behavior-y: none; }
   .nav-label--desktop { display: none; }
   .nav-label--mobile { display: inline; }
   .scroll-world__scene img,.scroll-world__scene video { object-position: 60% center; }
-  .scroll-world__chapters { left: 18px; right: auto; width: min(320px,calc(100vw - 54px)); }
-  .world-copy,.world-copy--left,.world-copy--right,.world-copy--center { width: 100%; bottom: 92px; max-width: none; padding: 12px 14px; border-radius: 12px; background: rgba(255,245,249,.54); backdrop-filter: blur(8px) saturate(135%); -webkit-backdrop-filter: blur(8px) saturate(135%); }
+  .world-copy,.world-copy--left,.world-copy--right,.world-copy--center { box-sizing: border-box; left: 50%; right: auto; width: max-content; min-width: 0; max-width: calc(100vw - 36px); bottom: 92px; padding: 10px 12px; border-radius: 12px; text-align: center; transform: translateX(-50%); background: rgba(255,245,249,.54); backdrop-filter: blur(8px) saturate(135%); -webkit-backdrop-filter: blur(8px) saturate(135%); }
+  .world-copy.is-active,.world-copy--center.is-active { transform: translateX(-50%); }
   .world-copy__count { margin-bottom: 5px; font-size: 9px; }
   .world-copy__eyebrow { margin-bottom: 8px; font-size: 10px; }
-  .world-copy h1 { max-width: 16ch; font-size: clamp(28px,8.2vw,38px); line-height: .98; }
-  .world-copy p { display: -webkit-box; overflow: hidden; margin-top: 8px; font-size: 12px; line-height: 1.38; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+  .world-copy h1 { max-width: min(16ch,calc(100vw - 60px)); margin-right: auto; margin-left: auto; font-size: clamp(28px,8.2vw,38px); line-height: .98; }
+  .world-copy p { display: -webkit-box; overflow: hidden; width: fit-content; max-width: min(42ch,calc(100vw - 60px)); margin: 8px auto 0; font-size: 12px; line-height: 1.38; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
   .world-copy__note { display: none; }
   .glass-button { min-height: 42px; margin-top: 11px; padding: 0 16px; font-size: 12px; }
-  .world-copy__contact { margin-top: 14px; gap: 10px 14px; }
+  .world-copy__contact { justify-content: center; margin-top: 14px; gap: 10px 14px; }
   .world-copy__contact a { font-size: 11px; }
   .world-controls { left: 12px; right: auto; bottom: max(12px,env(safe-area-inset-bottom)); height: 44px; }
   .world-controls > span { max-width: none; }
