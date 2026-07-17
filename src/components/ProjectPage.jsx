@@ -10,9 +10,9 @@ import Footer from '../sections/Footer.jsx';
 
 const projects = {
   'econ-mom': {
-    eyebrow: 'The Mother of Econ', title: 'Economics tools built to show their work.', dek: 'Twelve free, citation-rigorous tools for students, debaters, and policy desks.', href: 'https://econ.mom', cta: 'Open econ.mom',
+    eyebrow: 'The Mother of Econ', title: 'Econ.mom', dek: 'Twelve free, citation-rigorous economics tools built to show their work.', href: 'https://econ.mom', cta: 'Open Econ.mom',
     stats: [['12', 'public economics tools'], ['May 2026', 'featured by Marginal Revolution'], ['Free', 'no paywall between a question and its evidence']],
-    sections: [['A working economics desk', 'The collection moves beyond explainers. It includes an AP free-response grader, tariff modeling, and a public Shadow Fed. Each tool turns a policy question into something a reader can inspect, change, and challenge.'], ['Built for scrutiny', 'Formulas and sources sit beside the result. The project uses cited public datasets and makes assumptions visible, so a polished output never substitutes for an auditable method.'], ['Press and reach', 'Marginal Revolution featured econ.mom in May 2026 and specifically called attention to its formulas and cited datasets. That recognition matters because rigor, not traffic theater, is the product.']],
+    sections: [['A working economics desk', 'The collection moves beyond explainers. It includes an AP free-response grader, tariff modeling, and a public Shadow Fed. Each tool turns a policy question into something a reader can inspect, change, and challenge.'], ['Built for scrutiny', 'Formulas and sources sit beside the result. The project uses cited public datasets and makes assumptions visible, so a polished output never substitutes for an auditable method.'], ['Press and reach', 'Marginal Revolution featured Econ.mom in May 2026 and specifically called attention to its formulas and cited datasets. That recognition matters because rigor, not traffic theater, is the product.']],
   },
   'local-ledger': {
     eyebrow: 'local-ledger.net', title: 'A local economy should never require invented data.', dek: 'Public dashboards across every state, 3,143 counties, and 120 metro areas.', href: 'https://local-ledger.net', cta: 'Open local-ledger.net',

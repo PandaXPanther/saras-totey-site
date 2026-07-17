@@ -27,7 +27,7 @@ export default function Hero() {
           transition={{ duration: 0.9, delay: 0.15, ease: [0.2, 0.9, 0.2, 1] }}
           className="hero-title"
         >
-          {HERO.headline_line1}<br /><em>{HERO.headline_grad}</em>
+          Trading systems
         </motion.h1>
 
         <motion.p
