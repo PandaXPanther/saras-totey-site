@@ -91,6 +91,11 @@ test('touch free-scroll reliably traverses the full world in both directions', a
       }
       await waitForMarker(page, expectedMarker);
       await expect(page.locator('.world-copy.is-active')).toBeVisible();
+      const expectedTime = markerTimes[expectedMarker];
+      await expect.poll(() => page.locator('.scroll-world video').evaluate((video) => video.currentTime)).toBeGreaterThanOrEqual(Math.max(0, expectedTime - 0.35));
+      if (process.env.CAPTURE_DEPTHS && forward && expectedMarker <= 5) {
+        await page.screenshot({ path: `.scroll-world-work/live-mobile-depth-${expectedMarker}.png` });
+      }
     }
     const atExtreme = () => page.evaluate((isForward) => {
       const maxScrollY = document.documentElement.scrollHeight - innerHeight;

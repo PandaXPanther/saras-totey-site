@@ -444,7 +444,7 @@ main > div[data-world='india']::before { background: rgba(41, 25, 36, .73); }
 .scroll-world { position: relative; height: var(--world-height); background: #f3ebdd; color: #242230; z-index: 20; }
 .scroll-world__sticky { position: sticky; top: 0; height: 100vh; overflow: hidden; isolation: isolate; }
 .scroll-world__sticky::after { content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none; background: radial-gradient(circle at 72% 46%, transparent 25%, rgba(243,235,221,.18) 66%, rgba(243,235,221,.58) 100%); }
-.scroll-world__stage { position: absolute; inset: 0; z-index: 1; }
+.scroll-world__stage { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
 .scroll-world__scene { position: absolute; inset: 0; opacity: 0; will-change: opacity; }
 .scroll-world__scene:first-child { opacity: 1; }
 .scroll-world__scene img,.scroll-world__scene video { position: absolute; width: 64vw; height: 100%; right: 0; top: 0; object-fit: cover; object-position: center; }
@@ -508,6 +508,7 @@ main > div[data-world='india']::before { background: rgba(41, 25, 36, .73); }
 .world-copy__count { margin-bottom: 28px; color: #6f6067; }
 .world-copy__eyebrow { color: #a42f61; margin-bottom: 14px; font-size: 13px; font-weight: 800; letter-spacing: .08em; }
 .world-copy h1 { max-width: 460px; font-family: -apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif; font-size: clamp(42px,4.6vw,68px); line-height: .94; font-weight: 650; letter-spacing: -.05em; color: #251c26; text-wrap: balance; }
+@media (min-width: 769px) { .world-copy--att h1 { font-size: clamp(38px,3.55vw,54px); } }
 .world-copy p { max-width: 470px; margin-top: 20px; font: 450 clamp(16px,1.2vw,19px)/1.5 'Switzer','Avenir Next',sans-serif; color: #55444d; }
 .world-copy li,.glass-button { border: 1px solid rgba(255,255,255,.72); border-radius: 9px; padding: 8px 12px; font-family: 'Switzer','Avenir Next',sans-serif; font-size: 11px; background: rgba(255,245,249,.44); box-shadow: inset 0 1px 0 rgba(255,255,255,.8),0 8px 30px rgba(104,50,75,.13); backdrop-filter: blur(18px) saturate(150%); -webkit-backdrop-filter: blur(18px) saturate(150%); }
 .glass-button { display: inline-flex; margin-top: 22px; padding: 11px 17px; color: #61233e; }

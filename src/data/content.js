@@ -403,7 +403,7 @@ export const ROADMAP = {
 export const LIVE = {
   eyebrow: 'Live signals · refreshed daily',
   intro: 'The site rebuilds every night at 06:00 UTC via a GitHub Actions workflow. Commit counts and the Hyperliquid cohort ROI regenerate against real APIs. Every number here is reproducible.',
-  last_updated_iso: '2026-07-17T22:33:08.867Z',
+  last_updated_iso: '2026-07-17T22:47:57.408Z',
   cards: [
     { k: "CounterSnipe commits", v: "328", foot: "srtt16/countersnipe" },
     { k: "Prediction bot commits", v: "17", foot: "PandaXPanther/pandaxpanther-prediction-bot" },
