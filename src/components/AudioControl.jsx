@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 const AMBIENT_AUDIO_SRC = '/ambient-fairy-fountain.ogg';
 const AMBIENT_VOLUME = 0.16;
 const AUDIO_KEY = '__sarasAmbientAudio';
+const AUDIO_GRAPH_KEY = '__sarasAmbientAudioGraph';
 
 const getAudio = () => {
   if (typeof window === 'undefined') return null;
@@ -14,6 +15,33 @@ const getAudio = () => {
     window[AUDIO_KEY] = element;
   }
   return window[AUDIO_KEY];
+};
+
+const getAudioGraph = () => {
+  if (typeof window === 'undefined') return null;
+  if (window[AUDIO_GRAPH_KEY]) return window[AUDIO_GRAPH_KEY];
+
+  const element = getAudio();
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  if (!element || !AudioContext) return null;
+
+  const context = new AudioContext();
+  const analyser = context.createAnalyser();
+  analyser.fftSize = 128;
+  analyser.smoothingTimeConstant = 0.72;
+  const source = context.createMediaElementSource(element);
+  source.connect(analyser);
+  analyser.connect(context.destination);
+  window[AUDIO_GRAPH_KEY] = { context, analyser };
+  return window[AUDIO_GRAPH_KEY];
+};
+
+export const readAmbientFrequencyData = (target) => {
+  const element = getAudio();
+  const graph = typeof window === 'undefined' ? null : window[AUDIO_GRAPH_KEY];
+  if (!element || element.paused || !graph || graph.context.state !== 'running') return false;
+  graph.analyser.getByteFrequencyData(target);
+  return true;
 };
 
 export default function AudioControl() {
@@ -41,6 +69,8 @@ export default function AudioControl() {
     }
 
     try {
+      const graph = getAudioGraph();
+      if (graph?.context.state === 'suspended') await graph.context.resume();
       await element.play();
       setMuted(false);
     } catch {

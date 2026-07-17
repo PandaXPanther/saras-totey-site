@@ -10,17 +10,17 @@ import Footer from '../sections/Footer.jsx';
 
 const projects = {
   'econ-mom': {
-    eyebrow: 'The Mother of Econ', title: 'Econ.mom', dek: 'Twelve free, citation-rigorous economics tools built to show their work.', href: 'https://econ.mom', cta: 'Open Econ.mom',
+    eyebrow: 'The Mother of Econ', title: 'Econ.mom', dek: 'Twelve free, citation-rigorous economics tools I built to make the models I met in AP Econ easier to question, test, and actually understand.', href: 'https://econ.mom', cta: 'Open Econ.mom',
     stats: [['12', 'public economics tools'], ['May 2026', 'featured by Marginal Revolution'], ['Free', 'no paywall between a question and its evidence']],
     sections: [['A working economics desk', 'The collection moves beyond explainers. It includes an AP free-response grader, tariff modeling, and a public Shadow Fed. Each tool turns a policy question into something a reader can inspect, change, and challenge.'], ['Built for scrutiny', 'Formulas and sources sit beside the result. The project uses cited public datasets and makes assumptions visible, so a polished output never substitutes for an auditable method.'], ['Press and reach', 'Marginal Revolution featured Econ.mom in May 2026 and specifically called attention to its formulas and cited datasets. That recognition matters because rigor, not traffic theater, is the product.']],
   },
   'local-ledger': {
-    eyebrow: 'local-ledger.net', title: 'A local economy should never require invented data.', dek: 'Public dashboards across every state, 3,143 counties, and 120 metro areas.', href: 'https://local-ledger.net', cta: 'Open local-ledger.net',
+    eyebrow: 'local-ledger.net', title: 'A local economy should never require invented data.', dek: 'I built public dashboards across every state, 3,143 counties, and 120 metro areas because I wanted local government data to be usable without losing where it came from—plus a simulator you can crash.', href: 'https://local-ledger.net', cta: 'Open local-ledger.net',
     stats: [['50', 'states'], ['3,143', 'counties'], ['120', 'metro areas'], ['0', 'fabricated data points']],
     sections: [['The country, at local resolution', 'Local Ledger brings jobs, income, housing, schools, and federal spending into one geographic research surface. Rankings make comparison possible without flattening places into one score.'], ['Primary-source backbone', 'The dashboards cite FRED, the Bureau of Labor Statistics, Census Bureau, Bureau of Economic Analysis, College Scorecard, and USAspending. The integrity counter reads 0 fabricated because missing data stays missing.'], ['The simulator is the extravagant part', 'The economy simulator turns the observatory into a live policy lab. Change the forces acting on a place (employment, income, housing pressure, and public investment) and watch the local picture respond as a connected system instead of a stack of isolated charts. It makes counterfactuals tangible while keeping the real baseline data in view, so exploring a dramatic scenario never gets confused with reporting a fact.']],
   },
   'att-agency': {
-    eyebrow: 'Boulder, Colorado', title: 'Small businesses deserve technical work that holds up.', dek: 'I co-founded ATT Agency to connect brands, custom websites, video, ads, and analytics without the usual handoffs.', href: 'https://attagency.co', cta: 'Visit ATT Agency',
+    eyebrow: 'attagency.co', title: 'Small businesses deserve technical work that holds up.', dek: 'I co-founded ATT Agency to connect brands, custom websites, video, ads, and analytics without the usual handoffs.', href: 'https://attagency.co', cta: 'Visit ATT Agency',
     stats: [['3', 'co-founders'], ['11', 'projects shipped'], ['1', 'team accountable for the outcome']],
     sections: [['My role in the studio', 'I co-founded ATT Agency with Ryder Thomas and Sunny Avula. I work where software, strategy, and measurement meet, helping clients commission a complete system or only the pieces they need.'], ['Work tied to outcomes', 'Brand, site, video, advertising, and analytics are planned together, so the public face and the measurement layer do not drift apart.']],
   },
