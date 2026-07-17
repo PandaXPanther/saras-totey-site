@@ -2,27 +2,20 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-WORK="$ROOT/.scroll-world-work/continuous-4k"
+WORK="$ROOT/.scroll-world-work/continuous-chain-v8"
 OUT="$ROOT/public/world/flight/continuous-flight.mp4"
 SCENES=(intro countersnipe prediction ventures att contact)
+LIST="$WORK/concat.txt"
 
-inputs=()
-filters=()
-for index in "${!SCENES[@]}"; do
-  inputs+=(-i "$WORK/${SCENES[$index]}.mp4")
-  filters+=("[$index:v]scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,fps=24,setsar=1,setpts=PTS-STARTPTS[v$index]")
+: > "$LIST"
+for scene in "${SCENES[@]}"; do
+  printf "file '%s/%s.mp4'\n" "$WORK" "$scene" >> "$LIST"
 done
 
-filter_graph="$(IFS=';'; echo "${filters[*]}")"
-filter_graph+=";[v0][v1]xfade=transition=fade:duration=0.75:offset=7.291667[x1]"
-filter_graph+=";[x1][v2]xfade=transition=fade:duration=0.75:offset=14.583334[x2]"
-filter_graph+=";[x2][v3]xfade=transition=fade:duration=0.75:offset=18.875001[x3]"
-filter_graph+=";[x3][v4]xfade=transition=fade:duration=0.75:offset=23.166668[x4]"
-filter_graph+=";[x4][v5]xfade=transition=fade:duration=0.75:offset=26.458335[out]"
-
-ffmpeg -y -v error "${inputs[@]}" \
-  -filter_complex "$filter_graph" \
-  -map '[out]' -an -c:v libx264 -preset medium -crf 22 -pix_fmt yuv420p \
+# Every generated clip begins from the previous clip's literal final frame.
+# Hard concatenation preserves that continuity. Crossfades/blends are forbidden.
+ffmpeg -y -v error -f concat -safe 0 -i "$LIST" \
+  -an -c:v libx265 -tag:v hvc1 -preset medium -crf 23 -pix_fmt yuv420p \
   -g 8 -keyint_min 8 -sc_threshold 0 -movflags +faststart "$OUT"
 
-echo "Encoded $OUT"
+echo "Encoded hard-cut 4K chain to $OUT"

@@ -2,11 +2,11 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-WORK="$ROOT/.scroll-world-work/continuous-4k"
+WORK="$ROOT/.scroll-world-work/continuous-chain-v8"
 PROMPTS="$ROOT/scripts/scroll-world-prompts/continuous"
 SCENES=(intro countersnipe prediction ventures att contact)
 
-mkdir -p "$WORK"
+mkdir -p "$WORK/boundaries"
 
 for index in "${!SCENES[@]}"; do
   scene="${SCENES[$index]}"
@@ -14,6 +14,7 @@ for index in "${!SCENES[@]}"; do
     echo "Keeping completed $scene"
     continue
   fi
+
   if (( index == 0 )); then
     start="$ROOT/.scroll-world-work/still_intro.png"
   else
@@ -21,23 +22,23 @@ for index in "${!SCENES[@]}"; do
     start="$WORK/${previous}-last.png"
   fi
 
-  if (( index < 2 )); then
-    duration=8
-    resolution=4k
-  elif (( index >= 4 )); then
+  duration=6
+  if [[ "$scene" == "ventures" ]]; then
     duration=4
-    resolution=1080p
-  else
-    duration=5
-    resolution=1080p
   fi
 
   higgsfield generate create seedance_2_0 \
     --prompt "$(<"$PROMPTS/$scene.txt")" \
     --start-image "$start" \
-    --image "$ROOT/.scroll-world-work/still_intro.png" \
-    --aspect_ratio 16:9 --duration "$duration" --mode std --resolution "$resolution" \
-    --generate_audio false --wait --wait-timeout 25m --json \
+    --aspect_ratio 16:9 \
+    --duration "$duration" \
+    --mode std \
+    --resolution 4k \
+    --bitrate_mode high \
+    --generate_audio false \
+    --wait \
+    --wait-timeout 30m \
+    --json \
     > "$WORK/$scene.json" 2> "$WORK/$scene.err"
 
   url="$(jq -r '.[0].result_url // empty' "$WORK/$scene.json")"
@@ -47,6 +48,24 @@ for index in "${!SCENES[@]}"; do
   fi
 
   curl -fsSL "$url" -o "$WORK/$scene.mp4"
-  ffmpeg -y -v error -sseof -0.05 -i "$WORK/$scene.mp4" -frames:v 1 "$WORK/$scene-last.png"
-  echo "Rendered $scene from $(basename "$start")"
+  frame_count="$(ffprobe -v error -select_streams v:0 -show_entries stream=nb_frames -of csv=p=0 "$WORK/$scene.mp4")"
+  ffmpeg -y -v error -i "$WORK/$scene.mp4" \
+    -vf "select=eq(n\\,$((frame_count - 1)))" -vsync 0 "$WORK/$scene-last.png"
+
+  if (( index > 0 )); then
+    previous="${SCENES[$((index - 1))]}"
+    ffmpeg -y -v error -i "$WORK/$scene.mp4" -frames:v 1 \
+      "$WORK/boundaries/${index}-${scene}-first.png"
+    cp "$start" "$WORK/boundaries/${index}-${previous}-last.png"
+    ffmpeg -i "$start" -i "$WORK/boundaries/${index}-${scene}-first.png" \
+      -lavfi '[0:v]scale=1920:1080[a];[1:v]scale=1920:1080[b];[a][b]ssim' \
+      -f null - 2> "$WORK/boundaries/${index}-${previous}-to-${scene}.ssim"
+    grep 'SSIM' "$WORK/boundaries/${index}-${previous}-to-${scene}.ssim" | tail -1
+  fi
+
+  echo "Rendered $scene from $(basename "$start") at 4K high bitrate"
+
+  if [[ "${STOP_AFTER:-}" == "$scene" ]]; then
+    exit 0
+  fi
 done
