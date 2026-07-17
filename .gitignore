@@ -5,3 +5,5 @@ dist
 .DS_Store
 *.log
 .vite
+.scroll-world-work/
+test-results/

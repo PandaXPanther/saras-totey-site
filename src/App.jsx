@@ -10,7 +10,7 @@ import Other from './sections/Other.jsx';
 import Awards from './sections/Awards.jsx';
 import Footer from './sections/Footer.jsx';
 import AudioControl from './components/AudioControl.jsx';
-import CulturalWorld from './components/CulturalWorld.jsx';
+import ScrollWorld from './components/ScrollWorld.jsx';
 import { SYSTEMS } from './data/content.js';
 
 export default function App() {
@@ -18,7 +18,7 @@ export default function App() {
     <>
       <Nav />
       <AudioControl />
-      <CulturalWorld />
+      <ScrollWorld />
       <main>
         <div data-world="japan"><Hero /><Thesis /></div>
         <div data-world="trading">
