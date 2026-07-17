@@ -2,7 +2,7 @@ import React from 'react';
 
 export const PROJECT_LINKS = [
   { href: '/home', label: 'Home', mobileLabel: 'Home' },
-  { href: '/', label: 'Trading systems', mobileLabel: 'Trading' },
+  { href: '/', label: 'Quant', mobileLabel: 'Quant' },
   { href: '/econ-mom', label: 'econ.mom', mobileLabel: 'Econ' },
   { href: '/local-ledger', label: 'Local Ledger', mobileLabel: 'Ledger' },
   { href: '/att-agency', label: 'ATT Agency', mobileLabel: 'ATT' },

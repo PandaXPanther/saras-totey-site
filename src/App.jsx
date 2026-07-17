@@ -5,7 +5,7 @@ import ScrollWorld from './components/ScrollWorld.jsx';
 import ProjectPage from './components/ProjectPage.jsx';
 
 const metadata = {
-  '/': ['Saras Totey · Trading Systems I Built', 'Independent trading systems built by Saras Totey: live CS2 arbitrage, prediction-market research, and transparent quantitative experiments.', '/og.png'],
+  '/': ['Saras Totey · Independent Quant Systems · Boulder, Colorado', 'Independent trading systems built by Saras Totey: live CS2 arbitrage, prediction-market research, and transparent quantitative experiments.', '/og.png'],
   '/home': ['Home · Saras Totey', 'Meet Saras Totey, a Boulder full-stack developer building trading bots, economics tools, public-data products, and websites.', '/og.png'],
   '/econ-mom': ['econ.mom · Saras Totey', 'Twelve free, interactive economics tools with formulas, explanations, and every dataset cited.', '/og.png'],
   '/local-ledger': ['local-ledger.net · Saras Totey', 'A nationwide economic observatory and simulator covering every state, 3,143 counties, and 120 metro areas.', '/og.png'],

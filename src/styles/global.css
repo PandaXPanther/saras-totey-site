@@ -668,11 +668,12 @@ html,body { min-height: 100%; overscroll-behavior-y: none; }
   .nav-label--desktop { display: none; }
   .nav-label--mobile { display: inline; }
   .scroll-world__scene img,.scroll-world__scene video { object-position: 60% center; }
-  .world-copy,.world-copy--left,.world-copy--right,.world-copy--center { bottom: 92px; max-width: none; padding: 14px 16px; border-radius: 12px; }
-  .world-copy__count { margin-bottom: 7px; font-size: 9px; }
+  .scroll-world__chapters { left: 18px; right: auto; width: min(320px,calc(100vw - 54px)); }
+  .world-copy,.world-copy--left,.world-copy--right,.world-copy--center { width: 100%; bottom: 92px; max-width: none; padding: 12px 14px; border-radius: 12px; background: rgba(255,245,249,.54); backdrop-filter: blur(8px) saturate(135%); -webkit-backdrop-filter: blur(8px) saturate(135%); }
+  .world-copy__count { margin-bottom: 5px; font-size: 9px; }
   .world-copy__eyebrow { margin-bottom: 8px; font-size: 10px; }
   .world-copy h1 { max-width: 16ch; font-size: clamp(28px,8.2vw,38px); line-height: .98; }
-  .world-copy p { display: -webkit-box; overflow: hidden; margin-top: 9px; font-size: 12px; line-height: 1.38; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
+  .world-copy p { display: -webkit-box; overflow: hidden; margin-top: 8px; font-size: 12px; line-height: 1.38; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
   .world-copy__note { display: none; }
   .glass-button { min-height: 42px; margin-top: 11px; padding: 0 16px; font-size: 12px; }
   .world-copy__contact { margin-top: 14px; gap: 10px 14px; }
