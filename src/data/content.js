@@ -12,6 +12,7 @@ export const IDENTITY = {
   github_org: 'srtt16',
   bmc: 'https://buymeacoffee.com/sarast1',
   linkedin: 'https://www.linkedin.com/in/saras-totey-64a777334/',
+  instagram: 'https://www.instagram.com/sarastotey_/',
   econmom: 'https://econ.mom',
   localledger: 'https://local-ledger.net',
 };
