@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
+    "brand:generate": "node scripts/generate-brand-assets.mjs",
     "dev": "vite",
     "refresh": "node scripts/refresh_live.mjs",
     "generate-trade": "node scripts/generate_trades.mjs",

@@ -5,11 +5,11 @@ import ScrollWorld from './components/ScrollWorld.jsx';
 import ProjectPage from './components/ProjectPage.jsx';
 
 const metadata = {
-  '/': ['Trading systems · Saras Totey', 'Independent trading systems built by Saras Totey: live CS2 arbitrage, prediction-market research, and transparent quantitative experiments.', '/og.png'],
-  '/home': ['Home · Saras Totey', 'Meet Saras Totey, a Boulder full-stack developer building trading bots, economics tools, public-data products, and websites.', '/og.png'],
-  '/econ-mom': ['Econ.mom · Saras Totey', 'Twelve free, interactive economics tools with formulas, explanations, and every dataset cited.', '/og.png'],
-  '/local-ledger': ['local-ledger.net · Saras Totey', 'A nationwide economic observatory and simulator covering every state, 3,143 counties, and 120 metro areas.', '/og.png'],
-  '/att-agency': ['ATT Agency · Saras Totey', 'Saras Totey’s work co-founding ATT Agency and shipping brands, websites, video, ads, and analytics.', '/og.png'],
+  '/': ['Trading systems · Saras Totey', 'Independent trading systems built by Saras Totey: live CS2 arbitrage, prediction-market research, and transparent quantitative experiments.', '/og-saras-totey.png?v=3'],
+  '/home': ['Home · Saras Totey', 'Meet Saras Totey, a Boulder full-stack developer building trading bots, economics tools, public-data products, and websites.', '/og-saras-totey.png?v=3'],
+  '/econ-mom': ['Econ.mom · Saras Totey', 'Twelve free, interactive economics tools with formulas, explanations, and every dataset cited.', '/og-saras-totey.png?v=3'],
+  '/local-ledger': ['local-ledger.net · Saras Totey', 'A nationwide economic observatory and simulator covering every state, 3,143 counties, and 120 metro areas.', '/og-saras-totey.png?v=3'],
+  '/att-agency': ['ATT Agency · Saras Totey', 'Saras Totey’s work co-founding ATT Agency and shipping brands, websites, video, ads, and analytics.', '/og-saras-totey.png?v=3'],
 };
 
 const setMeta = (selector, value) => document.querySelector(selector)?.setAttribute('content', value);
