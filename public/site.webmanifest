@@ -2,7 +2,7 @@
   "name": "Saras Totey",
   "short_name": "Saras",
   "description": "Saras Totey builds trading systems, economics tools, and websites.",
-  "start_url": "/home",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#17182B",
   "theme_color": "#17182B",

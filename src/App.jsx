@@ -5,8 +5,8 @@ import ScrollWorld from './components/ScrollWorld.jsx';
 import ProjectPage from './components/ProjectPage.jsx';
 
 const metadata = {
-  '/': ['Trading systems · Saras Totey', 'Independent trading systems built by Saras Totey: live CS2 arbitrage, prediction-market research, and transparent quantitative experiments.', '/og-saras-totey.png?v=3'],
-  '/home': ['Home · Saras Totey', 'Meet Saras Totey, a Boulder full-stack developer building trading bots, economics tools, public-data products, and websites.', '/og-saras-totey.png?v=3'],
+  '/': ['Saras Totey · Developer, researcher, and builder', 'Meet Saras Totey, a Boulder full-stack developer building trading bots, economics tools, public-data products, and websites.', '/og-saras-totey.png?v=3'],
+  '/quant': ['Trading systems · Saras Totey', 'Independent trading systems built by Saras Totey: live CS2 arbitrage, prediction-market research, and transparent quantitative experiments.', '/og-saras-totey.png?v=3'],
   '/econ-mom': ['Econ.mom · Saras Totey', 'Twelve free, interactive economics tools with formulas, explanations, and every dataset cited.', '/og-saras-totey.png?v=3'],
   '/local-ledger': ['local-ledger.net · Saras Totey', 'A nationwide economic observatory and simulator covering every state, 3,143 counties, and 120 metro areas.', '/og-saras-totey.png?v=3'],
   '/att-agency': ['ATT Agency · Saras Totey', 'Saras Totey’s work co-founding ATT Agency and shipping brands, websites, video, ads, and analytics.', '/og-saras-totey.png?v=3'],
@@ -61,7 +61,7 @@ export default function App({ initialPath = '/' }) {
       <a className="skip-link" href="#main-content">Skip to content</a>
       <Nav pathname={path} />
       <AudioControl />
-      <div id="main-content">{path === '/home' ? <ScrollWorld /> : <ProjectPage slug={path === '/' ? 'quant' : path.slice(1)} canReturnToWorld={typeof window !== 'undefined' && Boolean(window.history.state?.worldReturnSnapshot)} />}</div>
+      <div id="main-content">{path === '/' ? <ScrollWorld /> : <ProjectPage slug={path.slice(1)} canReturnToWorld={typeof window !== 'undefined' && Boolean(window.history.state?.worldReturnSnapshot)} />}</div>
     </>
   );
 }

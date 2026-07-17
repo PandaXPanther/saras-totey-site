@@ -37,8 +37,8 @@ try {
     throw new Error('Could not find empty root div in dist/index.html');
   }
   const routes = new Map([
-    ['/', ['Trading systems · Saras Totey', 'Independent trading systems built by Saras Totey: live CS2 arbitrage, prediction-market research, and transparent quantitative experiments.']],
-    ['/home', ['Home · Saras Totey', 'Meet Saras Totey, a Boulder full-stack developer building trading bots, economics tools, public-data products, and websites.']],
+    ['/', ['Saras Totey · Developer, researcher, and builder', 'Meet Saras Totey, a Boulder full-stack developer building trading bots, economics tools, public-data products, and websites.']],
+    ['/quant', ['Trading systems · Saras Totey', 'Independent trading systems built by Saras Totey: live CS2 arbitrage, prediction-market research, and transparent quantitative experiments.']],
     ['/econ-mom', ['Econ.mom · Saras Totey', 'Twelve free, interactive economics tools with formulas, explanations, and every dataset cited.']],
     ['/local-ledger', ['local-ledger.net · Saras Totey', 'A nationwide economic observatory and simulator covering every state, 3,143 counties, and 120 metro areas.']],
     ['/att-agency', ['ATT Agency · Saras Totey', 'Saras Totey’s work co-founding ATT Agency and shipping brands, websites, video, ads, and analytics.']],

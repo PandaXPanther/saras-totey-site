@@ -32,7 +32,7 @@ function SiteFooter() {
   return <footer className="site-footer"><strong>Site made by Saras Totey</strong><nav aria-label="Social links">{footerLinks.map(([label, href]) => <a key={label} href={href} target="_blank" rel="noreferrer">{label}</a>)}</nav></footer>;
 }
 
-function BackToWorld({ visible }) { return visible ? <a className="take-back" href="/home" data-restore-world="true">← Take me back</a> : null; }
+function BackToWorld({ visible }) { return visible ? <a className="take-back" href="/" data-restore-world="true">← Take me back</a> : null; }
 
 function QuantPage({ canReturnToWorld }) {
   return <main className="project-page project-page--quant"><BackToWorld visible={canReturnToWorld} /><Hero /><Thesis />{SYSTEMS.map((system, index) => <System key={system.slug} system={system} flipped={index % 2 === 1} />)}<Backtest /><Live /><Roadmap /><Footer /></main>;
@@ -45,6 +45,6 @@ function Recognition() {
 export default function ProjectPage({ slug, canReturnToWorld = false }) {
   if (slug === 'quant') return <QuantPage canReturnToWorld={canReturnToWorld} />;
   const project = projects[slug];
-  if (!project) return <main className="project-page"><header className="project-hero"><span>404</span><h1>This island is not on the map.</h1><a className="hero-cta" href="/home">Return home</a></header><SiteFooter /></main>;
+  if (!project) return <main className="project-page"><header className="project-hero"><span>404</span><h1>This island is not on the map.</h1><a className="hero-cta" href="/">Return home</a></header><SiteFooter /></main>;
   return <main className={`project-page project-page--${slug}`}><BackToWorld visible={canReturnToWorld} /><header className="project-hero"><span>{project.eyebrow}</span><h1>{project.title}</h1><p>{project.dek}</p><a className="hero-cta" href={project.href} target="_blank" rel="noreferrer">{project.cta}</a></header><section className="project-stats">{project.stats.map(([value, label]) => <div key={label}><strong>{value}</strong><span>{label}</span></div>)}</section><section className="project-story">{project.sections.map(([title, body], index) => <article key={title}><span>0{index + 1}</span><h2>{title}</h2><p>{body}</p></article>)}</section>{slug === 'econ-mom' && <Recognition />}<SiteFooter /></main>;
 }
