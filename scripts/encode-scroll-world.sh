@@ -4,8 +4,8 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 WORK="$ROOT/.scroll-world-work"
 OUT="$ROOT/public/world/flight"
-SCENES="intro countersnipe prediction ventures contact"
-CONNECTORS="intro-countersnipe countersnipe-prediction prediction-ventures ventures-contact"
+SCENES="intro countersnipe prediction ventures att contact"
+CONNECTORS="intro-countersnipe countersnipe-prediction prediction-ventures ventures-att att-contact"
 
 mkdir -p "$OUT"
 
