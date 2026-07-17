@@ -50,11 +50,20 @@ export default function ScrollWorld() {
       if (!snapshot) {
         try { snapshot = JSON.parse(sessionStorage.getItem('saras-world-snapshot')); } catch { snapshot = null; }
       }
-      if (!snapshot || !Number.isFinite(snapshot.scrollY)) return;
-      window.scrollTo(0, snapshot.scrollY);
+      if (!snapshot || (!Number.isFinite(snapshot.position) && !Number.isFinite(snapshot.scrollY))) return;
+      const node = root.current;
+      if (!node) return;
+      const max = Math.max(1, node.offsetHeight - innerHeight);
+      const scrollTarget = Number.isFinite(snapshot.position)
+        ? node.offsetTop + clamp(snapshot.position) * max
+        : snapshot.scrollY;
+      window.scrollTo(0, scrollTarget);
       const video = videoRef.current;
-      if (!video || !Number.isFinite(snapshot.videoTime)) return;
-      const seek = () => { video.currentTime = Math.min(snapshot.videoTime, Math.max(0, video.duration - 0.04)); };
+      if (!video) return;
+      const seek = () => {
+        const position = clamp((scrollTarget - node.offsetTop) / max);
+        video.currentTime = position * Math.max(0, video.duration - 0.04);
+      };
       if (video.readyState >= 1 && video.duration) seek();
       else video.addEventListener('loadedmetadata', seek, { once: true });
     };
@@ -106,12 +115,15 @@ export default function ScrollWorld() {
     };
     const requestUpdate = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
     const dismissHint = () => setHasScrolled(true);
+    const video = videoRef.current;
     update();
     addEventListener('scroll', requestUpdate, { passive: true });
     addEventListener('scroll', dismissHint, { passive: true, once: true });
     addEventListener('pagehide', rememberPosition);
     addEventListener('resize', requestUpdate, { passive: true });
-    return () => { rememberPosition(); removeEventListener('scroll', requestUpdate); removeEventListener('scroll', dismissHint); removeEventListener('pagehide', rememberPosition); removeEventListener('resize', requestUpdate); };
+    video?.addEventListener('loadedmetadata', requestUpdate);
+    video?.addEventListener('seeked', requestUpdate);
+    return () => { rememberPosition(); removeEventListener('scroll', requestUpdate); removeEventListener('scroll', dismissHint); removeEventListener('pagehide', rememberPosition); removeEventListener('resize', requestUpdate); video?.removeEventListener('loadedmetadata', requestUpdate); video?.removeEventListener('seeked', requestUpdate); };
   }, [chain]);
 
   const total = chain.reduce((sum, segment) => sum + segment.scroll, 0);

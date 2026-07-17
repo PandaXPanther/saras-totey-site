@@ -7,7 +7,7 @@ const chapterPositions = [0, 0.15, 0.3, 0.45, 0.6, 0.75, 0.9, 1];
 const routes = [
   { label: 'Home', path: '/home', marker: '.scroll-world' },
   { label: 'Trading systems', path: '/', marker: '.project-page--quant' },
-  { label: 'econ.mom', path: '/econ-mom', marker: '.project-page--econ-mom' },
+  { label: 'Econ.mom', path: '/econ-mom', marker: '.project-page--econ-mom' },
   { label: 'Local Ledger', path: '/local-ledger', marker: '.project-page--local-ledger' },
   { label: 'ATT Agency', path: '/att-agency', marker: '.project-page--att-agency' },
 ];
@@ -39,7 +39,7 @@ test('return link only exists on project entries created by a world CTA', async 
   const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
   const page = await context.newPage();
   await page.goto('http://127.0.0.1:4174/home');
-  await page.getByRole('button', { name: 'Go to Trading bots' }).click();
+  await page.getByRole('button', { name: 'Go to Trading systems' }).click();
   await expect(page.locator('.world-copy.is-active')).toContainText('Markets, then code');
   const expectedFrame = await page.evaluate(() => scrollY);
   await page.locator('.world-copy.is-active').getByRole('link', { name: /Take me there/ }).click();
@@ -51,7 +51,7 @@ test('return link only exists on project entries created by a world CTA', async 
   await expect(page).toHaveURL(/\/home$/);
   await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(expectedFrame - 3);
 
-  await page.getByRole('button', { name: 'Go to Trading bots' }).click();
+  await page.getByRole('button', { name: 'Go to Trading systems' }).click();
   await page.locator('.world-copy.is-active').getByRole('link', { name: /Take me there/ }).click();
   await page.goBack();
   await expect(page).toHaveURL(/\/home$/);
