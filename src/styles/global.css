@@ -572,7 +572,7 @@ main > div[data-world='india']::before { background: rgba(41, 25, 36, .73); }
 .world-copy__count,.world-copy__eyebrow,.world-copy p,.glass-nav a { font-family: 'Switzer','Avenir Next',sans-serif; }
 a:focus-visible,button:focus-visible { outline: 2px solid #d64b83; outline-offset: 4px; }
 a,button { touch-action: manipulation; -webkit-tap-highlight-color: rgba(214,75,131,.2); }
-.world-copy--right { left: auto; right: clamp(22px,6vw,92px); text-align: right; background: transparent; border: 0; }
+.world-copy--right { left: auto; right: clamp(22px,6vw,92px); text-align: left; background: transparent; border: 0; }
 .world-copy--right p,.world-copy--right h1 { margin-left: auto; }
 .world-copy--right .glass-button { justify-content: flex-end; }
 .world-copy--center { width: min(70vw,760px); }
