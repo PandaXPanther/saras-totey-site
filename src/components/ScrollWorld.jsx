@@ -16,6 +16,9 @@ const chapters = [
 ];
 
 const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
+const flightDurations = [7.791667, 7.541667, 4.541667, 4.541667, 3.541667, 3.791667];
+const flightDuration = flightDurations.reduce((sum, duration) => sum + duration, 0);
+const scrollDuration = 9.4;
 
 export default function ScrollWorld() {
   const root = useRef(null);
@@ -27,7 +30,7 @@ export default function ScrollWorld() {
     id: chapter.media,
     chapter: index,
     kind: 'scene',
-    scroll: index === 0 || index === chapters.length - 1 ? 1.7 : 1.5,
+    scroll: (flightDurations[index] / flightDuration) * scrollDuration,
   })), []);
 
   useEffect(() => {
@@ -105,7 +108,7 @@ export default function ScrollWorld() {
     <main ref={root} className="scroll-world" style={{ '--world-height': `${total * 100 + 100}vh` }}>
       <div className="scroll-world__sticky">
         <div className="scroll-world__stage" aria-hidden="true">
-          <div className="scroll-world__scene"><img src={reduceMotion ? `/world/flight/${chapters[active].media}.webp` : '/world/flight/intro-4k.webp'} alt="" />{!reduceMotion && <video ref={videoRef} src="/world/flight/intro.mp4" muted playsInline preload="auto" />}</div>
+          <div className="scroll-world__scene"><img src={reduceMotion ? `/world/flight/${chapters[active].media}.webp` : '/world/flight/intro-4k.webp'} alt="" />{!reduceMotion && <video ref={videoRef} src="/world/flight/continuous-flight.mp4" muted playsInline preload="auto" />}</div>
         </div>
         <div className="world-wash" aria-hidden="true" />
         {chapters.map((chapter, index) => <article key={chapter.id} className={`world-copy world-copy--${chapter.side} ${active === index ? 'is-active' : ''}`}><span className="world-copy__count">{String(index + 1).padStart(2, '0')} / {chapters.length}</span><span className="world-copy__eyebrow">{chapter.eyebrow}</span><h1>{chapter.title}</h1><p>{chapter.body}</p>{chapter.note && <small className="world-copy__note">{chapter.note}</small>}{chapter.href && <a className="glass-button" href={chapter.href} data-world-cta="true" onClick={rememberPosition}>Take me there <span aria-hidden="true">↗</span></a>}{chapter.cta && <div className="world-copy__contact"><a href="mailto:sarastotey@icloud.com">Email</a><a href={IDENTITY.linkedin} target="_blank" rel="noreferrer">LinkedIn</a><a href={`https://github.com/${IDENTITY.github_user}`} target="_blank" rel="noreferrer">GitHub</a><a href={IDENTITY.instagram} target="_blank" rel="noreferrer">Instagram</a></div>}</article>)}

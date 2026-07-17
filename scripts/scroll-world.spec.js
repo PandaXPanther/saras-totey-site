@@ -2,7 +2,7 @@ import { test, expect } from 'playwright/test';
 
 test.describe.configure({ timeout: 120_000 });
 
-const chapterPositions = [0.02, 0.19, 0.37, 0.55, 0.73, 0.96];
+const chapterPositions = [0, 0.15, 0.3, 0.45, 0.6, 0.75, 0.9, 1];
 
 const routes = [
   { label: 'Home', path: '/home', marker: '.scroll-world' },
