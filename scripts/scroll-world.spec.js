@@ -1,6 +1,63 @@
 import { test, expect } from 'playwright/test';
 
+test.describe.configure({ timeout: 120_000 });
+
 const chapterPositions = [0.02, 0.19, 0.37, 0.55, 0.73, 0.96];
+
+const routes = [
+  { label: 'Home', path: '/home', marker: '.scroll-world' },
+  { label: 'Trading systems', path: '/', marker: '.project-page--quant' },
+  { label: 'econ.mom', path: '/econ-mom', marker: '.project-page--econ-mom' },
+  { label: 'Local Ledger', path: '/local-ledger', marker: '.project-page--local-ledger' },
+  { label: 'ATT Agency', path: '/att-agency', marker: '.project-page--att-agency' },
+];
+
+test('every header destination renders from every page', async ({ page }) => {
+  const browserErrors = [];
+  page.on('pageerror', (error) => browserErrors.push(error.message));
+  for (const source of routes) {
+    for (const destination of routes) {
+      browserErrors.length = 0;
+      await page.goto(`http://127.0.0.1:4174${source.path}`);
+      await expect(page.locator(source.marker)).toBeVisible();
+      await page.getByRole('navigation', { name: 'Project pages' }).getByRole('link', { name: destination.label, exact: true }).click();
+      await expect(page).toHaveURL(new RegExp(`${destination.path === '/' ? '/$' : destination.path}$`));
+      await expect(page.locator(destination.marker), `${source.path} -> ${destination.path}: ${browserErrors.join(' | ')}`).toBeVisible();
+    }
+  }
+});
+
+test('return link only exists on project entries created by a world CTA', async ({ browser }) => {
+  for (const route of routes.filter(({ path }) => path !== '/home')) {
+    const context = await browser.newContext();
+    const page = await context.newPage();
+    await page.goto(`http://127.0.0.1:4174${route.path}`);
+    await expect(page.locator('.take-back')).toHaveCount(0);
+    await context.close();
+  }
+
+  const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  const page = await context.newPage();
+  await page.goto('http://127.0.0.1:4174/home');
+  await page.getByRole('button', { name: 'Go to Trading bots' }).click();
+  await expect(page.locator('.world-copy.is-active')).toContainText('Markets, then code');
+  const expectedFrame = await page.evaluate(() => scrollY);
+  await page.locator('.world-copy.is-active').getByRole('link', { name: /Take me there/ }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.locator('.project-page--quant')).toBeVisible();
+  await expect(page.locator('.take-back')).toBeVisible();
+  await page.screenshot({ path: '.scroll-world-work/cta-quant-with-return.png' });
+  await page.locator('.take-back').click();
+  await expect(page).toHaveURL(/\/home$/);
+  await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(expectedFrame - 3);
+
+  await page.getByRole('button', { name: 'Go to Trading bots' }).click();
+  await page.locator('.world-copy.is-active').getByRole('link', { name: /Take me there/ }).click();
+  await page.goBack();
+  await expect(page).toHaveURL(/\/home$/);
+  await expect(page.locator('.scroll-world')).toBeVisible();
+  await context.close();
+});
 
 test('desktop camera chain scrubs every chapter and restores navigation state', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -16,15 +73,17 @@ test('desktop camera chain scrubs every chapter and restores navigation state', 
     await page.screenshot({ path: `.scroll-world-work/desktop-${index + 1}.png` });
     const state = await page.evaluate(() => ({
       chapter: document.querySelector('.world-copy.is-active')?.textContent,
-      visible: [...document.querySelectorAll('.scroll-world__scene')].filter((node) => Number(getComputedStyle(node).opacity) > 0.5).length,
+      videos: document.querySelectorAll('.scroll-world video').length,
+      currentTime: document.querySelector('.scroll-world video')?.currentTime,
     }));
     expect(state.chapter).toBeTruthy();
-    expect(state.visible).toBe(1);
+    expect(state.videos).toBe(1);
+    expect(state.currentTime).toBeGreaterThanOrEqual(0);
   }
   for (const progress of [...chapterPositions].reverse()) {
     await page.evaluate(([height, position]) => scrollTo(0, height * position), [worldHeight, progress]);
     await page.waitForTimeout(160);
-    await expect.poll(() => page.locator('.scroll-world__scene').evaluateAll((nodes) => nodes.filter((node) => Number(getComputedStyle(node).opacity) > 0.5).length)).toBe(1);
+    await expect(page.locator('.scroll-world video')).toHaveCount(1);
   }
   const midTransition = 0.4137;
   await page.evaluate(([height, position]) => scrollTo(0, height * position), [worldHeight, midTransition]);
@@ -32,7 +91,7 @@ test('desktop camera chain scrubs every chapter and restores navigation state', 
   await page.locator('.world-copy.is-active .glass-button').click();
   await expect(page).not.toHaveURL(/home/);
   await expect.poll(() => page.evaluate(() => !window.__sarasAmbientAudio.paused)).toBeTruthy();
-  await page.locator('a[href="/home"]').last().click();
+  await page.locator('.take-back').click();
   await expect(page).toHaveURL(/home/);
   await expect.poll(() => page.evaluate(() => scrollY), { timeout: 3000 }).toBeGreaterThan(expectedFrame - 2);
   expect(Math.abs((await page.evaluate(() => scrollY)) - expectedFrame)).toBeLessThanOrEqual(2);
