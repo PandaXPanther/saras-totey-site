@@ -27,12 +27,12 @@ export default function App() {
       event.preventDefault();
       const restoreWorld = link.dataset.restoreWorld === 'true';
       const fromWorld = link.dataset.worldCta === 'true';
-      const savedWorldPosition = Number(sessionStorage.getItem('saras-world-position'));
-      const returnPosition = Number(window.history.state?.worldReturnPosition);
-      const nextState = restoreWorld && Number.isFinite(returnPosition)
-        ? { worldPosition: returnPosition }
-        : fromWorld && Number.isFinite(savedWorldPosition)
-          ? { worldReturnPosition: savedWorldPosition }
+      const savedWorldSnapshot = sessionStorage.getItem('saras-world-snapshot');
+      const returnSnapshot = window.history.state?.worldReturnSnapshot;
+      const nextState = restoreWorld && returnSnapshot
+        ? { worldSnapshot: returnSnapshot }
+        : fromWorld && savedWorldSnapshot
+          ? { worldReturnSnapshot: JSON.parse(savedWorldSnapshot) }
           : {};
       window.history.pushState(nextState, '', `${url.pathname}${url.search}${url.hash}`);
       sync();
@@ -61,7 +61,7 @@ export default function App() {
       <a className="skip-link" href="#main-content">Skip to content</a>
       <Nav pathname={path} />
       <AudioControl />
-      <div id="main-content">{path === '/home' ? <ScrollWorld /> : <ProjectPage slug={path === '/' ? 'quant' : path.slice(1)} canReturnToWorld={typeof window !== 'undefined' && Number.isFinite(Number(window.history.state?.worldReturnPosition))} />}</div>
+      <div id="main-content">{path === '/home' ? <ScrollWorld /> : <ProjectPage slug={path === '/' ? 'quant' : path.slice(1)} canReturnToWorld={typeof window !== 'undefined' && Boolean(window.history.state?.worldReturnSnapshot)} />}</div>
     </>
   );
 }

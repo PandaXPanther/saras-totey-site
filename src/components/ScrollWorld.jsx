@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { IDENTITY } from '../data/content.js';
 
 const getAge = (now = new Date()) => {
@@ -16,7 +16,7 @@ const chapters = [
 ];
 
 const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
-const flightDurations = [7.791667, 7.541667, 4.541667, 4.541667, 3.541667, 3.791667];
+const flightDurations = [7.291667, 7.291667, 4.291667, 4.291667, 3.291667, 4.041667];
 const flightDuration = flightDurations.reduce((sum, duration) => sum + duration, 0);
 const scrollDuration = 9.4;
 
@@ -41,15 +41,20 @@ export default function ScrollWorld() {
     return () => query.removeEventListener('change', sync);
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     history.scrollRestoration = 'manual';
     const restore = () => {
-      const saved = Number(history.state?.worldPosition ?? sessionStorage.getItem('saras-world-position'));
-      if (!Number.isFinite(saved) || saved < 0) return;
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        const node = root.current;
-        if (node) window.scrollTo(0, saved * Math.max(0, node.offsetHeight - innerHeight));
-      }));
+      let snapshot = history.state?.worldSnapshot;
+      if (!snapshot) {
+        try { snapshot = JSON.parse(sessionStorage.getItem('saras-world-snapshot')); } catch { snapshot = null; }
+      }
+      if (!snapshot || !Number.isFinite(snapshot.scrollY)) return;
+      window.scrollTo(0, snapshot.scrollY);
+      const video = videoRef.current;
+      if (!video || !Number.isFinite(snapshot.videoTime)) return;
+      const seek = () => { video.currentTime = Math.min(snapshot.videoTime, Math.max(0, video.duration - 0.04)); };
+      if (video.readyState >= 1 && video.duration) seek();
+      else video.addEventListener('loadedmetadata', seek, { once: true });
     };
     restore();
     addEventListener('pageshow', restore);
@@ -61,8 +66,10 @@ export default function ScrollWorld() {
     if (!node) return;
     const max = Math.max(1, node.offsetHeight - innerHeight);
     const position = clamp((scrollY - node.offsetTop) / max);
+    const snapshot = { scrollY, videoTime: videoRef.current?.currentTime ?? position * flightDuration, position };
+    sessionStorage.setItem('saras-world-snapshot', JSON.stringify(snapshot));
     sessionStorage.setItem('saras-world-position', String(position));
-    history.replaceState({ ...history.state, worldPosition: position }, '');
+    history.replaceState({ ...history.state, worldSnapshot: snapshot }, '');
   };
 
   const jumpTo = (chapterIndex) => {

@@ -14,11 +14,11 @@ for index in "${!SCENES[@]}"; do
 done
 
 filter_graph="$(IFS=';'; echo "${filters[*]}")"
-filter_graph+=";[v0][v1]xfade=transition=fade:duration=0.5:offset=7.541667[x1]"
-filter_graph+=";[x1][v2]xfade=transition=fade:duration=0.5:offset=15.083334[x2]"
-filter_graph+=";[x2][v3]xfade=transition=fade:duration=0.5:offset=19.625001[x3]"
-filter_graph+=";[x3][v4]xfade=transition=fade:duration=0.5:offset=24.166668[x4]"
-filter_graph+=";[x4][v5]xfade=transition=fade:duration=0.5:offset=27.708335[out]"
+filter_graph+=";[v0][v1]xfade=transition=fade:duration=0.75:offset=7.291667[x1]"
+filter_graph+=";[x1][v2]xfade=transition=fade:duration=0.75:offset=14.583334[x2]"
+filter_graph+=";[x2][v3]xfade=transition=fade:duration=0.75:offset=18.875001[x3]"
+filter_graph+=";[x3][v4]xfade=transition=fade:duration=0.75:offset=23.166668[x4]"
+filter_graph+=";[x4][v5]xfade=transition=fade:duration=0.75:offset=26.458335[out]"
 
 ffmpeg -y -v error "${inputs[@]}" \
   -filter_complex "$filter_graph" \
