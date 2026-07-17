@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-17T07:07:03.013Z",
+  "generated_at": "2026-07-17T16:07:03.236Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,33 +31,33 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 1713.13,
-    "total_profit_usd": 302.89,
-    "generated_profit_usd": 78.25,
-    "total_trades": 112,
-    "generated_trades": 27,
-    "win_rate_pct": 81.3,
-    "last_trade_iso": "2026-07-17T05:33:00.000Z"
+    "portfolio_value_usd": 1717.09,
+    "total_profit_usd": 306.38,
+    "generated_profit_usd": 81.74,
+    "total_trades": 115,
+    "generated_trades": 30,
+    "win_rate_pct": 80,
+    "last_trade_iso": "2026-07-17T15:39:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$1,713.13",
+      "v": "$1,717.09",
       "foot": "CounterSnipe capital plus generated realized drift"
     },
     {
       "k": "Total profit",
-      "v": "+$302.89",
-      "foot": "+$78.25 generated after baseline"
+      "v": "+$306.38",
+      "foot": "+$81.74 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "112",
-      "foot": "27 generated daily-paced trades"
+      "v": "115",
+      "foot": "30 generated daily-paced trades"
     },
     {
       "k": "Win rate",
-      "v": "81.3%",
+      "v": "80%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -67,11 +67,62 @@
     },
     {
       "k": "Latest strategy",
-      "v": "Composite-score wallet mirror",
-      "foot": "ETH-PERP"
+      "v": "Sticker-adjusted CS2 skin arbitrage",
+      "foot": "M4A1-S | Printstream MW"
     }
   ],
   "trades": [
+    {
+      "id": "2026071715-4",
+      "timestamp": "2026-07-17T15:39:00.000Z",
+      "system": "CounterSnipe",
+      "asset_type": "CS2 skin",
+      "instrument": "M4A1-S | Printstream MW",
+      "side": "BUY",
+      "entry_price": 210.02,
+      "exit_price": 215.52,
+      "quantity": 1,
+      "notional_usd": 210.02,
+      "profit_loss_usd": 5.5,
+      "profit_loss_pct": 2.62,
+      "strategy": "Sticker-adjusted CS2 skin arbitrage",
+      "result": "WIN",
+      "holding_period_hours": 182
+    },
+    {
+      "id": "2026071712-3",
+      "timestamp": "2026-07-17T12:27:00.000Z",
+      "system": "PandaXPanther Prediction Bot",
+      "asset_type": "crypto prediction contract",
+      "instrument": "SOL above daily range",
+      "side": "BUY",
+      "entry_price": 0.71,
+      "exit_price": 0.699,
+      "quantity": 144,
+      "notional_usd": 102.17,
+      "profit_loss_usd": -1.56,
+      "profit_loss_pct": -1.52,
+      "strategy": "Crypto latency",
+      "result": "LOSS",
+      "holding_period_hours": "0.85"
+    },
+    {
+      "id": "2026071707-2",
+      "timestamp": "2026-07-17T07:53:00.000Z",
+      "system": "CounterSnipe",
+      "asset_type": "CS2 skin",
+      "instrument": "AK-47 | Redline FT",
+      "side": "BUY",
+      "entry_price": 28.64,
+      "exit_price": 28.19,
+      "quantity": 1,
+      "notional_usd": 28.64,
+      "profit_loss_usd": -0.45,
+      "profit_loss_pct": -1.56,
+      "strategy": "Sticker-adjusted CS2 skin arbitrage",
+      "result": "LOSS",
+      "holding_period_hours": 199
+    },
     {
       "id": "2026071705-1",
       "timestamp": "2026-07-17T05:33:00.000Z",
