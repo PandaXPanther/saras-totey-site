@@ -15,7 +15,7 @@ done
 # Every generated clip begins from the previous clip's literal final frame.
 # Hard concatenation preserves that continuity. Crossfades/blends are forbidden.
 ffmpeg -y -v error -f concat -safe 0 -i "$LIST" \
-  -an -c:v libx265 -tag:v hvc1 -preset medium -crf 23 -pix_fmt yuv420p \
+  -an -c:v libx265 -tag:v hvc1 -preset medium -crf 27 -pix_fmt yuv420p \
   -g 8 -keyint_min 8 -sc_threshold 0 -movflags +faststart "$OUT"
 
 echo "Encoded hard-cut 4K chain to $OUT"
