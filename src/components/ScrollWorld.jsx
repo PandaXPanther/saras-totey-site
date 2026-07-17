@@ -20,7 +20,10 @@ const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 const flightDurations = [6.041667, 6.041667, 6.041667, 4.041667, 6.041667, 6.041667];
 const markerTimes = flightDurations.map((_, index) => flightDurations.slice(0, index).reduce((sum, duration) => sum + duration, 0));
 const markerProgress = chapters.map((_, index) => index / (chapters.length - 1));
-const TRANSITION_SECONDS = 0.85;
+const TRANSITION_SECONDS = 1.8;
+const TEXT_EXIT_END = 0.15;
+const TRAVEL_END = 0.817;
+const SETTLE_END = 0.9;
 const INTENT_THRESHOLD = 36;
 const useBrowserLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect;
 
@@ -42,9 +45,11 @@ export default function ScrollWorld() {
   const scrollTimerRef = useRef(0);
   const reduceMotionRef = useRef(false);
   const [active, setActive] = useState(0);
+  const [visibleChapter, setVisibleChapter] = useState(0);
   const [hasScrolled, setHasScrolled] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
   const [transitioning, setTransitioning] = useState(false);
+  const [transitionPhase, setTransitionPhase] = useState('idle');
 
   const markerScrollTop = (index) => {
     const node = root.current;
@@ -55,6 +60,7 @@ export default function ScrollWorld() {
   const applyMarker = (index) => {
     markerRef.current = index;
     setActive(index);
+    setVisibleChapter(index);
     window.scrollTo(0, markerScrollTop(index));
     const video = videoRef.current;
     if (video?.readyState >= 1) video.currentTime = Math.min(markerTimes[index], Math.max(0, video.duration - 0.04));
@@ -89,8 +95,10 @@ export default function ScrollWorld() {
     const video = videoRef.current;
     const fromTime = video?.readyState >= 1 ? video.currentTime : markerTimes[fromIndex];
     const toTime = markerTimes[nextIndex];
-    const revealAt = 0.46;
-    let revealed = nextIndex === fromIndex;
+    const isForwardStep = nextIndex === fromIndex + 1;
+    const travelSeconds = TRANSITION_SECONDS * (TRAVEL_END - TEXT_EXIT_END);
+    let phase = 'text-exit';
+    let startedTravel = false;
 
     markerRef.current = nextIndex;
     programmaticScrollRef.current = true;
@@ -102,21 +110,54 @@ export default function ScrollWorld() {
     }
 
     setTransitioning(true);
+    setTransitionPhase('text-exit');
+    setVisibleChapter(null);
     transitionRef.current = animate(0, 1, {
       duration: TRANSITION_SECONDS,
-      ease: [0.16, 1, 0.3, 1],
+      ease: 'linear',
       onUpdate: (progress) => {
-        window.scrollTo(0, fromScroll + (toScroll - fromScroll) * progress);
-        if (video?.readyState >= 1) video.currentTime = fromTime + (toTime - fromTime) * progress;
-        if (!revealed && progress >= revealAt) {
-          revealed = true;
+        if (progress >= TEXT_EXIT_END && progress < TRAVEL_END) {
+          if (phase !== 'travel') {
+            phase = 'travel';
+            setTransitionPhase('travel');
+          }
+          const linearTravel = clamp((progress - TEXT_EXIT_END) / (TRAVEL_END - TEXT_EXIT_END));
+          const easedTravel = 1 - ((1 - linearTravel) ** 3);
+          window.scrollTo(0, fromScroll + (toScroll - fromScroll) * easedTravel);
+          if (video?.readyState >= 1 && isForwardStep) {
+            if (!startedTravel) {
+              startedTravel = true;
+              video.currentTime = fromTime;
+              video.playbackRate = clamp((toTime - fromTime) / travelSeconds, 0.25, 16);
+              video.play().catch(() => { startedTravel = false; });
+            }
+          } else if (video?.readyState >= 1 && !video.seeking) {
+            const targetTime = fromTime + (toTime - fromTime) * easedTravel;
+            if (Math.abs(video.currentTime - targetTime) > 0.06) video.currentTime = targetTime;
+          }
+        } else if (progress >= TRAVEL_END && progress < SETTLE_END) {
+          if (phase !== 'settle') {
+            phase = 'settle';
+            setTransitionPhase('settle');
+            window.scrollTo(0, toScroll);
+            if (video?.readyState >= 1) {
+              video.pause();
+              video.playbackRate = 1;
+              if (Math.abs(video.currentTime - toTime) > 0.08) video.currentTime = toTime;
+            }
+          }
+        } else if (progress >= SETTLE_END && phase !== 'text-enter') {
+          phase = 'text-enter';
+          setTransitionPhase('text-enter');
           setActive(nextIndex);
+          setVisibleChapter(nextIndex);
         }
       },
       onComplete: () => {
         transitionRef.current = null;
         programmaticScrollRef.current = false;
         setTransitioning(false);
+        setTransitionPhase('idle');
         applyMarker(nextIndex);
         rememberPosition();
         const queuedDirection = queuedDirectionRef.current;
@@ -236,13 +277,13 @@ export default function ScrollWorld() {
   }, []);
 
   return (
-    <main ref={root} className="scroll-world" data-marker={active} data-transitioning={transitioning ? 'true' : 'false'} style={{ '--world-height': `${chapters.length * 100}vh` }}>
+    <main ref={root} className="scroll-world" data-marker={active} data-transitioning={transitioning ? 'true' : 'false'} data-transition-phase={transitionPhase} style={{ '--world-height': `${chapters.length * 100}vh` }}>
       <div className="scroll-world__sticky">
         <div className="scroll-world__stage" aria-hidden="true">
           <div className="scroll-world__scene"><img src={reduceMotion ? `/world/flight/${chapters[active].media}.webp` : '/world/flight/intro-4k.webp'} alt="" />{!reduceMotion && <video ref={videoRef} src="/world/flight/continuous-flight.mp4" muted playsInline preload="auto" />}</div>
         </div>
         <div className="world-wash" aria-hidden="true" />
-        {chapters.map((chapter, index) => <article key={chapter.id} className={`world-copy world-copy--${chapter.side} ${active === index ? 'is-active' : ''}`}><span className="world-copy__count">{String(index + 1).padStart(2, '0')} / {chapters.length}</span><span className="world-copy__eyebrow">{chapter.eyebrow}</span><h1>{chapter.title}</h1><p>{chapter.body}</p>{chapter.note && <small className="world-copy__note">{chapter.note}</small>}{chapter.href && <a className="glass-button" href={chapter.href} data-world-cta="true" onClick={rememberPosition}>Take me there</a>}{chapter.cta && <div className="world-copy__contact"><a href="mailto:sarastotey@icloud.com">Email</a><a href={IDENTITY.linkedin} target="_blank" rel="noreferrer">LinkedIn</a><a href={`https://github.com/${IDENTITY.github_user}`} target="_blank" rel="noreferrer">GitHub</a><a href={IDENTITY.instagram} target="_blank" rel="noreferrer">Instagram</a></div>}</article>)}
+        {chapters.map((chapter, index) => <article key={chapter.id} className={`world-copy world-copy--${chapter.side} ${visibleChapter === index ? 'is-active' : ''}`}><span className="world-copy__count">{String(index + 1).padStart(2, '0')} / {chapters.length}</span><span className="world-copy__eyebrow">{chapter.eyebrow}</span><h1>{chapter.title}</h1><p>{chapter.body}</p>{chapter.note && <small className="world-copy__note">{chapter.note}</small>}{chapter.href && <a className="glass-button" href={chapter.href} data-world-cta="true" onClick={rememberPosition}>Take me there</a>}{chapter.cta && <div className="world-copy__contact"><a href="mailto:sarastotey@icloud.com">Email</a><a href={IDENTITY.linkedin} target="_blank" rel="noreferrer">LinkedIn</a><a href={`https://github.com/${IDENTITY.github_user}`} target="_blank" rel="noreferrer">GitHub</a><a href={IDENTITY.instagram} target="_blank" rel="noreferrer">Instagram</a></div>}</article>)}
         <div className={`world-controls ${hasScrolled ? 'is-dismissed' : ''}`}><button type="button" onClick={() => goToMarkerRef.current(Math.max(0, active - 1), { userInitiated: true })} aria-label="Back to previous section">↑</button><span>scroll to explore <i aria-hidden="true">⌄</i></span></div>
         <nav className="world-route" aria-label="World chapters">{chapters.map((chapter, index) => <button key={chapter.id} className={active === index ? 'is-active' : ''} onClick={() => goToMarkerRef.current(index, { userInitiated: true })} aria-label={`Go to ${chapter.label}`}><i aria-hidden="true" /></button>)}</nav>
       </div>
