@@ -36,10 +36,18 @@ try {
   if (!template.includes('<div id="root"></div>')) {
     throw new Error('Could not find empty root div in dist/index.html');
   }
-  const routes = ['/', '/home', '/econ-mom', '/local-ledger', '/att-agency'];
-  for (const route of routes) {
+  const routes = new Map([
+    ['/', 'Trading systems · Saras Totey'],
+    ['/home', 'Home · Saras Totey'],
+    ['/econ-mom', 'Econ.mom · Saras Totey'],
+    ['/local-ledger', 'local-ledger.net · Saras Totey'],
+    ['/att-agency', 'ATT Agency · Saras Totey'],
+  ]);
+  for (const [route, title] of routes) {
     const appHtml = render(route);
-    const html = template.replace('<div id="root"></div>', `<div id="root">${appHtml}</div>`);
+    const html = template
+      .replace(/<title>[^<]*<\/title>/, `<title>${title}</title>`)
+      .replace('<div id="root"></div>', `<div id="root">${appHtml}</div>`);
     const output = route === '/' ? distIndexPath : resolve(root, 'dist', route.slice(1), 'index.html');
     await mkdir(resolve(output, '..'), { recursive: true });
     await writeFile(output, html);
