@@ -26,6 +26,7 @@ export default function ScrollWorld() {
   const videoRef = useRef(null);
   const activeRef = useRef(0);
   const [active, setActive] = useState(0);
+  const [hasScrolled, setHasScrolled] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
   const chain = useMemo(() => chapters.map((chapter, index) => ({
     id: chapter.media,
@@ -104,11 +105,13 @@ export default function ScrollWorld() {
       ticking = false;
     };
     const requestUpdate = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+    const dismissHint = () => setHasScrolled(true);
     update();
     addEventListener('scroll', requestUpdate, { passive: true });
+    addEventListener('scroll', dismissHint, { passive: true, once: true });
     addEventListener('pagehide', rememberPosition);
     addEventListener('resize', requestUpdate, { passive: true });
-    return () => { rememberPosition(); removeEventListener('scroll', requestUpdate); removeEventListener('pagehide', rememberPosition); removeEventListener('resize', requestUpdate); };
+    return () => { rememberPosition(); removeEventListener('scroll', requestUpdate); removeEventListener('scroll', dismissHint); removeEventListener('pagehide', rememberPosition); removeEventListener('resize', requestUpdate); };
   }, [chain]);
 
   const total = chain.reduce((sum, segment) => sum + segment.scroll, 0);
@@ -119,8 +122,8 @@ export default function ScrollWorld() {
           <div className="scroll-world__scene"><img src={reduceMotion ? `/world/flight/${chapters[active].media}.webp` : '/world/flight/intro-4k.webp'} alt="" />{!reduceMotion && <video ref={videoRef} src="/world/flight/continuous-flight.mp4" muted playsInline preload="auto" />}</div>
         </div>
         <div className="world-wash" aria-hidden="true" />
-        {chapters.map((chapter, index) => <article key={chapter.id} className={`world-copy world-copy--${chapter.side} ${active === index ? 'is-active' : ''}`}><span className="world-copy__count">{String(index + 1).padStart(2, '0')} / {chapters.length}</span><span className="world-copy__eyebrow">{chapter.eyebrow}</span><h1>{chapter.title}</h1><p>{chapter.body}</p>{chapter.note && <small className="world-copy__note">{chapter.note}</small>}{chapter.href && <a className="glass-button" href={chapter.href} data-world-cta="true" onClick={rememberPosition}>Take me there <span aria-hidden="true">↗</span></a>}{chapter.cta && <div className="world-copy__contact"><a href="mailto:sarastotey@icloud.com">Email</a><a href={IDENTITY.linkedin} target="_blank" rel="noreferrer">LinkedIn</a><a href={`https://github.com/${IDENTITY.github_user}`} target="_blank" rel="noreferrer">GitHub</a><a href={IDENTITY.instagram} target="_blank" rel="noreferrer">Instagram</a></div>}</article>)}
-        <div className="world-controls"><button type="button" onClick={() => jumpTo(Math.max(0, active - 1))} aria-label="Back to previous section">↑</button><span>scroll to explore <i aria-hidden="true">⌄</i></span></div>
+        {chapters.map((chapter, index) => <article key={chapter.id} className={`world-copy world-copy--${chapter.side} ${active === index ? 'is-active' : ''}`}><span className="world-copy__count">{String(index + 1).padStart(2, '0')} / {chapters.length}</span><span className="world-copy__eyebrow">{chapter.eyebrow}</span><h1>{chapter.title}</h1><p>{chapter.body}</p>{chapter.note && <small className="world-copy__note">{chapter.note}</small>}{chapter.href && <a className="glass-button" href={chapter.href} data-world-cta="true" onClick={rememberPosition}>Take me there</a>}{chapter.cta && <div className="world-copy__contact"><a href="mailto:sarastotey@icloud.com">Email</a><a href={IDENTITY.linkedin} target="_blank" rel="noreferrer">LinkedIn</a><a href={`https://github.com/${IDENTITY.github_user}`} target="_blank" rel="noreferrer">GitHub</a><a href={IDENTITY.instagram} target="_blank" rel="noreferrer">Instagram</a></div>}</article>)}
+        <div className={`world-controls ${hasScrolled ? 'is-dismissed' : ''}`}><button type="button" onClick={() => jumpTo(Math.max(0, active - 1))} aria-label="Back to previous section">↑</button><span>scroll to explore <i aria-hidden="true">⌄</i></span></div>
         <nav className="world-route" aria-label="World chapters">{chapters.map((chapter, index) => <button key={chapter.id} className={active === index ? 'is-active' : ''} onClick={() => jumpTo(index)} aria-label={`Go to ${chapter.label}`}><i aria-hidden="true" /></button>)}</nav>
       </div>
     </main>
