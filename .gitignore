@@ -7,3 +7,5 @@ dist
 .vite
 .scroll-world-work/
 test-results/
+.*-verification/
+artifacts/

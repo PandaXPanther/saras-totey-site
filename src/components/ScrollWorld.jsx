@@ -25,6 +25,7 @@ const useBrowserLayoutEffect = typeof window === 'undefined' ? useEffect : useLa
 export default function ScrollWorld() {
   const root = useRef(null);
   const videoRef = useRef(null);
+  const pendingVideoProgressRef = useRef(0);
   const activeRef = useRef(0);
   const [active, setActive] = useState(0);
   const [visibleChapter, setVisibleChapter] = useState(0);
@@ -89,6 +90,18 @@ export default function ScrollWorld() {
     if (!node) return undefined;
     const starts = chain.map((_, index) => chain.slice(0, index).reduce((sum, segment) => sum + segment.scroll, 0));
     let ticking = false;
+    let seekFrame = 0;
+    const syncVideo = () => {
+      const video = videoRef.current;
+      if (!video || video.readyState < 1 || !Number.isFinite(video.duration) || video.duration <= 0) return;
+      const target = pendingVideoProgressRef.current * Math.max(0, video.duration - 0.04);
+      if (Math.abs(video.currentTime - target) <= 0.025) return;
+      try { video.currentTime = target; } catch { /* A readiness or seek-completion event retries the latest target. */ }
+    };
+    const queueVideoSync = () => {
+      cancelAnimationFrame(seekFrame);
+      seekFrame = requestAnimationFrame(syncVideo);
+    };
     const update = () => {
       const y = clamp(scrollY - node.offsetTop, 0, node.offsetHeight - innerHeight);
       let currentIndex = chain.length - 1;
@@ -98,11 +111,8 @@ export default function ScrollWorld() {
         if (y >= start && y <= end) currentIndex = index;
       });
       const local = clamp((y - starts[currentIndex] * innerHeight) / (chain[currentIndex].scroll * innerHeight));
-      const video = videoRef.current;
-      if (video?.readyState >= 2 && video.duration && !video.seeking) {
-        const target = clamp(y / Math.max(1, node.offsetHeight - innerHeight)) * Math.max(0, video.duration - 0.04);
-        if (Math.abs(video.currentTime - target) > 0.035) video.currentTime = target;
-      }
+      pendingVideoProgressRef.current = clamp(y / Math.max(1, node.offsetHeight - innerHeight));
+      queueVideoSync();
       const inBoundaryMask = currentIndex < chain.length - 1 && local > 1 - TEXT_MASK_FRACTION;
       const nextVisible = inBoundaryMask ? null : currentIndex;
       if (currentIndex !== activeRef.current) { activeRef.current = currentIndex; setActive(currentIndex); }
@@ -117,12 +127,12 @@ export default function ScrollWorld() {
     addEventListener('scroll', dismissHint, { passive: true, once: true });
     addEventListener('pagehide', rememberPosition);
     addEventListener('resize', requestUpdate, { passive: true });
-    const mediaReady = () => requestUpdate();
+    const mediaReady = () => { requestUpdate(); queueVideoSync(); };
     video?.addEventListener('loadedmetadata', mediaReady);
     video?.addEventListener('loadeddata', mediaReady);
     video?.addEventListener('canplay', mediaReady);
-    video?.addEventListener('seeked', requestUpdate);
-    return () => { rememberPosition(); removeEventListener('scroll', requestUpdate); removeEventListener('scroll', dismissHint); removeEventListener('pagehide', rememberPosition); removeEventListener('resize', requestUpdate); video?.removeEventListener('loadedmetadata', mediaReady); video?.removeEventListener('loadeddata', mediaReady); video?.removeEventListener('canplay', mediaReady); video?.removeEventListener('seeked', requestUpdate); };
+    video?.addEventListener('seeked', mediaReady);
+    return () => { cancelAnimationFrame(seekFrame); rememberPosition(); removeEventListener('scroll', requestUpdate); removeEventListener('scroll', dismissHint); removeEventListener('pagehide', rememberPosition); removeEventListener('resize', requestUpdate); video?.removeEventListener('loadedmetadata', mediaReady); video?.removeEventListener('loadeddata', mediaReady); video?.removeEventListener('canplay', mediaReady); video?.removeEventListener('seeked', mediaReady); };
   }, [chain]);
 
   const total = chain.reduce((sum, segment) => sum + segment.scroll, 0);
