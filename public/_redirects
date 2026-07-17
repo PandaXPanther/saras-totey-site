@@ -1,8 +1,2 @@
-/home /index.html 200
-/home/ /index.html 200
-/econ-mom /index.html 200
-/econ-mom/ /index.html 200
-/local-ledger /index.html 200
-/local-ledger/ /index.html 200
-/att-agency /index.html 200
-/att-agency/ /index.html 200
+/assets/* /404.html 404
+/* /index.html 200
