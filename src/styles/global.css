@@ -599,7 +599,7 @@ a,button { touch-action: manipulation; -webkit-tap-highlight-color: rgba(214,75,
 .hero-cta { display: inline-flex; align-items: center; justify-content: space-between; gap: 36px; width: fit-content; min-width: 260px; min-height: 68px; margin-top: 42px; padding: 0 24px; color: #fff; background: #9c345f; border: 1px solid #9c345f; border-radius: 9px; font: 650 17px/1 'Switzer',sans-serif; text-decoration: none; transition: background-color .18s ease; }
 .hero-cta:hover { background: #782447; }
 .project-page--econ-mom .project-hero,.project-page--local-ledger .project-hero,.project-page--att-agency .project-hero { min-height: 100svh; padding-bottom: 12vh; }
-.project-page--econ-mom .project-hero,.project-page--local-ledger .project-hero,.project-page--att-agency .project-hero { position: relative; padding-bottom: calc(12vh + 110px); }
+.project-page--econ-mom .project-hero,.project-page--local-ledger .project-hero,.project-page--att-agency .project-hero { position: relative; height: 100svh; min-height: 0; padding-bottom: calc(12vh + 110px); }
 .project-page--econ-mom .hero-cta,.project-page--local-ledger .hero-cta,.project-page--att-agency .hero-cta { position: absolute; left: max(6vw,24px); bottom: 12vh; margin-top: 0; }
 .site-footer { display: flex; align-items: center; justify-content: space-between; gap: 32px; padding: 40px max(6vw,24px); border-top: 1px solid rgba(91,42,63,.24); color: inherit; }
 .site-footer strong { font: 650 14px/1.4 -apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif; }
@@ -682,7 +682,7 @@ html,body { min-height: 100%; overscroll-behavior-y: none; }
   .audio-dock button { height: 44px; }
   .hero-cta { width: min(280px,100%); min-width: 0; margin-top: 30px; }
   .project-hero { min-height: 100dvh; padding-top: 112px; padding-bottom: max(64px,9dvh); }
-  .project-page--econ-mom .project-hero,.project-page--local-ledger .project-hero,.project-page--att-agency .project-hero { padding-bottom: 161px; }
+  .project-page--econ-mom .project-hero,.project-page--local-ledger .project-hero,.project-page--att-agency .project-hero { height: 100dvh; padding-bottom: 161px; }
   .project-page--econ-mom .hero-cta,.project-page--local-ledger .hero-cta,.project-page--att-agency .hero-cta { left: 24px; bottom: 101px; }
   .project-hero h1 { font-size: clamp(48px,15vw,72px); }
 }
