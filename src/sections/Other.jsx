@@ -1,19 +1,17 @@
 import React from 'react';
 import Reveal from '../components/Reveal.jsx';
-import Aurora from '../components/Aurora.jsx';
 import { OTHER } from '../data/content.js';
 
 export default function Other() {
   return (
     <section id="other" style={{ position: 'relative', overflow: 'hidden' }}>
-      <Aurora color="#4a3d6e" size={480} top="30%" left="18%" opacity={0.1} />
       <div className="wrap">
         <Reveal>
-          <div className="eyebrow">{OTHER.eyebrow}</div>
+          <div className="section-kicker">{OTHER.eyebrow}</div>
         </Reveal>
         <Reveal i={1}>
           <h2 style={{ maxWidth: '20ch', marginBottom: 48 }}>
-            The <span className="grad">non-trading</span> track record.
+            The other things I built while the bots were running.
           </h2>
         </Reveal>
         <div className="grid grid-3">
@@ -30,6 +28,11 @@ export default function Other() {
             </Reveal>
           ))}
         </div>
+        <Reveal i={3}>
+          <div className="agency-note">
+            <p>I also co-founded ATT Agency in Boulder with Ryder Thomas and Sunny Avula. We make brands, custom websites, video, ads, and analytics for small businesses. We sell the work as one package or in parts, based on what a client needs. <a href="https://attagency.co" target="_blank" rel="noreferrer">want a site like this? attagency.co.</a></p>
+          </div>
+        </Reveal>
       </div>
     </section>
   );

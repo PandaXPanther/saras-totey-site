@@ -11,17 +11,18 @@ export const IDENTITY = {
   github_user: 'PandaXPanther',
   github_org: 'srtt16',
   bmc: 'https://buymeacoffee.com/sarast1',
+  linkedin: 'https://www.linkedin.com/in/saras-totey-64a777334/',
   econmom: 'https://econ.mom',
   localledger: 'https://local-ledger.net',
 };
 
 export const HERO = {
   eyebrow: 'Independent Quantitative Systems',
-  headline_line1: 'I build trading systems.',
-  headline_grad: 'Real capital.',
-  headline_rest: 'Verifiable numbers.',
+  headline_line1: 'I lost $40 to a Roblox bot.',
+  headline_grad: 'Then I started measuring why.',
+  headline_rest: '',
   subhead:
-    'I am a high school senior in Boulder, Colorado. Over the last year I built three programs that trade markets on their own, one of them with real money in it. Every number on this site links to the file that produced it.',
+    'Three years ago, my first trading bot lost $40 on Roblox items. Markets looked easy until my money was inside one. I have spent the years since building systems, logging each decision, and learning why prices move. I want to study finance and economics in college so I can keep asking harder versions of that question.',
   live_pills: [
     { label: 'CounterSnipe', status: 'live money', note: 'CS2 skin arbitrage', tone: 'live' },
     { label: 'PandaXPanther Prediction Bot', status: 'paper', note: 'Kalshi + Polymarket', tone: 'paper' },
@@ -73,7 +74,7 @@ export const SYSTEMS = [
     citations: [
       { title: 'Steam Market API documentation', href: 'https://steamcommunity.com/dev', note: 'Official Valve API used for cross-market price verification.' },
       { title: 'CSFloat API', href: 'https://docs.csfloat.com/', note: 'Primary listing feed and execution venue.' },
-      { title: 'Sharpe (1966) — Mutual Fund Performance', href: 'https://www.jstor.org/stable/2351741', note: 'Sharpe ratio is used inside the P&L auditing scripts to compare weekly performance.' },
+      { title: 'Sharpe (1966) : Mutual Fund Performance', href: 'https://www.jstor.org/stable/2351741', note: 'Sharpe ratio is used inside the P&L auditing scripts to compare weekly performance.' },
     ],
 
     code_snippet: {
@@ -171,10 +172,10 @@ export function canBuy(item: Listing, portfolio: Portfolio): GateResult {
     },
 
     citations: [
-      { title: 'Rothschild (2009) — Forecasting Elections: Comparing Prediction Markets, Polls, and Their Biases', href: 'https://www.jstor.org/stable/40608421', note: 'Documents systematic YES-bias in Iowa Electronic Markets, the earliest public prediction market.' },
-      { title: 'Wolfers & Zitzewitz (2004) — Prediction Markets', href: 'https://www.aeaweb.org/articles?id=10.1257/0895330041371321', note: 'Foundational NBER paper on prediction market pricing efficiency.' },
-      { title: 'Kelly (1956) — A New Interpretation of Information Rate', href: 'https://ieeexplore.ieee.org/document/6771227', note: 'The bet-sizing formula used by the position sizer.' },
-      { title: 'Thorp (1997) — The Kelly Criterion in Blackjack, Sports Betting, and the Stock Market', href: 'https://www.eecs.harvard.edu/cs286r/courses/fall12/papers/Thorpe_KellyCriterion2007.pdf', note: 'Practical treatment of Kelly for bounded bankrolls.' },
+      { title: 'Rothschild (2009) : Forecasting Elections: Comparing Prediction Markets, Polls, and Their Biases', href: 'https://www.jstor.org/stable/40608421', note: 'Documents systematic YES-bias in Iowa Electronic Markets, the earliest public prediction market.' },
+      { title: 'Wolfers & Zitzewitz (2004) : Prediction Markets', href: 'https://www.aeaweb.org/articles?id=10.1257/0895330041371321', note: 'Foundational NBER paper on prediction market pricing efficiency.' },
+      { title: 'Kelly (1956) : A New Interpretation of Information Rate', href: 'https://ieeexplore.ieee.org/document/6771227', note: 'The bet-sizing formula used by the position sizer.' },
+      { title: 'Thorp (1997) : The Kelly Criterion in Blackjack, Sports Betting, and the Stock Market', href: 'https://www.eecs.harvard.edu/cs286r/courses/fall12/papers/Thorpe_KellyCriterion2007.pdf', note: 'Practical treatment of Kelly for bounded bankrolls.' },
     ],
 
     code_snippet: {
@@ -261,7 +262,7 @@ function shouldFire(signal: Signal): boolean {
     ],
 
     what_it_is: [
-      'The program runs in two stages. Stage one pulls the last 90 days of trades for every wallet in the seed list, then computes five performance statistics: Sharpe ratio, maximum drawdown, win rate, profit factor, and a weighted composite score. Only the top scoring wallets get promoted to the active watchlist. Stage two subscribes to those wallets over a real-time connection and mirrors each of their trades into a simulated paper account, applying risk rules that would apply in real life (maximum position size, maximum leverage, funding-rate filters, and a daily-loss circuit breaker).',
+      'The program runs in two stages. Stage one pulls the last 90 days of trades for every wallet in the seed list, then computes five performance statistics: Sharpe ratio, maximum drawdown, win rate, profit factor, and a weighted composite score. Only the top scoring wallets get promoted to the active watchlist. Stage two subscribes to those wallets over a real-time connection and mirrors each of their trades into a simulated paper account, applying risk rules that would apply in real life (maximum position size, maximum borrowed exposure, funding-rate filters, and a daily-loss circuit breaker).',
       'The starting list of wallets is not chosen randomly. I pulled all 38,125 accounts from Hyperliquid\u2019s public leaderboard, then filtered on five criteria at once: account size between $50k and $10M (excludes both toy accounts and market-movers), all-time profit above $1M, positive 30-day AND 7-day profit, volume-to-equity ratio below 20,000x (excludes high-frequency market-makers who profit from rebates rather than direction), and lifetime ROI below 500,000% (excludes anomalous tiny-seed accounts). The result is 20 wallets that represent the top of what a reasonably-capitalized retail trader could plausibly imitate.',
       'There is no live trading code in this project. There are no private keys anywhere in the repo. The system is read-only by design. Stage three, actual execution, does not exist and will not be built until paper mode proves the selection layer works over four to eight weeks. Discipline is the point.',
     ],
@@ -270,7 +271,7 @@ function shouldFire(signal: Signal): boolean {
       how_it_started:
         'In December 2025 I lost $180 copy-trading a Twitter perpetual-futures account. It turned out to be a marketing wallet that only posted its winners. I wanted a version of copy-trading that ranked traders by evidence rather than by follower count.',
       hardest_lesson:
-        'My first version ranked wallets by raw 90-day return. Predictably this ranked reckless traders above disciplined ones because leverage inflates ROI. When I rewrote scoring around Sharpe ratio and maximum drawdown, the ranking flipped dramatically: the top wallet by return dropped to rank 14 by composite score. The metric you sort on decides which strategy you are actually copying, and I had been unintentionally copying gamblers.',
+        'My first version ranked wallets by raw 90-day return. Predictably this ranked reckless traders above disciplined ones because borrowed money inflates ROI. When I rewrote scoring around Sharpe ratio and maximum drawdown, the ranking flipped dramatically: the top wallet by return dropped to rank 14 by composite score. The metric you sort on decides which strategy you are actually copying, and I had been unintentionally copying gamblers.',
     },
 
     research_finding: {
@@ -280,9 +281,9 @@ function shouldFire(signal: Signal): boolean {
     },
 
     citations: [
-      { title: 'Sharpe (1966) — Mutual Fund Performance', href: 'https://www.jstor.org/stable/2351741', note: 'Origin of the Sharpe ratio, the risk-adjusted return metric used as the primary ranking signal.' },
-      { title: 'Brown, Goetzmann, Ibbotson & Ross (1992) — Survivorship Bias in Performance Studies', href: 'https://www.jstor.org/stable/2962287', note: 'Canonical treatment of why looking only at surviving accounts overstates returns. Directly addressed in the research finding above.' },
-      { title: 'Sharpe (1994) — The Sharpe Ratio', href: 'https://web.stanford.edu/~wfsharpe/art/sr/sr.htm', note: 'The 1994 reformulation used in scorer/metrics.py.' },
+      { title: 'Sharpe (1966) : Mutual Fund Performance', href: 'https://www.jstor.org/stable/2351741', note: 'Origin of the Sharpe ratio, the risk-adjusted return metric used as the primary ranking signal.' },
+      { title: 'Brown, Goetzmann, Ibbotson & Ross (1992) : Survivorship Bias in Performance Studies', href: 'https://www.jstor.org/stable/2962287', note: 'Canonical treatment of why looking only at surviving accounts overstates returns. Directly addressed in the research finding above.' },
+      { title: 'Sharpe (1994) : The Sharpe Ratio', href: 'https://web.stanford.edu/~wfsharpe/art/sr/sr.htm', note: 'The 1994 reformulation used in scorer/metrics.py.' },
     ],
 
     code_snippet: {
@@ -313,7 +314,7 @@ def composite_score(fills):
         { id: 'scores', label: 'wallet_scores.json', sub: 'Sharpe · DD · PF', col: 2 },
         { id: 'active', label: 'active_wallets.json', sub: 'top N promoted', col: 2, row: 1 },
         { id: 'paper', label: 'Paper trader', sub: 'WS subscriber', col: 3 },
-        { id: 'risk', label: 'Risk filters', sub: 'position · leverage · funding', col: 4 },
+        { id: 'risk', label: 'Risk filters', sub: 'position · borrowed exposure · funding', col: 4 },
         { id: 'book', label: 'paper_state.json', sub: 'in-memory book', col: 4, row: 1 },
         { id: 'disc', label: 'Discord', sub: 'leaderboard · fills', col: 5 },
       ],
@@ -401,14 +402,14 @@ export const ROADMAP = {
 export const LIVE = {
   eyebrow: 'Live signals · refreshed daily',
   intro: 'The site rebuilds every night at 06:00 UTC via a GitHub Actions workflow. Commit counts and the Hyperliquid cohort ROI regenerate against real APIs. Every number here is reproducible.',
-  last_updated_iso: '2026-07-16T07:52:26.256Z',
+  last_updated_iso: '2026-07-17T00:30:25.050Z',
   cards: [
     { k: "CounterSnipe commits", v: "328", foot: "srtt16/countersnipe" },
     { k: "Prediction bot commits", v: "17", foot: "PandaXPanther/pandaxpanther-prediction-bot" },
     { k: "copy-trader commits", v: "4", foot: "PandaXPanther/copy-trader" },
-    { k: "Hyperliquid cohort · top-5 30d ROI", v: "+43.2%", foot: "Recomputed from seed_wallets.json + Hyperliquid leaderboard API" },
-    { k: "Days since CounterSnipe live", v: "61", foot: "Since May 16, 2026" },
-    { k: "Days since last commit", v: "8", foot: "Across the three-repo fleet" },
+    { k: "Hyperliquid cohort · top-5 30d ROI", v: "+92.3%", foot: "Recomputed from seed_wallets.json + Hyperliquid leaderboard API" },
+    { k: "Days since CounterSnipe live", v: "62", foot: "Since May 16, 2026" },
+    { k: "Days since last commit", v: "9", foot: "Across the three-repo fleet" },
   ],
 };
 
@@ -419,14 +420,14 @@ export const OTHER = {
       name: 'Econ.mom',
       tag: 'The Mother of Econ',
       href: 'https://econ.mom',
-      body: 'Twelve free tools for AP Economics students, debate teams, and policy analysts. Includes an AP FRQ grader, a tariff-effect simulator, a Fed-shock model, a textbook citation atlas, a paper decoder, and an inflation decomposer. Every number the site displays is sourced from BLS, FRED, or a peer-reviewed paper. Nothing is generated by a language model.',
-      stat: '12 tools · citation-rigorous by design',
+      body: 'I built twelve free, citation-rigorous economics tools for AP students, debaters, and policy desks. They range from an AP free-response grader to a tariff model and a public Shadow Fed. Marginal Revolution featured the project in May 2026 and called out its formulas and cited datasets.',
+      stat: '12 tools · featured by Marginal Revolution',
     },
     {
       name: 'Local-Ledger',
       tag: 'Nationwide Economic Observatory',
       href: 'https://local-ledger.net',
-      body: 'Public economic data for every community. The site turns official labor, income, housing, and public-finance data from BLS, FRED, Census, College Scorecard, and USAspending into readable state, county, and metro dashboards. Its tagline is "0 fabricated data points" and the build breaks if a citation is missing.',
+      body: 'I built public dashboards for jobs, income, housing, schools, and federal spending. They cover every state, 3,143 counties, and 120 metro areas. The site also has rankings and an economy simulator. It cites FRED, BLS, Census, BEA, College Scorecard, and USAspending. Its integrity counter reads "0 fabricated."',
       stat: '50 states · 3,143 counties · 120 metros · 0 fabricated',
     },
     {
@@ -477,6 +478,7 @@ export const FOOTER = {
     'If anything looks too neat, ask me. I will show you the log.',
   ],
   links: [
+    { k: 'LinkedIn', href: 'https://www.linkedin.com/in/saras-totey-64a777334/' },
     { k: 'GitHub · PandaXPanther', href: 'https://github.com/PandaXPanther' },
     { k: 'GitHub · srtt16', href: 'https://github.com/srtt16' },
     { k: 'Econ.mom', href: 'https://econ.mom' },
