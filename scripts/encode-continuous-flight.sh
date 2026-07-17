@@ -22,7 +22,7 @@ filter_graph+=";[x4][v5]xfade=transition=fade:duration=0.5:offset=27.708335[out]
 
 ffmpeg -y -v error "${inputs[@]}" \
   -filter_complex "$filter_graph" \
-  -map '[out]' -an -c:v libx264 -preset medium -crf 20 -pix_fmt yuv420p \
+  -map '[out]' -an -c:v libx264 -preset medium -crf 22 -pix_fmt yuv420p \
   -g 8 -keyint_min 8 -sc_threshold 0 -movflags +faststart "$OUT"
 
 echo "Encoded $OUT"
