@@ -19,14 +19,22 @@ export default function App() {
   useEffect(() => {
     const sync = () => setPath(window.location.pathname.replace(/\/$/, '') || '/');
     const navigate = (event) => {
+      if (!(event.target instanceof Element)) return;
       const link = event.target.closest('a[href]');
       if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.target === '_blank') return;
       const url = new URL(link.href, window.location.href);
       if (url.origin !== window.location.origin) return;
       event.preventDefault();
       const restoreWorld = link.dataset.restoreWorld === 'true';
-      const worldPosition = Number(sessionStorage.getItem('saras-world-position'));
-      window.history.pushState(restoreWorld && Number.isFinite(worldPosition) ? { worldPosition } : {}, '', `${url.pathname}${url.search}${url.hash}`);
+      const fromWorld = link.dataset.worldCta === 'true';
+      const savedWorldPosition = Number(sessionStorage.getItem('saras-world-position'));
+      const returnPosition = Number(window.history.state?.worldReturnPosition);
+      const nextState = restoreWorld && Number.isFinite(returnPosition)
+        ? { worldPosition: returnPosition }
+        : fromWorld && Number.isFinite(savedWorldPosition)
+          ? { worldReturnPosition: savedWorldPosition }
+          : {};
+      window.history.pushState(nextState, '', `${url.pathname}${url.search}${url.hash}`);
       sync();
       if (!restoreWorld) window.scrollTo(0, 0);
     };
@@ -51,9 +59,9 @@ export default function App() {
   return (
     <>
       <a className="skip-link" href="#main-content">Skip to content</a>
-      <Nav />
+      <Nav pathname={path} />
       <AudioControl />
-      <div id="main-content">{path === '/home' ? <ScrollWorld /> : <ProjectPage slug={path === '/' ? 'quant' : path.slice(1)} />}</div>
+      <div id="main-content">{path === '/home' ? <ScrollWorld /> : <ProjectPage slug={path === '/' ? 'quant' : path.slice(1)} canReturnToWorld={typeof window !== 'undefined' && Number.isFinite(Number(window.history.state?.worldReturnPosition))} />}</div>
     </>
   );
 }

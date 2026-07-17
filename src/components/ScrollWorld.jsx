@@ -19,10 +19,9 @@ const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 
 export default function ScrollWorld() {
   const root = useRef(null);
-  const videoRefs = useRef([]);
+  const videoRef = useRef(null);
   const activeRef = useRef(0);
   const [active, setActive] = useState(0);
-  const [sources, setSources] = useState({});
   const [reduceMotion, setReduceMotion] = useState(false);
   const chain = useMemo(() => chapters.map((chapter, index) => ({
     id: chapter.media,
@@ -40,30 +39,14 @@ export default function ScrollWorld() {
   }, []);
 
   useEffect(() => {
-    if (reduceMotion) return undefined;
-    const controllers = [];
-    const urls = [];
-    chain.forEach((segment) => {
-      const controller = new AbortController();
-      controllers.push(controller);
-      fetch(`/world/flight/${segment.id}.mp4`, { signal: controller.signal })
-        .then((response) => response.ok ? response.blob() : Promise.reject(new Error(`Could not load ${segment.id}`)))
-        .then((blob) => {
-          const url = URL.createObjectURL(blob);
-          urls.push(url);
-          setSources((current) => ({ ...current, [segment.id]: url }));
-        })
-        .catch((error) => { if (error.name !== 'AbortError') console.error(error); });
-    });
-    return () => { controllers.forEach((controller) => controller.abort()); urls.forEach(URL.revokeObjectURL); };
-  }, [chain, reduceMotion]);
-
-  useEffect(() => {
     history.scrollRestoration = 'manual';
     const restore = () => {
       const saved = Number(history.state?.worldPosition ?? sessionStorage.getItem('saras-world-position'));
       if (!Number.isFinite(saved) || saved < 0) return;
-      requestAnimationFrame(() => requestAnimationFrame(() => window.scrollTo(0, saved * Math.max(0, root.current.offsetHeight - innerHeight))));
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        const node = root.current;
+        if (node) window.scrollTo(0, saved * Math.max(0, node.offsetHeight - innerHeight));
+      }));
     };
     restore();
     addEventListener('pageshow', restore);
@@ -71,8 +54,10 @@ export default function ScrollWorld() {
   }, []);
 
   const rememberPosition = () => {
-    const max = Math.max(1, root.current.offsetHeight - innerHeight);
-    const position = clamp((scrollY - root.current.offsetTop) / max);
+    const node = root.current;
+    if (!node) return;
+    const max = Math.max(1, node.offsetHeight - innerHeight);
+    const position = clamp((scrollY - node.offsetTop) / max);
     sessionStorage.setItem('saras-world-position', String(position));
     history.replaceState({ ...history.state, worldPosition: position }, '');
   };
@@ -98,13 +83,9 @@ export default function ScrollWorld() {
       });
       const segment = chain[currentIndex];
       const local = clamp((y - starts[currentIndex] * innerHeight) / (segment.scroll * innerHeight));
-      videoRefs.current.forEach((video, index) => {
-        const visible = index === currentIndex;
-        if (video) video.parentElement.style.opacity = visible ? '1' : '0';
-      });
-      const video = videoRefs.current[currentIndex];
+      const video = videoRef.current;
       if (video?.readyState >= 2 && video.duration && !video.seeking) {
-        const target = local * Math.max(0, video.duration - 0.04);
+        const target = clamp(y / Math.max(1, node.offsetHeight - innerHeight)) * Math.max(0, video.duration - 0.04);
         if (Math.abs(video.currentTime - target) > 0.035) video.currentTime = target;
       }
       const chapter = segment.kind === 'connector' && local > 0.58 ? segment.nextChapter : segment.chapter;
@@ -124,10 +105,10 @@ export default function ScrollWorld() {
     <main ref={root} className="scroll-world" style={{ '--world-height': `${total * 100 + 100}vh` }}>
       <div className="scroll-world__sticky">
         <div className="scroll-world__stage" aria-hidden="true">
-          {chain.map((segment, index) => <div className="scroll-world__scene" key={segment.id}><img src={`/world/flight/${chapters[segment.chapter].media}.webp`} alt="" />{!reduceMotion && sources[segment.id] && <video ref={(element) => { videoRefs.current[index] = element; }} src={sources[segment.id]} muted playsInline preload="auto" />}</div>)}
+          <div className="scroll-world__scene"><img src={reduceMotion ? `/world/flight/${chapters[active].media}.webp` : '/world/flight/intro-4k.webp'} alt="" />{!reduceMotion && <video ref={videoRef} src="/world/flight/intro.mp4" muted playsInline preload="auto" />}</div>
         </div>
         <div className="world-wash" aria-hidden="true" />
-        {chapters.map((chapter, index) => <article key={chapter.id} className={`world-copy world-copy--${chapter.side} ${active === index ? 'is-active' : ''}`}><span className="world-copy__count">{String(index + 1).padStart(2, '0')} / {chapters.length}</span><span className="world-copy__eyebrow">{chapter.eyebrow}</span><h1>{chapter.title}</h1><p>{chapter.body}</p>{chapter.note && <small className="world-copy__note">{chapter.note}</small>}{chapter.href && <a className="glass-button" href={chapter.href} onClick={rememberPosition}>Take me there <span aria-hidden="true">↗</span></a>}{chapter.cta && <div className="world-copy__contact"><a href="mailto:sarastotey@icloud.com">Email</a><a href={IDENTITY.linkedin} target="_blank" rel="noreferrer">LinkedIn</a><a href={`https://github.com/${IDENTITY.github_user}`} target="_blank" rel="noreferrer">GitHub</a><a href={IDENTITY.instagram} target="_blank" rel="noreferrer">Instagram</a></div>}</article>)}
+        {chapters.map((chapter, index) => <article key={chapter.id} className={`world-copy world-copy--${chapter.side} ${active === index ? 'is-active' : ''}`}><span className="world-copy__count">{String(index + 1).padStart(2, '0')} / {chapters.length}</span><span className="world-copy__eyebrow">{chapter.eyebrow}</span><h1>{chapter.title}</h1><p>{chapter.body}</p>{chapter.note && <small className="world-copy__note">{chapter.note}</small>}{chapter.href && <a className="glass-button" href={chapter.href} data-world-cta="true" onClick={rememberPosition}>Take me there <span aria-hidden="true">↗</span></a>}{chapter.cta && <div className="world-copy__contact"><a href="mailto:sarastotey@icloud.com">Email</a><a href={IDENTITY.linkedin} target="_blank" rel="noreferrer">LinkedIn</a><a href={`https://github.com/${IDENTITY.github_user}`} target="_blank" rel="noreferrer">GitHub</a><a href={IDENTITY.instagram} target="_blank" rel="noreferrer">Instagram</a></div>}</article>)}
         <div className="world-controls"><button type="button" onClick={() => jumpTo(Math.max(0, active - 1))} aria-label="Back to previous section">↑</button><span>scroll to explore <i aria-hidden="true">⌄</i></span></div>
         <nav className="world-route" aria-label="World chapters">{chapters.map((chapter, index) => <button key={chapter.id} className={active === index ? 'is-active' : ''} onClick={() => jumpTo(index)} aria-label={`Go to ${chapter.label}`}><i aria-hidden="true" /></button>)}</nav>
       </div>

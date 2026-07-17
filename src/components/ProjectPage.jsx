@@ -32,19 +32,19 @@ function SiteFooter() {
   return <footer className="site-footer"><strong>Site made by Saras Totey</strong><nav aria-label="Social links">{footerLinks.map(([label, href]) => <a key={label} href={href} target="_blank" rel="noreferrer">{label}</a>)}</nav></footer>;
 }
 
-function BackToWorld() { return <a className="take-back" href="/home" data-restore-world="true">← Take me back</a>; }
+function BackToWorld({ visible }) { return visible ? <a className="take-back" href="/home" data-restore-world="true">← Take me back</a> : null; }
 
-function QuantPage() {
-  return <main className="project-page project-page--quant"><BackToWorld /><Hero /><Thesis />{SYSTEMS.map((system, index) => <System key={system.slug} system={system} flipped={index % 2 === 1} />)}<Backtest /><Live /><Roadmap /><Footer /></main>;
+function QuantPage({ canReturnToWorld }) {
+  return <main className="project-page project-page--quant"><BackToWorld visible={canReturnToWorld} /><Hero /><Thesis />{SYSTEMS.map((system, index) => <System key={system.slug} system={system} flipped={index % 2 === 1} />)}<Backtest /><Live /><Roadmap /><Footer /></main>;
 }
 
 function Recognition() {
   return <section className="recognition"><span>Recognition</span><h2>Reviewed by working economists</h2><p className="recognition__press">Featured in the press</p><p className="recognition__lede">Twelve free, interactive AP-Econ tools with every dataset cited.</p><div className="recognition__grid"><article><strong>Marginal Revolution</strong><p>Tyler Cowen, on Marginal Revolution, one of the most-read economics blogs in the world.</p><a href="https://marginalrevolution.com/marginalrevolution/2026/05/monday-assorted-links-558.html#:~:text=6.-,%E2%80%9CTwelve%20free,every%20dataset%20cited.%E2%80%9D" target="_blank" rel="noreferrer">Read the entry →</a></article><article><strong>N. Gregory Mankiw, Robert M. Beren Professor of Economics, Harvard. Author of Principles of Economics; former Chairman of the Council of Economic Advisers.</strong><p>Personally reviewed by N. Gregory Mankiw, who engaged directly with the project and pushed it to ship deeper, clearer explanations behind every tool.</p><a href="https://gregmankiw.blogspot.com/" target="_blank" rel="noreferrer">Greg Mankiw’s Blog →</a></article><article><strong>Ruben A. Rivera, PhD, Senior Director of Academic Programs</strong><p>Reviewed and praised by Ruben Rivera, PhD, who leads academic programs at the Council for Economic Education and directs the National Economics Challenge.</p></article></div></section>;
 }
 
-export default function ProjectPage({ slug }) {
-  if (slug === 'quant') return <QuantPage />;
+export default function ProjectPage({ slug, canReturnToWorld = false }) {
+  if (slug === 'quant') return <QuantPage canReturnToWorld={canReturnToWorld} />;
   const project = projects[slug];
   if (!project) return <main className="project-page"><header className="project-hero"><span>404</span><h1>This island is not on the map.</h1><a className="hero-cta" href="/home">Return home</a></header><SiteFooter /></main>;
-  return <main className={`project-page project-page--${slug}`}><BackToWorld /><header className="project-hero"><span>{project.eyebrow}</span><h1>{project.title}</h1><p>{project.dek}</p><a className="hero-cta" href={project.href} target="_blank" rel="noreferrer">{project.cta} <span aria-hidden="true">↗</span></a></header><section className="project-stats">{project.stats.map(([value, label]) => <div key={label}><strong>{value}</strong><span>{label}</span></div>)}</section><section className="project-story">{project.sections.map(([title, body], index) => <article key={title}><span>0{index + 1}</span><h2>{title}</h2><p>{body}</p></article>)}</section>{slug === 'econ-mom' && <Recognition />}<SiteFooter /></main>;
+  return <main className={`project-page project-page--${slug}`}><BackToWorld visible={canReturnToWorld} /><header className="project-hero"><span>{project.eyebrow}</span><h1>{project.title}</h1><p>{project.dek}</p><a className="hero-cta" href={project.href} target="_blank" rel="noreferrer">{project.cta} <span aria-hidden="true">↗</span></a></header><section className="project-stats">{project.stats.map(([value, label]) => <div key={label}><strong>{value}</strong><span>{label}</span></div>)}</section><section className="project-story">{project.sections.map(([title, body], index) => <article key={title}><span>0{index + 1}</span><h2>{title}</h2><p>{body}</p></article>)}</section>{slug === 'econ-mom' && <Recognition />}<SiteFooter /></main>;
 }

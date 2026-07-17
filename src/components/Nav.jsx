@@ -8,8 +8,7 @@ export const PROJECT_LINKS = [
   { href: '/att-agency', label: 'ATT Agency' },
 ];
 
-export default function Nav() {
-  const pathname = typeof window === 'undefined' ? '/' : window.location.pathname;
+export default function Nav({ pathname = '/' }) {
   return (
     <nav className="glass-nav" aria-label="Project pages">
       {PROJECT_LINKS.map((link) => <a key={link.href} href={link.href} aria-current={pathname === link.href ? 'page' : undefined}>{link.label}</a>)}
