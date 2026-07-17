@@ -2,7 +2,7 @@
 
 Portfolio site for my college applications. Documents three trading systems (CounterSnipe, PandaXPanther Prediction Bot, copy-trader) plus supporting projects.
 
-Live: [saras-totey.pplx.app](https://sarastotey.com/home)
+Live: [saras-totey.com](https://sarastotey.com/home)
 
 Every metric on the site is sourced from real repo files, live sites, or logged trade history. No fabricated numbers.
 
