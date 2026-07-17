@@ -7,15 +7,14 @@ const getAge = (now = new Date()) => {
 };
 
 const chapters = [
-  { id: 'intro', media: 'intro', label: 'Home', eyebrow: 'Boulder, Colorado', title: 'My name is Saras (sahr-iss) Totey.', body: `I’m a ${getAge()}-year-old full-stack developer who grew up in Boulder. I build trading bots, research markets, and make other cool projects.`, note: 'Age updates automatically every June 25.', side: 'left' },
+  { id: 'intro', media: 'intro', label: 'Home', eyebrow: 'Boulder, Colorado', title: 'My name is Saras Totey.', body: `I’m a ${getAge()}-year-old full-stack developer who grew up in Boulder. I build trading bots, research markets, and make other cool projects.`, note: 'Pronounced “sahr-iss.” Age updates automatically every June 25.', side: 'left' },
   { id: 'trading', media: 'countersnipe', label: 'Trading bots', eyebrow: 'Markets, then code', title: 'I like finding the moment a market disagrees with itself.', body: 'That puzzle is why I build trading bots. What began with Roblox items became live CS2 arbitrage, prediction-market research, and systems where the logs and mistakes are as interesting as the wins.', href: '/', side: 'left' },
   { id: 'econ-mom', media: 'prediction', label: 'econ.mom', eyebrow: 'Twelve tools, every source shown', title: 'I wanted economics to feel touchable.', body: 'I built econ.mom because changing an assumption and seeing the result makes a model click faster than memorizing one. Its free tools keep every formula and dataset visible.', href: '/econ-mom', side: 'left' },
-  { id: 'local-ledger', media: 'ventures', label: 'Local Ledger', eyebrow: 'A public-data observatory', title: 'I wanted to see a place as a living system.', body: 'That curiosity became Local Ledger: jobs, income, housing, schools, and public spending on one research desk, plus a simulator for asking what might change next.', href: '/local-ledger', side: 'left' },
+  { id: 'local-ledger', media: 'ventures', label: 'Local Ledger', eyebrow: 'A public-data observatory', title: 'I wanted to see a place as a living system.', body: 'That curiosity became Local Ledger: jobs, income, housing, schools, and public spending on one research desk, plus a simulator for asking what might change next.', href: '/local-ledger', side: 'right' },
   { id: 'att', media: 'att', label: 'ATT Agency', eyebrow: 'Want a site like this?', title: 'I co-founded the studio that builds them.', body: 'At ATT Agency, I help turn a business into a brand, website, campaign, and measurement system without passing the work between disconnected vendors.', href: '/att-agency', side: 'right' },
   { id: 'contact', media: 'contact', label: 'Contact', eyebrow: 'Boulder to anywhere', title: 'Contact me.', body: 'Discord: PandaXPanther · sarastotey@icloud.com · 720-415-9085', side: 'center', cta: true },
 ];
 
-const connectors = ['intro-countersnipe', 'countersnipe-prediction', 'prediction-ventures', 'ventures-att', 'att-contact'];
 const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 
 export default function ScrollWorld() {
@@ -25,10 +24,12 @@ export default function ScrollWorld() {
   const [active, setActive] = useState(0);
   const [sources, setSources] = useState({});
   const [reduceMotion, setReduceMotion] = useState(false);
-  const chain = useMemo(() => chapters.flatMap((chapter, index) => [
-    { id: chapter.media, chapter: index, kind: 'scene', scroll: index === 0 || index === chapters.length - 1 ? 1.55 : 1.35 },
-    ...(connectors[index] ? [{ id: connectors[index], chapter: index, nextChapter: index + 1, kind: 'connector', scroll: 0.95 }] : []),
-  ]), []);
+  const chain = useMemo(() => chapters.map((chapter, index) => ({
+    id: chapter.media,
+    chapter: index,
+    kind: 'scene',
+    scroll: index === 0 || index === chapters.length - 1 ? 1.7 : 1.5,
+  })), []);
 
   useEffect(() => {
     const query = matchMedia('(prefers-reduced-motion: reduce)');
@@ -58,14 +59,22 @@ export default function ScrollWorld() {
   }, [chain, reduceMotion]);
 
   useEffect(() => {
-    const saved = Number(sessionStorage.getItem('saras-world-position'));
-    if (!Number.isFinite(saved) || saved <= 0) return;
-    requestAnimationFrame(() => window.scrollTo(0, saved * Math.max(0, root.current.offsetHeight - innerHeight)));
+    history.scrollRestoration = 'manual';
+    const restore = () => {
+      const saved = Number(history.state?.worldPosition ?? sessionStorage.getItem('saras-world-position'));
+      if (!Number.isFinite(saved) || saved < 0) return;
+      requestAnimationFrame(() => requestAnimationFrame(() => window.scrollTo(0, saved * Math.max(0, root.current.offsetHeight - innerHeight))));
+    };
+    restore();
+    addEventListener('pageshow', restore);
+    return () => removeEventListener('pageshow', restore);
   }, []);
 
   const rememberPosition = () => {
     const max = Math.max(1, root.current.offsetHeight - innerHeight);
-    sessionStorage.setItem('saras-world-position', String(scrollY / max));
+    const position = clamp((scrollY - root.current.offsetTop) / max);
+    sessionStorage.setItem('saras-world-position', String(position));
+    history.replaceState({ ...history.state, worldPosition: position }, '');
   };
 
   const jumpTo = (chapterIndex) => {
@@ -105,8 +114,9 @@ export default function ScrollWorld() {
     const requestUpdate = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
     update();
     addEventListener('scroll', requestUpdate, { passive: true });
+    addEventListener('pagehide', rememberPosition);
     addEventListener('resize', requestUpdate, { passive: true });
-    return () => { removeEventListener('scroll', requestUpdate); removeEventListener('resize', requestUpdate); };
+    return () => { rememberPosition(); removeEventListener('scroll', requestUpdate); removeEventListener('pagehide', rememberPosition); removeEventListener('resize', requestUpdate); };
   }, [chain]);
 
   const total = chain.reduce((sum, segment) => sum + segment.scroll, 0);

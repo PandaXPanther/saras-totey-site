@@ -6,7 +6,6 @@ import Live from '../sections/Live.jsx';
 import Roadmap from '../sections/Roadmap.jsx';
 import Hero from '../sections/Hero.jsx';
 import Thesis from '../sections/Thesis.jsx';
-import Other from '../sections/Other.jsx';
 import Footer from '../sections/Footer.jsx';
 
 const projects = {
@@ -33,10 +32,10 @@ function SiteFooter() {
   return <footer className="site-footer"><strong>Site made by Saras Totey</strong><nav aria-label="Social links">{footerLinks.map(([label, href]) => <a key={label} href={href} target="_blank" rel="noreferrer">{label}</a>)}</nav></footer>;
 }
 
-function BackToWorld() { return <a className="take-back" href="/home">← Take me back</a>; }
+function BackToWorld() { return <a className="take-back" href="/home" data-restore-world="true">← Take me back</a>; }
 
 function QuantPage() {
-  return <main className="project-page project-page--quant"><BackToWorld /><Hero /><Thesis />{SYSTEMS.map((system, index) => <System key={system.slug} system={system} flipped={index % 2 === 1} />)}<Backtest /><Live /><Roadmap /><Other /><Footer /></main>;
+  return <main className="project-page project-page--quant"><BackToWorld /><Hero /><Thesis />{SYSTEMS.map((system, index) => <System key={system.slug} system={system} flipped={index % 2 === 1} />)}<Backtest /><Live /><Roadmap /><Footer /></main>;
 }
 
 function Recognition() {

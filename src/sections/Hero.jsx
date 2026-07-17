@@ -1,10 +1,21 @@
-import React from 'react';
+import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { HERO, IDENTITY } from '../data/content.js';
+
+const OrderbookField = lazy(() => import('../components/OrderbookField.jsx'));
+
+function OriginalOrderbookBackground() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
+  return <Suspense fallback={null}><OrderbookField /></Suspense>;
+}
 
 export default function Hero() {
   return (
     <section id="top" className="hero-world">
+      <div className="quant-orderbook" aria-hidden="true"><OriginalOrderbookBackground /></div>
+      <div className="quant-orderbook-vignette" aria-hidden="true" />
       <div className="wrap" style={{ position: 'relative', zIndex: 2 }}>
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.2, 0.9, 0.2, 1] }}>
           <div className="hero-index">Boulder, Colorado / field notes 2023 to 2026</div>
@@ -51,8 +62,8 @@ export default function Hero() {
         >
           <span>{IDENTITY.location.toUpperCase()}</span>
           <span>{IDENTITY.school.toUpperCase()}</span>
-          <span>github.com/{IDENTITY.github_user.toLowerCase()}</span>
-          <span>github.com/{IDENTITY.github_org}</span>
+          <a href={`https://github.com/${IDENTITY.github_user}`} target="_blank" rel="noreferrer">github.com/{IDENTITY.github_user.toLowerCase()}</a>
+          <a href={`https://github.com/${IDENTITY.github_org}`} target="_blank" rel="noreferrer">github.com/{IDENTITY.github_org}</a>
         </motion.div>
       </div>
 

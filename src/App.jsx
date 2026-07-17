@@ -24,9 +24,11 @@ export default function App() {
       const url = new URL(link.href, window.location.href);
       if (url.origin !== window.location.origin) return;
       event.preventDefault();
-      window.history.pushState({}, '', `${url.pathname}${url.search}${url.hash}`);
+      const restoreWorld = link.dataset.restoreWorld === 'true';
+      const worldPosition = Number(sessionStorage.getItem('saras-world-position'));
+      window.history.pushState(restoreWorld && Number.isFinite(worldPosition) ? { worldPosition } : {}, '', `${url.pathname}${url.search}${url.hash}`);
       sync();
-      window.scrollTo(0, 0);
+      if (!restoreWorld) window.scrollTo(0, 0);
     };
     addEventListener('popstate', sync);
     document.addEventListener('click', navigate);

@@ -26,14 +26,25 @@ test('desktop camera chain scrubs every chapter and restores navigation state', 
     await page.waitForTimeout(160);
     await expect.poll(() => page.locator('.scroll-world__scene').evaluateAll((nodes) => nodes.filter((node) => Number(getComputedStyle(node).opacity) > 0.5).length)).toBe(1);
   }
-  await page.evaluate(([height, position]) => scrollTo(0, height * position), [worldHeight, chapterPositions[2]]);
+  const midTransition = 0.4137;
+  await page.evaluate(([height, position]) => scrollTo(0, height * position), [worldHeight, midTransition]);
+  const expectedFrame = await page.evaluate(() => scrollY);
   await page.locator('.world-copy.is-active .glass-button').click();
-  await expect(page).toHaveURL(/econ-mom/);
+  await expect(page).not.toHaveURL(/home/);
   await expect.poll(() => page.evaluate(() => !window.__sarasAmbientAudio.paused)).toBeTruthy();
   await page.locator('a[href="/home"]').last().click();
   await expect(page).toHaveURL(/home/);
-  await page.waitForTimeout(500);
-  expect(await page.evaluate(() => scrollY)).toBeGreaterThan(1000);
+  await expect.poll(() => page.evaluate(() => scrollY), { timeout: 3000 }).toBeGreaterThan(expectedFrame - 2);
+  expect(Math.abs((await page.evaluate(() => scrollY)) - expectedFrame)).toBeLessThanOrEqual(2);
+
+  await page.evaluate(([height, position]) => scrollTo(0, height * position), [worldHeight, midTransition + 0.0713]);
+  const browserBackFrame = await page.evaluate(() => scrollY);
+  await page.locator('.world-copy.is-active .glass-button').click();
+  await expect(page).not.toHaveURL(/home/);
+  await page.goBack();
+  await expect(page).toHaveURL(/home/);
+  await expect.poll(() => page.evaluate(() => scrollY), { timeout: 3000 }).toBeGreaterThan(browserBackFrame - 2);
+  expect(Math.abs((await page.evaluate(() => scrollY)) - browserBackFrame)).toBeLessThanOrEqual(2);
 });
 
 test('mobile world and project pages render cleanly', async ({ page }) => {
