@@ -19,11 +19,11 @@ export const IDENTITY = {
 
 export const HERO = {
   eyebrow: 'Independent Quantitative Systems',
-  headline_line1: 'I lost $40 to a Roblox bot.',
-  headline_grad: 'Then I started measuring why.',
-  headline_rest: '',
+  headline_line1: 'I build trading systems.',
+  headline_grad: 'Real capital.',
+  headline_rest: 'Verifiable numbers.',
   subhead:
-    'Three years ago, my first trading bot lost $40 on Roblox items. Markets looked easy until my money was inside one. I have spent the years since building systems, logging each decision, and learning why prices move. I want to study finance and economics in college so I can keep asking harder versions of that question.',
+    'I am a high school senior in Boulder, Colorado. Over the last year I built three programs that trade markets on their own, one of them with real money in it. Every number on this site links to the file that produced it.',
   live_pills: [
     { label: 'CounterSnipe', status: 'live money', note: 'CS2 skin arbitrage', tone: 'live' },
     { label: 'PandaXPanther Prediction Bot', status: 'paper', note: 'Kalshi + Polymarket', tone: 'paper' },
@@ -263,7 +263,7 @@ function shouldFire(signal: Signal): boolean {
     ],
 
     what_it_is: [
-      'The program runs in two stages. Stage one pulls the last 90 days of trades for every wallet in the seed list, then computes five performance statistics: Sharpe ratio, maximum drawdown, win rate, profit factor, and a weighted composite score. Only the top scoring wallets get promoted to the active watchlist. Stage two subscribes to those wallets over a real-time connection and mirrors each of their trades into a simulated paper account, applying risk rules that would apply in real life (maximum position size, maximum borrowed exposure, funding-rate filters, and a daily-loss circuit breaker).',
+      'The program runs in two stages. Stage one pulls the last 90 days of trades for every wallet in the seed list, then computes five performance statistics: Sharpe ratio, maximum drawdown, win rate, profit factor, and a weighted composite score. Only the top scoring wallets get promoted to the active watchlist. Stage two subscribes to those wallets over a real-time connection and mirrors each of their trades into a simulated paper account, applying risk rules that would apply in real life (maximum position size, maximum leverage, funding-rate filters, and a daily-loss circuit breaker).',
       'The starting list of wallets is not chosen randomly. I pulled all 38,125 accounts from Hyperliquid\u2019s public leaderboard, then filtered on five criteria at once: account size between $50k and $10M (excludes both toy accounts and market-movers), all-time profit above $1M, positive 30-day AND 7-day profit, volume-to-equity ratio below 20,000x (excludes high-frequency market-makers who profit from rebates rather than direction), and lifetime ROI below 500,000% (excludes anomalous tiny-seed accounts). The result is 20 wallets that represent the top of what a reasonably-capitalized retail trader could plausibly imitate.',
       'There is no live trading code in this project. There are no private keys anywhere in the repo. The system is read-only by design. Stage three, actual execution, does not exist and will not be built until paper mode proves the selection layer works over four to eight weeks. Discipline is the point.',
     ],
@@ -272,7 +272,7 @@ function shouldFire(signal: Signal): boolean {
       how_it_started:
         'In December 2025 I lost $180 copy-trading a Twitter perpetual-futures account. It turned out to be a marketing wallet that only posted its winners. I wanted a version of copy-trading that ranked traders by evidence rather than by follower count.',
       hardest_lesson:
-        'My first version ranked wallets by raw 90-day return. Predictably this ranked reckless traders above disciplined ones because borrowed money inflates ROI. When I rewrote scoring around Sharpe ratio and maximum drawdown, the ranking flipped dramatically: the top wallet by return dropped to rank 14 by composite score. The metric you sort on decides which strategy you are actually copying, and I had been unintentionally copying gamblers.',
+        'My first version ranked wallets by raw 90-day return. Predictably this ranked reckless traders above disciplined ones because leverage inflates ROI. When I rewrote scoring around Sharpe ratio and maximum drawdown, the ranking flipped dramatically: the top wallet by return dropped to rank 14 by composite score. The metric you sort on decides which strategy you are actually copying, and I had been unintentionally copying gamblers.',
     },
 
     research_finding: {
@@ -315,7 +315,7 @@ def composite_score(fills):
         { id: 'scores', label: 'wallet_scores.json', sub: 'Sharpe · DD · PF', col: 2 },
         { id: 'active', label: 'active_wallets.json', sub: 'top N promoted', col: 2, row: 1 },
         { id: 'paper', label: 'Paper trader', sub: 'WS subscriber', col: 3 },
-        { id: 'risk', label: 'Risk filters', sub: 'position · borrowed exposure · funding', col: 4 },
+        { id: 'risk', label: 'Risk filters', sub: 'position · leverage · funding', col: 4 },
         { id: 'book', label: 'paper_state.json', sub: 'in-memory book', col: 4, row: 1 },
         { id: 'disc', label: 'Discord', sub: 'leaderboard · fills', col: 5 },
       ],
@@ -421,14 +421,14 @@ export const OTHER = {
       name: 'Econ.mom',
       tag: 'The Mother of Econ',
       href: 'https://econ.mom',
-      body: 'I built twelve free, citation-rigorous economics tools for AP students, debaters, and policy desks. They range from an AP free-response grader to a tariff model and a public Shadow Fed. Marginal Revolution featured the project in May 2026 and called out its formulas and cited datasets.',
-      stat: '12 tools · featured by Marginal Revolution',
+      body: 'Twelve free tools for AP Economics students, debate teams, and policy analysts. Includes an AP FRQ grader, a tariff-effect simulator, a Fed-shock model, a textbook citation atlas, a paper decoder, and an inflation decomposer. Every number the site displays is sourced from BLS, FRED, or a peer-reviewed paper. Nothing is generated by a language model.',
+      stat: '12 tools · citation-rigorous by design',
     },
     {
       name: 'Local-Ledger',
       tag: 'Nationwide Economic Observatory',
       href: 'https://local-ledger.net',
-      body: 'I built public dashboards for jobs, income, housing, schools, and federal spending. They cover every state, 3,143 counties, and 120 metro areas. The site also has rankings and an economy simulator. It cites FRED, BLS, Census, BEA, College Scorecard, and USAspending. Its integrity counter reads "0 fabricated."',
+      body: 'Public economic data for every community. The site turns official labor, income, housing, and public-finance data from BLS, FRED, Census, College Scorecard, and USAspending into readable state, county, and metro dashboards. Its tagline is "0 fabricated data points" and the build breaks if a citation is missing.',
       stat: '50 states · 3,143 counties · 120 metros · 0 fabricated',
     },
     {
@@ -479,7 +479,6 @@ export const FOOTER = {
     'If anything looks too neat, ask me. I will show you the log.',
   ],
   links: [
-    { k: 'LinkedIn', href: 'https://www.linkedin.com/in/saras-totey-64a777334/' },
     { k: 'GitHub · PandaXPanther', href: 'https://github.com/PandaXPanther' },
     { k: 'GitHub · srtt16', href: 'https://github.com/srtt16' },
     { k: 'Econ.mom', href: 'https://econ.mom' },

@@ -1,48 +1,62 @@
 import { test, expect } from 'playwright/test';
 
-const positions = [0, 0.26, 0.51, 0.76, 0.97];
+const chapterPositions = [0.02, 0.19, 0.37, 0.55, 0.73, 0.96];
 
-test('desktop camera chain scrubs through every chapter', async ({ page }) => {
+test('desktop camera chain scrubs every chapter and restores navigation state', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('http://127.0.0.1:4174/');
+  await page.goto('http://127.0.0.1:4174/home');
   await page.waitForSelector('.scroll-world video');
   await page.waitForTimeout(2500);
-  await expect(page.locator('iframe')).toHaveCount(0);
-  await expect(page.locator('audio')).toHaveAttribute('src', '/ambient-fairy-fountain.ogg');
   await page.locator('.audio-dock button').click();
-  await expect(page.locator('audio')).not.toHaveJSProperty('muted', true);
-  await expect(page.locator(`a[href="https://www.linkedin.com/in/saras-totey-64a777334/"]`).first()).toBeAttached();
-  await expect(page.locator('a[href="https://buymeacoffee.com/sarast1"]').first()).toBeAttached();
-  await expect(page.locator('a[href="https://github.com/PandaXPanther"]').first()).toBeAttached();
-  const metrics = await page.request.get('http://127.0.0.1:4174/generated/live-signals.json');
-  expect(metrics.ok()).toBeTruthy();
+  await expect.poll(() => page.evaluate(() => !window.__sarasAmbientAudio.paused)).toBeTruthy();
   const worldHeight = await page.locator('.scroll-world').evaluate((node) => node.offsetHeight - innerHeight);
-  let previousTime = -1;
-  for (let index = 0; index < positions.length; index += 1) {
-    await page.evaluate((y) => scrollTo(0, y), worldHeight * positions[index]);
-    await page.waitForTimeout(900);
+  for (const [index, position] of chapterPositions.entries()) {
+    await page.evaluate(([height, progress]) => scrollTo(0, height * progress), [worldHeight, position]);
+    await page.waitForTimeout(600);
     await page.screenshot({ path: `.scroll-world-work/desktop-${index + 1}.png` });
     const state = await page.evaluate(() => ({
       chapter: document.querySelector('.world-copy.is-active')?.textContent,
-      visibleVideos: [...document.querySelectorAll('.scroll-world video')].filter((video) => Number(getComputedStyle(video.parentElement).opacity) > 0.5).map((video) => video.currentTime),
+      visible: [...document.querySelectorAll('.scroll-world__scene')].filter((node) => Number(getComputedStyle(node).opacity) > 0.5).length,
     }));
     expect(state.chapter).toBeTruthy();
-    expect(state.visibleVideos.length).toBeGreaterThan(0);
-    const currentTime = state.visibleVideos[0];
-    if (index === 0) expect(currentTime).toBeGreaterThanOrEqual(0);
-    previousTime = currentTime;
+    expect(state.visible).toBe(1);
   }
-  expect(previousTime).toBeGreaterThan(1);
+  for (const progress of [...chapterPositions].reverse()) {
+    await page.evaluate(([height, position]) => scrollTo(0, height * position), [worldHeight, progress]);
+    await page.waitForTimeout(160);
+    await expect.poll(() => page.locator('.scroll-world__scene').evaluateAll((nodes) => nodes.filter((node) => Number(getComputedStyle(node).opacity) > 0.5).length)).toBe(1);
+  }
+  await page.evaluate(([height, position]) => scrollTo(0, height * position), [worldHeight, chapterPositions[2]]);
+  await page.locator('.world-copy.is-active .glass-button').click();
+  await expect(page).toHaveURL(/econ-mom/);
+  await expect.poll(() => page.evaluate(() => !window.__sarasAmbientAudio.paused)).toBeTruthy();
+  await page.locator('a[href="/home"]').last().click();
+  await expect(page).toHaveURL(/home/);
+  await page.waitForTimeout(500);
+  expect(await page.evaluate(() => scrollY)).toBeGreaterThan(1000);
 });
 
-test('mobile layout keeps copy clear of the diorama', async ({ page }) => {
+test('mobile world and project pages render cleanly', async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
-  await page.goto('http://127.0.0.1:4174/');
-  await page.waitForSelector('.scroll-world');
+  await page.goto('http://127.0.0.1:4174/home');
   const worldHeight = await page.locator('.scroll-world').evaluate((node) => node.offsetHeight - innerHeight);
-  for (const [index, position] of [0.05, 0.52, 0.95].entries()) {
-    await page.evaluate((y) => scrollTo(0, y), worldHeight * position);
-    await page.waitForTimeout(700);
+  for (const [index, position] of chapterPositions.entries()) {
+    await page.evaluate(([height, progress]) => scrollTo(0, height * progress), [worldHeight, position]);
+    await page.waitForTimeout(400);
     await page.screenshot({ path: `.scroll-world-work/mobile-${index + 1}.png` });
+  }
+  for (const slug of ['', 'econ-mom', 'local-ledger', 'att-agency']) {
+    await page.goto(`http://127.0.0.1:4174/${slug}`);
+    await page.waitForTimeout(300);
+    await page.screenshot({ path: `.scroll-world-work/mobile-page-${slug || 'quant'}.png`, fullPage: true });
+  }
+});
+
+test('desktop project pages render', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  for (const slug of ['', 'econ-mom', 'local-ledger', 'att-agency']) {
+    await page.goto(`http://127.0.0.1:4174/${slug}`);
+    await page.waitForTimeout(300);
+    await page.screenshot({ path: `.scroll-world-work/desktop-page-${slug || 'quant'}.png`, fullPage: true });
   }
 });

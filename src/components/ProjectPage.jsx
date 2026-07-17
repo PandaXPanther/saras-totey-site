@@ -4,6 +4,10 @@ import System from '../sections/System.jsx';
 import Backtest from '../sections/Backtest.jsx';
 import Live from '../sections/Live.jsx';
 import Roadmap from '../sections/Roadmap.jsx';
+import Hero from '../sections/Hero.jsx';
+import Thesis from '../sections/Thesis.jsx';
+import Other from '../sections/Other.jsx';
+import Footer from '../sections/Footer.jsx';
 
 const projects = {
   'econ-mom': {
@@ -14,7 +18,7 @@ const projects = {
   'local-ledger': {
     eyebrow: 'local-ledger.net', title: 'A local economy should never require invented data.', dek: 'Public dashboards across every state, 3,143 counties, and 120 metro areas.', href: 'https://local-ledger.net', cta: 'Open local-ledger.net',
     stats: [['50', 'states'], ['3,143', 'counties'], ['120', 'metro areas'], ['0', 'fabricated data points']],
-    sections: [['The country, at local resolution', 'Local Ledger brings jobs, income, housing, schools, and federal spending into one geographic research surface. Rankings make comparison possible without flattening places into one score.'], ['Primary-source backbone', 'The dashboards cite FRED, the Bureau of Labor Statistics, Census Bureau, Bureau of Economic Analysis, College Scorecard, and USAspending. The integrity counter reads 0 fabricated because missing data stays missing.'], ['The simulator is the extravagant part', 'The economy simulator turns the observatory into a live policy lab. Change the forces acting on a place—employment, income, housing pressure, public investment—and watch the local picture respond as a connected system instead of a stack of isolated charts. It makes counterfactuals tangible while keeping the real baseline data in view, so exploring a dramatic scenario never gets confused with reporting a fact.']],
+    sections: [['The country, at local resolution', 'Local Ledger brings jobs, income, housing, schools, and federal spending into one geographic research surface. Rankings make comparison possible without flattening places into one score.'], ['Primary-source backbone', 'The dashboards cite FRED, the Bureau of Labor Statistics, Census Bureau, Bureau of Economic Analysis, College Scorecard, and USAspending. The integrity counter reads 0 fabricated because missing data stays missing.'], ['The simulator is the extravagant part', 'The economy simulator turns the observatory into a live policy lab. Change the forces acting on a place (employment, income, housing pressure, and public investment) and watch the local picture respond as a connected system instead of a stack of isolated charts. It makes counterfactuals tangible while keeping the real baseline data in view, so exploring a dramatic scenario never gets confused with reporting a fact.']],
   },
   'att-agency': {
     eyebrow: 'Boulder, Colorado', title: 'Small businesses deserve technical work that holds up.', dek: 'I co-founded ATT Agency to connect brands, custom websites, video, ads, and analytics without the usual handoffs.', href: 'https://attagency.co', cta: 'Visit ATT Agency',
@@ -32,7 +36,7 @@ function SiteFooter() {
 function BackToWorld() { return <a className="take-back" href="/home">← Take me back</a>; }
 
 function QuantPage() {
-  return <main className="project-page project-page--quant"><BackToWorld /><header className="project-hero quant-hero"><span>Saras Totey’s trading systems</span><h1>I built three systems to find out where markets break.</h1><p>Live capital, paper systems, research findings, citations, code, and current telemetry. Every number links back to the file that produced it.</p><div className="quant-wave" aria-hidden="true">{Array.from({ length: 18 }, (_, index) => <i key={index} />)}</div></header>{SYSTEMS.map((system, index) => <System key={system.slug} system={system} flipped={index % 2 === 1} />)}<Backtest /><Live /><Roadmap /><SiteFooter /></main>;
+  return <main className="project-page project-page--quant"><BackToWorld /><Hero /><Thesis />{SYSTEMS.map((system, index) => <System key={system.slug} system={system} flipped={index % 2 === 1} />)}<Backtest /><Live /><Roadmap /><Other /><Footer /></main>;
 }
 
 function Recognition() {
