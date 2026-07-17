@@ -35,7 +35,7 @@
 
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: auto; }
 body {
   background: var(--bg);
   color: var(--text);
@@ -490,3 +490,74 @@ main > div[data-world='india']::before { background: rgba(41, 25, 36, .73); }
 }
 
 @media (prefers-reduced-motion: reduce) { .world-scroll-hint i { animation: none; } .world-copy { transition: none; } }
+
+/* Full-world portfolio and Liquid Glass project navigation. */
+.scroll-world { padding: 0; background: #f7e8ed; color: #201b25; }
+.scroll-world__sticky { height: 100svh; }
+.scroll-world__sticky::after { display: none; }
+.scroll-world__scene { transform: translateZ(0); contain: strict; }
+.scroll-world__scene img,.scroll-world__scene video { inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; transform: translateZ(0); }
+.world-wash { position: absolute; inset: 0; z-index: 3; pointer-events: none; background: linear-gradient(90deg,rgba(255,242,247,.68),transparent 42%,rgba(255,239,246,.16) 65%,rgba(255,239,246,.58)); }
+.world-copy { z-index: 4; width: min(41vw,560px); top: 19%; bottom: auto; padding: 26px 28px; transform: translateY(14px); transition: opacity .32s ease,transform .5s cubic-bezier(.2,.8,.2,1),visibility .32s; text-shadow: 0 1px 20px rgba(255,255,255,.72); }
+.world-copy:not(.is-active) { display: none; }
+.world-copy--left { left: clamp(22px,6vw,92px); right: auto; }
+.world-copy--right { left: clamp(22px,6vw,92px); right: auto; top: 24%; }
+.world-copy--center { left: 50%; top: 44%; transform: translate(-50%,14px); text-align: center; }
+.world-copy.is-active { transform: none; }
+.world-copy--center.is-active { transform: translate(-50%,0); }
+.world-copy__count,.world-copy__eyebrow { font-family: -apple-system,BlinkMacSystemFont,'SF Pro Text','Inter',sans-serif; }
+.world-copy__count { margin-bottom: 28px; color: #6f6067; }
+.world-copy__eyebrow { color: #a42f61; margin-bottom: 14px; }
+.world-copy h1 { max-width: 540px; font-family: -apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',sans-serif; font-size: clamp(42px,5vw,76px); line-height: .94; font-weight: 650; letter-spacing: -.05em; color: #251c26; text-wrap: balance; }
+.world-copy p { max-width: 470px; margin-top: 20px; font: 450 clamp(16px,1.2vw,19px)/1.5 'Inter',-apple-system,BlinkMacSystemFont,'SF Pro Text',sans-serif; color: #55444d; }
+.world-copy li,.glass-button { border: 1px solid rgba(255,255,255,.72); border-radius: 999px; padding: 8px 12px; font-family: -apple-system,BlinkMacSystemFont,'SF Pro Text','Inter',sans-serif; font-size: 11px; background: rgba(255,245,249,.44); box-shadow: inset 0 1px 0 rgba(255,255,255,.8),0 8px 30px rgba(104,50,75,.13); backdrop-filter: blur(18px) saturate(150%); -webkit-backdrop-filter: blur(18px) saturate(150%); }
+.glass-button { display: inline-flex; margin-top: 22px; padding: 11px 17px; color: #61233e; }
+.world-jump { position: absolute; z-index: 8; right: 18px; bottom: 18px; display: flex; gap: 6px; align-items: stretch; }
+.world-jump button { border: 1px solid rgba(255,255,255,.68); border-radius: 999px; min-width: 44px; min-height: 44px; color: #3d2933; background: rgba(255,244,248,.5); box-shadow: inset 0 1px 0 rgba(255,255,255,.86),0 9px 32px rgba(77,31,53,.15); backdrop-filter: blur(22px) saturate(160%); -webkit-backdrop-filter: blur(22px) saturate(160%); cursor: pointer; }
+.world-jump .world-jump__label { display: grid; padding: 6px 18px; min-width: 130px; text-align: left; }
+.world-jump__label span { font: 600 12px/1.1 -apple-system,BlinkMacSystemFont,'SF Pro Text','Inter',sans-serif; }
+.world-jump__label small { font: 9px/1.1 'Inter',sans-serif; color: #816c76; text-transform: uppercase; letter-spacing: .09em; }
+.world-progress { position: absolute; z-index: 7; left: 0; right: 0; bottom: 0; height: 3px; background: rgba(255,255,255,.38); }
+.world-progress i { display: block; width: 100%; height: 100%; transform-origin: left; background: #d64b83; transition: transform .35s ease; }
+.glass-nav { position: fixed; z-index: 100; top: max(14px,env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); display: flex; gap: 7px; max-width: calc(100vw - 24px); }
+.glass-nav a { white-space: nowrap; padding: 9px 14px; border: 1px solid rgba(255,255,255,.7); border-radius: 999px; color: #382630; background: rgba(255,245,249,.48); box-shadow: inset 0 1px 0 rgba(255,255,255,.86),0 9px 28px rgba(74,28,50,.12); backdrop-filter: blur(22px) saturate(165%); -webkit-backdrop-filter: blur(22px) saturate(165%); font: 600 11px/1 -apple-system,BlinkMacSystemFont,'SF Pro Text','Inter',sans-serif; }
+.glass-nav a[aria-current='page'] { background: rgba(255,255,255,.76); color: #a42f61; }
+.audio-dock { z-index: 101; }
+.audio-dock button { border-radius: 999px; border-color: rgba(255,255,255,.68); background: rgba(255,245,249,.5); color: #382630; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+.project-page { min-height: 100vh; overflow: hidden; background: linear-gradient(150deg,#fbedf2 0%,#efd7e1 50%,#e5b6c9 100%); color: #271d25; font-family: 'Inter',-apple-system,BlinkMacSystemFont,'SF Pro Text',sans-serif; padding-top: 1px; }
+.project-page--local-ledger { background: linear-gradient(145deg,#faeaf0,#e8c9d7 55%,#c989a8); }
+.project-page--att-agency { background: linear-gradient(145deg,#fde9ef,#e8b9c8 55%,#e78d67); }
+.project-hero { min-height: 82svh; display: flex; flex-direction: column; justify-content: flex-end; padding: 120px max(6vw,24px) 9vw; border-bottom: 1px solid rgba(91,42,63,.16); }
+.project-hero > span { margin-bottom: 22px; color: #a42f61; font: 700 11px/1 'SF Pro Text','Inter',sans-serif; text-transform: uppercase; letter-spacing: .14em; }
+.project-hero h1 { max-width: 13ch; color: #2c2028; font: 650 clamp(58px,9.5vw,142px)/.88 -apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',sans-serif; letter-spacing: -.065em; }
+.project-hero p { max-width: 58ch; margin: 32px 0 0; color: #654d59; font-size: clamp(18px,2vw,25px); }
+.project-stats { display: grid; grid-template-columns: repeat(auto-fit,minmax(190px,1fr)); gap: 1px; padding: 0; background: rgba(91,42,63,.14); }
+.project-stats div { min-height: 210px; padding: 42px; background: rgba(255,247,250,.58); }
+.project-stats strong { display: block; font: 650 clamp(46px,6vw,82px)/1 -apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',sans-serif; letter-spacing: -.05em; color: #9c345f; }
+.project-stats span { display: block; margin-top: 14px; color: #654d59; }
+.project-story,.project-record { padding: clamp(72px,10vw,150px) max(6vw,24px); }
+.project-story article { display: grid; grid-template-columns: 60px minmax(240px,420px) minmax(280px,620px); gap: 5vw; padding: 52px 0; border-top: 1px solid rgba(91,42,63,.2); }
+.project-story article > span { color: #a42f61; font-size: 12px; }
+.project-story h2,.project-record h2 { color: #2c2028; font: 600 clamp(30px,4vw,54px)/1 -apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',sans-serif; letter-spacing: -.04em; }
+.project-story p { color: #654d59; font-size: 18px; line-height: 1.65; }
+.project-record article { padding: 28px 0; border-top: 1px solid rgba(91,42,63,.2); }
+.project-footer { display: flex; justify-content: space-between; padding: 44px max(6vw,24px) 90px; border-top: 1px solid rgba(91,42,63,.2); color: #84304f; }
+@media (max-width:720px) {
+  .glass-nav { left: 12px; right: 12px; transform: none; overflow-x: auto; scrollbar-width: none; }
+  .glass-nav a { padding: 9px 12px; }
+  .scroll-world__scene img,.scroll-world__scene video { top: 0; width: 100%; height: 100%; object-position: 58% center; }
+  .world-wash { background: linear-gradient(180deg,rgba(255,242,247,.35),transparent 33%,rgba(255,239,246,.76) 82%); }
+  .world-copy,.world-copy--left,.world-copy--right,.world-copy--center { left: 18px; right: 18px; top: auto; bottom: 104px; width: auto; padding: 18px; text-align: left; }
+  .world-copy--center,.world-copy--center.is-active { transform: none; }
+  .world-copy__count { margin-bottom: 12px; }
+  .world-copy h1 { font-size: clamp(34px,10vw,48px); max-width: 12ch; }
+  .world-copy p { font-size: 14px; margin-top: 12px; max-width: 42ch; }
+  .world-copy ul { margin-top: 14px; }
+  .world-jump { bottom: 12px; right: 12px; }
+  .audio-dock { left: 12px; right: auto; bottom: 12px; }
+  .project-hero { min-height: 74svh; padding-bottom: 72px; }
+  .project-hero h1 { font-size: clamp(52px,17vw,82px); }
+  .project-story article { grid-template-columns: 34px 1fr; gap: 18px; }
+  .project-story article p { grid-column: 2; }
+  .project-footer { flex-direction: column; gap: 18px; }
+}

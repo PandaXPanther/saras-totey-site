@@ -6,54 +6,32 @@ const AMBIENT_VOLUME = 0.16;
 export default function AudioControl() {
   const audio = useRef(null);
   const [muted, setMuted] = useState(true);
-  const [playing, setPlaying] = useState(false);
 
   useEffect(() => {
     const element = audio.current;
     if (!element) return undefined;
 
     element.volume = AMBIENT_VOLUME;
-    element.muted = true;
-
-    const startMutedPlayback = () => {
-      element.play().catch(() => {
-        // The button remains available when the browser requires an explicit click.
-      });
-    };
-
-    const interactionEvents = ['pointerdown', 'touchstart', 'keydown', 'scroll', 'wheel'];
-    const removeInteractionListeners = () => {
-      interactionEvents.forEach((eventName) => {
-        window.removeEventListener(eventName, startMutedPlayback);
-      });
-    };
-
-    interactionEvents.forEach((eventName) => {
-      window.addEventListener(eventName, startMutedPlayback, { passive: true, once: true });
-    });
-
-    startMutedPlayback();
-
-    return removeInteractionListeners;
+    element.pause();
+    element.muted = false;
+    return undefined;
   }, []);
 
   const toggle = async () => {
     const element = audio.current;
     if (!element) return;
 
-    if (!element.muted) {
-      element.muted = true;
+    if (!element.paused) {
+      element.pause();
       setMuted(true);
       return;
     }
 
-    element.muted = false;
-    setMuted(false);
-
     try {
       await element.play();
+      setMuted(false);
     } catch {
-      element.muted = true;
+      element.pause();
       setMuted(true);
     }
   };
@@ -65,17 +43,14 @@ export default function AudioControl() {
         className="audio-source"
         src={AMBIENT_AUDIO_SRC}
         loop
-        muted={muted}
-        autoPlay
-        preload="auto"
+        preload="metadata"
         aria-hidden="true"
-        onPlay={() => setPlaying(true)}
-        onPause={() => setPlaying(false)}
-        onVolumeChange={(event) => setMuted(event.currentTarget.muted)}
+        onPlay={() => setMuted(false)}
+        onPause={() => setMuted(true)}
       />
       <button type="button" onClick={toggle} aria-label={muted ? 'Turn ambient sound on' : 'Mute ambient sound'}>
         <span className="audio-bars" aria-hidden="true"><i /><i /><i /></span>
-        {muted ? (playing ? 'sound off' : 'tap for sound') : 'sound on'}
+        {muted ? 'sound off' : 'sound on'}
       </button>
     </div>
   );
