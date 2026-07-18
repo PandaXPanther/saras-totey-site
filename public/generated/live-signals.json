@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-17T22:47:57.408Z",
+  "generated_at": "2026-07-18T07:24:49.007Z",
   "cards": [
     {
       "k": "CounterSnipe commits",
@@ -18,12 +18,12 @@
     },
     {
       "k": "Hyperliquid cohort · top-5 30d ROI",
-      "v": "+119.9%",
+      "v": "+85.7%",
       "foot": "Recomputed from seed_wallets.json + Hyperliquid leaderboard API"
     },
     {
       "k": "Days since CounterSnipe live",
-      "v": "62",
+      "v": "63",
       "foot": "Since May 16, 2026"
     },
     {
