@@ -5,11 +5,11 @@ import ScrollWorld from './components/ScrollWorld.jsx';
 import ProjectPage from './components/ProjectPage.jsx';
 
 const metadata = {
-  '/': ['Saras Totey · Developer, researcher, and builder', 'Meet Saras Totey, a Boulder full-stack developer building trading bots, economics tools, public-data products, and websites.', '/og-saras-totey.png?v=3'],
-  '/quant': ['Trading systems · Saras Totey', 'Independent trading systems built by Saras Totey: live CS2 arbitrage, prediction-market research, and transparent quantitative experiments.', '/og-saras-totey.png?v=3'],
-  '/econ-mom': ['Econ.mom · Saras Totey', 'Twelve free, interactive economics tools with formulas, explanations, and every dataset cited.', '/og-saras-totey.png?v=3'],
-  '/local-ledger': ['local-ledger.net · Saras Totey', 'A nationwide economic observatory and simulator covering every state, 3,143 counties, and 120 metro areas.', '/og-saras-totey.png?v=3'],
-  '/att-agency': ['ATT Agency · Saras Totey', 'Saras Totey’s work co-founding ATT Agency and shipping brands, websites, video, ads, and analytics.', '/og-saras-totey.png?v=3'],
+  '/': ['Saras Totey — Boulder Developer and Quant Researcher', 'Meet Saras Totey, a Boulder full-stack developer building trading bots, economics tools, public-data products, and websites.', '/og-saras-totey.png?v=3'],
+  '/quant': ['Quantitative Trading Systems and Research | Saras Totey', 'Explore Saras Totey’s independent quantitative trading systems, including live CS2 arbitrage, prediction-market research, and documented experiments.', '/og-saras-totey.png?v=3'],
+  '/econ-mom': ['Free Interactive Economics Tools | Econ.mom by Saras Totey', 'Explore 12 free interactive economics tools built by Saras Totey, with visible formulas, clear explanations, and every underlying dataset cited.', '/og-saras-totey.png?v=3'],
+  '/local-ledger': ['Local Economic Data Dashboard | Local Ledger by Saras Totey', 'Explore Saras Totey’s local economic data dashboard and simulator covering jobs, housing, schools, and public spending across U.S. counties and metros.', '/og-saras-totey.png?v=3'],
+  '/att-agency': ['Web Design and Development Work | ATT Agency · Saras Totey', 'See Saras Totey’s work co-founding ATT Agency and delivering brand strategy, web design, development, video, advertising, and measurement systems.', '/og-saras-totey.png?v=3'],
 };
 
 const setMeta = (selector, value) => document.querySelector(selector)?.setAttribute('content', value);
