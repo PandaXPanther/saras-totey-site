@@ -92,6 +92,7 @@ export default function ScrollWorld() {
     let ticking = false;
     let seekFrame = 0;
     let settleTimer = 0;
+    let videoPrimed = false;
     const syncVideo = () => {
       const video = videoRef.current;
       if (!video || video.readyState < 1 || !Number.isFinite(video.duration) || video.duration <= 0 || video.seeking) return;
@@ -102,6 +103,17 @@ export default function ScrollWorld() {
     const queueVideoSync = () => {
       cancelAnimationFrame(seekFrame);
       seekFrame = requestAnimationFrame(syncVideo);
+    };
+    const primeVideoDecoder = () => {
+      const video = videoRef.current;
+      if (!video || videoPrimed) return;
+      const playback = video.play();
+      if (!playback) return;
+      playback.then(() => {
+        video.pause();
+        videoPrimed = true;
+        queueVideoSync();
+      }).catch(() => { /* A first touch retries when mobile autoplay is unavailable. */ });
     };
     const update = () => {
       const y = clamp(scrollY - node.offsetTop, 0, node.offsetHeight - innerHeight);
@@ -130,16 +142,17 @@ export default function ScrollWorld() {
     update();
     addEventListener('scroll', requestUpdate, { passive: true });
     addEventListener('touchmove', requestUpdate, { passive: true });
+    addEventListener('touchstart', primeVideoDecoder, { passive: true, once: true });
     addEventListener('scrollend', requestUpdate, { passive: true });
     addEventListener('scroll', dismissHint, { passive: true, once: true });
     addEventListener('pagehide', rememberPosition);
     addEventListener('resize', requestUpdate, { passive: true });
-    const mediaReady = () => { requestUpdate(); queueVideoSync(); };
+    const mediaReady = () => { primeVideoDecoder(); requestUpdate(); queueVideoSync(); };
     video?.addEventListener('loadedmetadata', mediaReady);
     video?.addEventListener('loadeddata', mediaReady);
     video?.addEventListener('canplay', mediaReady);
     video?.addEventListener('seeked', mediaReady);
-    return () => { cancelAnimationFrame(seekFrame); clearTimeout(settleTimer); rememberPosition(); removeEventListener('scroll', requestUpdate); removeEventListener('touchmove', requestUpdate); removeEventListener('scrollend', requestUpdate); removeEventListener('scroll', dismissHint); removeEventListener('pagehide', rememberPosition); removeEventListener('resize', requestUpdate); video?.removeEventListener('loadedmetadata', mediaReady); video?.removeEventListener('loadeddata', mediaReady); video?.removeEventListener('canplay', mediaReady); video?.removeEventListener('seeked', mediaReady); };
+    return () => { cancelAnimationFrame(seekFrame); clearTimeout(settleTimer); rememberPosition(); removeEventListener('scroll', requestUpdate); removeEventListener('touchmove', requestUpdate); removeEventListener('touchstart', primeVideoDecoder); removeEventListener('scrollend', requestUpdate); removeEventListener('scroll', dismissHint); removeEventListener('pagehide', rememberPosition); removeEventListener('resize', requestUpdate); video?.removeEventListener('loadedmetadata', mediaReady); video?.removeEventListener('loadeddata', mediaReady); video?.removeEventListener('canplay', mediaReady); video?.removeEventListener('seeked', mediaReady); };
   }, [chain]);
 
   const total = chain.reduce((sum, segment) => sum + segment.scroll, 0);
@@ -147,7 +160,7 @@ export default function ScrollWorld() {
     <main ref={root} className="scroll-world" data-marker={active} data-scroll-mode="free" style={{ '--world-height': `${total * 100 + 100}vh` }}>
       <div className="scroll-world__sticky">
         <div className="scroll-world__stage" aria-hidden="true">
-          <div className="scroll-world__scene"><img src={reduceMotion ? `/world/flight/${chapters[active].media}.webp` : '/world/flight/intro-4k.webp'} alt="" />{!reduceMotion && <video ref={videoRef} src="/world/flight/continuous-flight.mp4" muted playsInline preload="auto" disablePictureInPicture />}</div>
+          <div className="scroll-world__scene"><img src={reduceMotion ? `/world/flight/${chapters[active].media}.webp` : '/world/flight/intro-4k.webp'} alt="" />{!reduceMotion && <video ref={videoRef} muted playsInline autoPlay preload="auto" disablePictureInPicture><source src="/world/flight/continuous-flight-mobile.mp4" media="(max-width: 768px)" type="video/mp4" /><source src="/world/flight/continuous-flight.mp4" type="video/mp4" /></video>}</div>
         </div>
         <div className="world-wash" aria-hidden="true" />
         {chapters.map((chapter, index) => <article key={chapter.id} className={`world-copy world-copy--${chapter.side} world-copy--${chapter.id} ${visibleChapter === index ? 'is-active' : ''}`}><span className="world-copy__count">{String(index + 1).padStart(2, '0')} / {chapters.length}</span><span className="world-copy__eyebrow">{chapter.eyebrow}</span><h1>{chapter.title}</h1><p>{chapter.body}</p>{chapter.note && <small className="world-copy__note">{chapter.note}</small>}{chapter.href && <a className="glass-button" href={chapter.href} data-world-cta="true" onClick={rememberPosition}>Take me there</a>}{chapter.cta && <div className="world-copy__contact"><a href="mailto:sarastotey@icloud.com">Email</a><a href={IDENTITY.linkedin} target="_blank" rel="noreferrer">LinkedIn</a><a href={`https://github.com/${IDENTITY.github_user}`} target="_blank" rel="noreferrer">GitHub</a><a href={IDENTITY.instagram} target="_blank" rel="noreferrer">Instagram</a></div>}</article>)}
