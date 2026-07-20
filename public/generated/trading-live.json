@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-20T14:07:03.399Z",
+  "generated_at": "2026-07-20T15:07:03.627Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -32,12 +32,12 @@
   },
   "totals": {
     "portfolio_value_usd": 1738,
-    "total_profit_usd": 332.46,
-    "generated_profit_usd": 107.82,
-    "total_trades": 123,
-    "generated_trades": 38,
-    "win_rate_pct": 79.7,
-    "last_trade_iso": "2026-07-20T11:23:00.000Z"
+    "total_profit_usd": 331.28,
+    "generated_profit_usd": 106.64,
+    "total_trades": 124,
+    "generated_trades": 39,
+    "win_rate_pct": 79,
+    "last_trade_iso": "2026-07-20T14:48:00.000Z"
   },
   "cards": [
     {
@@ -47,17 +47,17 @@
     },
     {
       "k": "Total profit",
-      "v": "+$332.46",
-      "foot": "+$107.82 generated after baseline"
+      "v": "+$331.28",
+      "foot": "+$106.64 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "123",
-      "foot": "38 generated daily-paced trades"
+      "v": "124",
+      "foot": "39 generated daily-paced trades"
     },
     {
       "k": "Win rate",
-      "v": "79.7%",
+      "v": "79%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -67,11 +67,28 @@
     },
     {
       "k": "Latest strategy",
-      "v": "Sticker-adjusted CS2 skin arbitrage",
-      "foot": "AK-47 | Redline FT"
+      "v": "Crypto latency",
+      "foot": "ETH above weekly range"
     }
   ],
   "trades": [
+    {
+      "id": "2026072014-4",
+      "timestamp": "2026-07-20T14:48:00.000Z",
+      "system": "PandaXPanther Prediction Bot",
+      "asset_type": "crypto prediction contract",
+      "instrument": "ETH above weekly range",
+      "side": "BUY",
+      "entry_price": 0.636,
+      "exit_price": 0.627,
+      "quantity": 120,
+      "notional_usd": 76.37,
+      "profit_loss_usd": -1.18,
+      "profit_loss_pct": -1.54,
+      "strategy": "Crypto latency",
+      "result": "LOSS",
+      "holding_period_hours": "0.32"
+    },
     {
       "id": "2026072011-3",
       "timestamp": "2026-07-20T11:23:00.000Z",
