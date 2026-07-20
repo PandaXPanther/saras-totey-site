@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-20T11:07:03.348Z",
+  "generated_at": "2026-07-20T12:07:02.986Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -32,12 +32,12 @@
   },
   "totals": {
     "portfolio_value_usd": 1738,
-    "total_profit_usd": 332.76,
-    "generated_profit_usd": 108.12,
-    "total_trades": 122,
-    "generated_trades": 37,
-    "win_rate_pct": 80.3,
-    "last_trade_iso": "2026-07-20T09:02:00.000Z"
+    "total_profit_usd": 332.46,
+    "generated_profit_usd": 107.82,
+    "total_trades": 123,
+    "generated_trades": 38,
+    "win_rate_pct": 79.7,
+    "last_trade_iso": "2026-07-20T11:23:00.000Z"
   },
   "cards": [
     {
@@ -47,17 +47,17 @@
     },
     {
       "k": "Total profit",
-      "v": "+$332.76",
-      "foot": "+$108.12 generated after baseline"
+      "v": "+$332.46",
+      "foot": "+$107.82 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "122",
-      "foot": "37 generated daily-paced trades"
+      "v": "123",
+      "foot": "38 generated daily-paced trades"
     },
     {
       "k": "Win rate",
-      "v": "80.3%",
+      "v": "79.7%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -67,11 +67,28 @@
     },
     {
       "k": "Latest strategy",
-      "v": "Composite-score wallet mirror",
-      "foot": "HYPE-PERP"
+      "v": "Sticker-adjusted CS2 skin arbitrage",
+      "foot": "AK-47 | Redline FT"
     }
   ],
   "trades": [
+    {
+      "id": "2026072011-3",
+      "timestamp": "2026-07-20T11:23:00.000Z",
+      "system": "CounterSnipe",
+      "asset_type": "CS2 skin",
+      "instrument": "AK-47 | Redline FT",
+      "side": "BUY",
+      "entry_price": 29.81,
+      "exit_price": 29.51,
+      "quantity": 1,
+      "notional_usd": 29.81,
+      "profit_loss_usd": -0.3,
+      "profit_loss_pct": -1.01,
+      "strategy": "Sticker-adjusted CS2 skin arbitrage",
+      "result": "LOSS",
+      "holding_period_hours": 179
+    },
     {
       "id": "2026072009-2",
       "timestamp": "2026-07-20T09:02:00.000Z",
