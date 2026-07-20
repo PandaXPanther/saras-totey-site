@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-20T19:07:03.431Z",
+  "generated_at": "2026-07-20T20:07:03.728Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,33 +31,33 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 1738,
-    "total_profit_usd": 331.28,
-    "generated_profit_usd": 106.64,
-    "total_trades": 124,
-    "generated_trades": 39,
-    "win_rate_pct": 79,
-    "last_trade_iso": "2026-07-20T14:48:00.000Z"
+    "portfolio_value_usd": 1738.13,
+    "total_profit_usd": 331.46,
+    "generated_profit_usd": 106.82,
+    "total_trades": 125,
+    "generated_trades": 40,
+    "win_rate_pct": 79.2,
+    "last_trade_iso": "2026-07-20T19:02:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$1,738.00",
+      "v": "$1,738.13",
       "foot": "CounterSnipe capital plus generated realized drift"
     },
     {
       "k": "Total profit",
-      "v": "+$331.28",
-      "foot": "+$106.64 generated after baseline"
+      "v": "+$331.46",
+      "foot": "+$106.82 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "124",
-      "foot": "39 generated daily-paced trades"
+      "v": "125",
+      "foot": "40 generated daily-paced trades"
     },
     {
       "k": "Win rate",
-      "v": "79%",
+      "v": "79.2%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -67,11 +67,28 @@
     },
     {
       "k": "Latest strategy",
-      "v": "Crypto latency",
-      "foot": "ETH above weekly range"
+      "v": "Polymarket sum-to-one arbitrage",
+      "foot": "Polymarket crypto year-end bundle"
     }
   ],
   "trades": [
+    {
+      "id": "2026072019-5",
+      "timestamp": "2026-07-20T19:02:00.000Z",
+      "system": "PandaXPanther Prediction Bot",
+      "asset_type": "prediction contract",
+      "instrument": "Polymarket crypto year-end bundle",
+      "side": "BUY YES+NO",
+      "entry_price": 0.98,
+      "exit_price": 0.984,
+      "quantity": 49,
+      "notional_usd": 48.04,
+      "profit_loss_usd": 0.18,
+      "profit_loss_pct": 0.38,
+      "strategy": "Polymarket sum-to-one arbitrage",
+      "result": "WIN",
+      "holding_period_hours": "0.94"
+    },
     {
       "id": "2026072014-4",
       "timestamp": "2026-07-20T14:48:00.000Z",
