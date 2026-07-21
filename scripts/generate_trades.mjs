@@ -198,6 +198,27 @@ function round(value, places = 2) {
   return Number(value.toFixed(places));
 }
 
+function emptySystemStats() {
+  return { total_trades: 0, wins: 0, losses: 0, profit_usd: 0, notional_usd: 0, return_pct_sum: 0 };
+}
+
+function ensureGeneratedSystemStats(state) {
+  if (state.generated.systems) return;
+  state.generated.systems = Object.fromEntries(
+    Object.keys(CONFIG.systemWinRates).map((system) => [system, emptySystemStats()]),
+  );
+  for (const trade of state.trades) {
+    const stats = state.generated.systems[trade.system] ?? emptySystemStats();
+    stats.total_trades += 1;
+    stats.wins += trade.result === 'WIN' ? 1 : 0;
+    stats.losses += trade.result === 'LOSS' ? 1 : 0;
+    stats.profit_usd = round(stats.profit_usd + trade.profit_loss_usd, 2);
+    stats.notional_usd = round(stats.notional_usd + trade.notional_usd, 2);
+    stats.return_pct_sum = round(stats.return_pct_sum + trade.profit_loss_pct, 2);
+    state.generated.systems[trade.system] = stats;
+  }
+}
+
 function pricePlaces(price) {
   if (price < 1) return 3;
   if (price < 100) return 2;
@@ -325,6 +346,7 @@ function tradeMinutesForDay(timestampIso) {
 }
 
 function appendTrade(state, trade) {
+  ensureGeneratedSystemStats(state);
   state.trades.unshift(trade);
   state.trades = state.trades.slice(0, CONFIG.maxRecentTrades);
   state.generated.total_trades += 1;
@@ -332,6 +354,14 @@ function appendTrade(state, trade) {
   state.generated.portfolio_delta_usd = round(state.generated.portfolio_delta_usd + Math.max(trade.profit_loss_usd * 0.72, 0), 2);
   if (trade.profit_loss_usd >= 0) state.generated.wins += 1;
   else state.generated.losses += 1;
+  const system = state.generated.systems[trade.system] ?? emptySystemStats();
+  system.total_trades += 1;
+  system.wins += trade.result === 'WIN' ? 1 : 0;
+  system.losses += trade.result === 'LOSS' ? 1 : 0;
+  system.profit_usd = round(system.profit_usd + trade.profit_loss_usd, 2);
+  system.notional_usd = round(system.notional_usd + trade.notional_usd, 2);
+  system.return_pct_sum = round(system.return_pct_sum + trade.profit_loss_pct, 2);
+  state.generated.systems[trade.system] = system;
   state.last_generated_iso = trade.timestamp;
 }
 
@@ -388,6 +418,7 @@ function resetGeneratedState(state) {
     wins: 0,
     losses: 0,
     portfolio_delta_usd: 0,
+    systems: Object.fromEntries(Object.keys(CONFIG.systemWinRates).map((system) => [system, emptySystemStats()])),
   };
   state.trades = [];
   state.last_generated_iso = null;
@@ -482,10 +513,39 @@ function normalizeLegacyState(state, timestampIso) {
 }
 
 function computeDashboard(state) {
+  ensureGeneratedSystemStats(state);
   const totalTrades = state.baseline.total_trades + state.generated.total_trades;
   const wins = state.baseline.wins + state.generated.wins;
   const totalProfit = state.baseline.total_profit_usd + state.generated.total_profit_usd;
   const portfolioValue = state.baseline.portfolio_value_usd + state.generated.portfolio_delta_usd;
+  const systemDefinitions = {
+    countersnipe: { generatedKey: 'CounterSnipe', baselineKey: 'countersnipe', label: 'CounterSnipe', mode: 'generated paper' },
+    'prediction-bot': { generatedKey: 'PandaXPanther Prediction Bot', baselineKey: 'prediction_bot', label: 'Prediction bot', mode: 'generated paper' },
+    'copy-trader': { generatedKey: 'copy-trader', baselineKey: 'copy_trader', label: 'copy-trader', mode: 'generated paper mirror' },
+  };
+  const systems = Object.fromEntries(Object.entries(systemDefinitions).map(([slug, definition]) => {
+    const baseline = state.baseline.systems[definition.baselineKey];
+    const generated = state.generated.systems[definition.generatedKey] ?? emptySystemStats();
+    const combinedRecords = baseline.total_trades + generated.total_trades;
+    const baselineWins = Math.round((baseline.win_rate_pct / 100) * baseline.total_trades);
+    const combinedWins = baselineWins + generated.wins;
+    const generatedWinRate = generated.total_trades ? round((generated.wins / generated.total_trades) * 100, 1) : 0;
+    const averageGeneratedReturn = generated.total_trades ? round(generated.return_pct_sum / generated.total_trades, 2) : 0;
+    return [slug, {
+      baseline,
+      generated,
+      cards: [
+        { k: 'Real / research baseline', v: `${baseline.total_trades}`, foot: `${definition.label} observations recorded before generated telemetry` },
+        { k: 'Baseline P&L', v: `${baseline.profit_usd >= 0 ? '+' : '-'}$${Math.abs(baseline.profit_usd).toFixed(2)}`, foot: 'Verified baseline · never blended into simulated attribution' },
+        { k: 'Generated paper fills', v: `${generated.total_trades}`, foot: `${definition.mode} · appended by the shared trade log` },
+        { k: 'Generated paper P&L', v: `${generated.profit_usd >= 0 ? '+' : '-'}$${Math.abs(generated.profit_usd).toFixed(2)}`, foot: `${generatedWinRate.toFixed(1)}% generated win rate` },
+        { k: 'Average generated return', v: `${averageGeneratedReturn >= 0 ? '+' : ''}${averageGeneratedReturn.toFixed(2)}%`, foot: `$${generated.notional_usd.toLocaleString('en-US', { minimumFractionDigits: 2 })} cumulative paper notional` },
+        slug === 'copy-trader'
+          ? { k: 'Research + paper records', v: `${combinedRecords}`, foot: `${baseline.total_trades} ranked wallets · ${generated.total_trades} generated paper fills` }
+          : { k: 'Combined outcomes', v: `${combinedRecords}`, foot: `${round((combinedWins / combinedRecords) * 100, 1).toFixed(1)}% baseline + generated outcome rate` },
+      ],
+    }];
+  }));
   return {
     generated_at: new Date().toISOString(),
     baseline: state.baseline,
@@ -502,7 +562,7 @@ function computeDashboard(state) {
       {
         k: 'Portfolio value',
         v: `$${round(portfolioValue, 2).toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
-        foot: 'CounterSnipe capital plus generated realized drift',
+        foot: 'Verified baseline portfolio plus generated paper drift',
       },
       {
         k: 'Total profit',
@@ -530,6 +590,7 @@ function computeDashboard(state) {
         foot: state.trades[0]?.instrument ?? 'Cron has not generated yet',
       },
     ],
+    systems,
     trades: state.trades.slice(0, CONFIG.maxPublicTrades),
     config: {
       cadence: 'daily-paced',

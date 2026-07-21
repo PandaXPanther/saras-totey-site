@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import Reveal from '../components/Reveal.jsx';
 import Aurora from '../components/Aurora.jsx';
 import { LIVE } from '../data/content.js';
-import STATIC_DASHBOARD from '../data/trading-live.json';
 
 const FALLBACK_SIGNALS = {
   generated_at: LIVE.last_updated_iso,
@@ -40,34 +39,18 @@ function formatStamp(iso) {
   });
 }
 
-export default function Live() {
-  const [dashboard, setDashboard] = useState(STATIC_DASHBOARD ?? FALLBACK_DASHBOARD);
+export default function Live({ dashboard = FALLBACK_DASHBOARD, tradeStatus = 'baseline' }) {
   const [signals, setSignals] = useState(FALLBACK_SIGNALS);
-  const [status, setStatus] = useState({ trades: 'baseline', signals: 'baseline' });
+  const [status, setStatus] = useState({ signals: 'baseline' });
   const newestStamp = [dashboard.generated_at, signals.generated_at, LIVE.last_updated_iso]
     .map((iso) => new Date(iso).getTime())
     .filter((time) => Number.isFinite(time))
     .sort((a, b) => b - a)[0];
   const stamp = formatStamp(new Date(newestStamp).toISOString());
-  const hasLiveData = status.trades === 'live' || status.signals === 'live';
+  const hasLiveData = tradeStatus === 'live' || status.signals === 'live';
 
   useEffect(() => {
     let cancelled = false;
-
-    fetch(`/generated/trading-live.json?ts=${Date.now()}`, { cache: 'no-store' })
-      .then((res) => {
-        if (!res.ok) throw new Error(`trade feed ${res.status}`);
-        return res.json();
-      })
-      .then((data) => {
-        if (!cancelled) {
-          setDashboard(data);
-          setStatus((current) => ({ ...current, trades: 'live' }));
-        }
-      })
-      .catch(() => {
-        if (!cancelled) setStatus((current) => ({ ...current, trades: 'baseline' }));
-      });
 
     fetch(`/generated/live-signals.json?ts=${Date.now()}`, { cache: 'no-store' })
       .then((res) => {

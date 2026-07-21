@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { IDENTITY, SYSTEMS } from '../data/content.js';
+import STATIC_DASHBOARD from '../data/trading-live.json';
 import System from '../sections/System.jsx';
 import Backtest from '../sections/Backtest.jsx';
 import Live from '../sections/Live.jsx';
@@ -35,7 +36,29 @@ function SiteFooter() {
 function BackToWorld({ visible }) { return visible ? <a className="take-back" href="/" data-restore-world="true">← Take me back</a> : null; }
 
 function QuantPage({ canReturnToWorld }) {
-  return <main className="project-page project-page--quant"><BackToWorld visible={canReturnToWorld} /><Hero /><Thesis />{SYSTEMS.map((system, index) => <System key={system.slug} system={system} flipped={index % 2 === 1} />)}<Backtest /><Live /><Roadmap /><Footer /></main>;
+  const [dashboard, setDashboard] = useState(STATIC_DASHBOARD);
+  const [tradeStatus, setTradeStatus] = useState('baseline');
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`/generated/trading-live.json?ts=${Date.now()}`, { cache: 'no-store' })
+      .then((response) => {
+        if (!response.ok) throw new Error(`trade feed ${response.status}`);
+        return response.json();
+      })
+      .then((data) => {
+        if (!cancelled) {
+          setDashboard(data);
+          setTradeStatus('live');
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setTradeStatus('baseline');
+      });
+    return () => { cancelled = true; };
+  }, []);
+
+  return <main className="project-page project-page--quant"><BackToWorld visible={canReturnToWorld} /><Hero /><Thesis />{SYSTEMS.map((system, index) => <System key={system.slug} system={system} dashboard={dashboard} flipped={index % 2 === 1} />)}<Backtest /><Live dashboard={dashboard} tradeStatus={tradeStatus} /><Roadmap /><Footer /></main>;
 }
 
 function Recognition() {

@@ -6,6 +6,7 @@ The site now has an hourly generated paper-trade feed. It is intentionally stati
 - `/opt/sarastotey-trading/state.json` stores durable state and survives VPS restarts.
 - `public/generated/trading-live.json` is the frontend-facing JSON copied into `dist/`.
 - `src/data/trading-live.json` is the build-time copy used for prerendered receipts before the browser fetch completes.
+- `systems.*` in both generated JSON files contains per-system cards derived from the same durable baseline and generated trade counters as the aggregate totals.
 - A VPS cron job runs the generator hourly, commits both JSON files, and pushes to `main`.
 
 ## Architecture
@@ -91,3 +92,5 @@ Edit `CONFIG` in `scripts/generate_trades.mjs`:
 Edit `TEMPLATES` in the same file to add instruments, price ranges, sides, quantities, or strategy labels.
 
 The infrastructure wrapper lives at `/opt/sarastotey-trading/generate-trades.js`; it changes into `/root/projects/saras-totey-site` and runs this repo script with `SARAS_TRADE_STATE_PATH=/opt/sarastotey-trading/state.json`.
+
+The UI fetches this feed once in `QuantPage` and passes the same dashboard object to both the aggregate live section and every system card. Baseline receipts and generated paper telemetry remain separate fields and labels; generated drift is never presented as verified live performance.

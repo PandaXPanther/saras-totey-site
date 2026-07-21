@@ -15,9 +15,10 @@ const STATUS_TAG = {
   'copy-trader': { tone: 'research', label: 'research only · read-only' },
 };
 
-export default function System({ system }) {
+export default function System({ system, dashboard }) {
   const accent = ACCENTS[system.slug] || '#9db5ff';
   const status = STATUS_TAG[system.slug];
+  const kpis = dashboard?.systems?.[system.slug]?.cards ?? system.kpis;
 
   return (
     <section id={system.slug} style={{ position: 'relative', overflow: 'hidden' }}>
@@ -62,7 +63,7 @@ export default function System({ system }) {
         {/* KPIs grid */}
         <Reveal i={2}>
           <div className="grid grid-3 mt-4">
-            {system.kpis.map((k, i) => (
+            {kpis.map((k, i) => (
               <div key={i} className="kpi">
                 <div className="kpi-k">{k.k}</div>
                 <div className="kpi-v num">{k.v}</div>
