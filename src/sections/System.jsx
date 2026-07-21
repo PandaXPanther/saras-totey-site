@@ -15,10 +15,60 @@ const STATUS_TAG = {
   'copy-trader': { tone: 'research', label: 'research only · read-only' },
 };
 
-export default function System({ system, dashboard }) {
+function money(value, signed = false) {
+  const amount = Number(value);
+  if (!Number.isFinite(amount)) return null;
+  const sign = signed && amount >= 0 ? '+' : '';
+  return `${sign}$${Math.abs(amount).toLocaleString('en-US', { minimumFractionDigits: amount % 1 ? 2 : 0, maximumFractionDigits: 2 })}`;
+}
+
+function originalKpis(system, dashboard, liveSignals) {
+  const baseline = dashboard?.systems?.[system.slug]?.baseline;
+  const cards = system.kpis.map((card) => ({ ...card }));
+  if (!baseline) return cards;
+
+  if (system.slug === 'countersnipe') {
+    const attempts = Number(baseline.total_trades);
+    const failureRate = 100 - Number(baseline.win_rate_pct);
+    const refunds = Number.isFinite(attempts) && Number.isFinite(failureRate)
+      ? Math.round(attempts * failureRate / 100)
+      : null;
+    const commitCard = liveSignals?.find((card) => card.k === 'CounterSnipe commits');
+
+    cards[0].v = money(baseline.portfolio_value_usd) ?? cards[0].v;
+    if (Number.isFinite(attempts) && refunds !== null) cards[0].foot = `${attempts - refunds} real buys across 6 trading days`;
+    // Average and median return remain receipt-backed real-trade metrics. Generated
+    // paper returns are intentionally reported only in the aggregate live section.
+    cards[2].v = money(baseline.profit_usd, true) ?? cards[2].v;
+    if (Number.isFinite(failureRate)) cards[3].v = `${failureRate.toFixed(1)}%`;
+    if (refunds !== null && Number.isFinite(attempts)) cards[3].foot = `${refunds} out of ${attempts} attempts refunded`;
+    if (commitCard?.v) cards[4].v = commitCard.v;
+  }
+
+  if (system.slug === 'prediction-bot') {
+    const trades = Number(baseline.total_trades);
+    if (Number.isFinite(Number(baseline.win_rate_pct))) cards[0].v = `${Number(baseline.win_rate_pct).toFixed(1)}%`;
+    cards[1].v = money(baseline.profit_usd, true) ?? cards[1].v;
+    if (Number.isFinite(trades)) cards[1].foot = `Over ${trades} settled paper trades`;
+  }
+
+  if (system.slug === 'copy-trader') {
+    const wallets = Number(baseline.total_trades);
+    if (Number.isFinite(wallets)) {
+      cards[0].v = String(wallets);
+      const positive = Math.round(wallets * Number(baseline.win_rate_pct) / 100);
+      if (Number.isFinite(positive)) cards[3].v = `${positive}/${wallets}`;
+    }
+    cards[5].v = money(baseline.portfolio_value_usd) ?? cards[5].v;
+  }
+
+  return cards;
+}
+
+export default function System({ system, dashboard, liveSignals }) {
   const accent = ACCENTS[system.slug] || '#9db5ff';
   const status = STATUS_TAG[system.slug];
-  const kpis = dashboard?.systems?.[system.slug]?.cards ?? system.kpis;
+  const kpis = originalKpis(system, dashboard, liveSignals);
 
   return (
     <section id={system.slug} style={{ position: 'relative', overflow: 'hidden' }}>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { IDENTITY, SYSTEMS } from '../data/content.js';
+import { IDENTITY, LIVE, SYSTEMS } from '../data/content.js';
 import STATIC_DASHBOARD from '../data/trading-live.json';
 import System from '../sections/System.jsx';
 import Backtest from '../sections/Backtest.jsx';
@@ -37,6 +37,7 @@ function BackToWorld({ visible }) { return visible ? <a className="take-back" hr
 
 function QuantPage({ canReturnToWorld }) {
   const [dashboard, setDashboard] = useState(STATIC_DASHBOARD);
+  const [liveSignals, setLiveSignals] = useState(LIVE.cards);
   const [tradeStatus, setTradeStatus] = useState('baseline');
 
   useEffect(() => {
@@ -55,10 +56,19 @@ function QuantPage({ canReturnToWorld }) {
       .catch(() => {
         if (!cancelled) setTradeStatus('baseline');
       });
+    fetch(`/generated/live-signals.json?ts=${Date.now()}`, { cache: 'no-store' })
+      .then((response) => {
+        if (!response.ok) throw new Error(`live signals ${response.status}`);
+        return response.json();
+      })
+      .then((data) => {
+        if (!cancelled && Array.isArray(data.cards)) setLiveSignals(data.cards);
+      })
+      .catch(() => {});
     return () => { cancelled = true; };
   }, []);
 
-  return <main className="project-page project-page--quant"><BackToWorld visible={canReturnToWorld} /><Hero /><Thesis />{SYSTEMS.map((system, index) => <System key={system.slug} system={system} dashboard={dashboard} flipped={index % 2 === 1} />)}<Backtest /><Live dashboard={dashboard} tradeStatus={tradeStatus} /><Roadmap /><Footer /></main>;
+  return <main className="project-page project-page--quant"><BackToWorld visible={canReturnToWorld} /><Hero /><Thesis />{SYSTEMS.map((system, index) => <System key={system.slug} system={system} dashboard={dashboard} liveSignals={liveSignals} flipped={index % 2 === 1} />)}<Backtest /><Live dashboard={dashboard} tradeStatus={tradeStatus} /><Roadmap /><Footer /></main>;
 }
 
 function Recognition() {
