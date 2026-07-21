@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-21T08:07:02.912Z",
+  "generated_at": "2026-07-21T09:07:03.105Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,33 +31,33 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 1738.13,
-    "total_profit_usd": 331.46,
-    "generated_profit_usd": 106.82,
-    "total_trades": 125,
-    "generated_trades": 40,
-    "win_rate_pct": 79.2,
-    "last_trade_iso": "2026-07-20T19:02:00.000Z"
+    "portfolio_value_usd": 1744.6,
+    "total_profit_usd": 340.44,
+    "generated_profit_usd": 115.8,
+    "total_trades": 126,
+    "generated_trades": 41,
+    "win_rate_pct": 79.4,
+    "last_trade_iso": "2026-07-21T08:15:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$1,738.13",
+      "v": "$1,744.60",
       "foot": "Verified baseline portfolio plus generated paper drift"
     },
     {
       "k": "Total profit",
-      "v": "+$331.46",
-      "foot": "+$106.82 generated after baseline"
+      "v": "+$340.44",
+      "foot": "+$115.80 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "125",
-      "foot": "40 generated daily-paced trades"
+      "v": "126",
+      "foot": "41 generated daily-paced trades"
     },
     {
       "k": "Win rate",
-      "v": "79.2%",
+      "v": "79.4%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -67,8 +67,8 @@
     },
     {
       "k": "Latest strategy",
-      "v": "Polymarket sum-to-one arbitrage",
-      "foot": "Polymarket crypto year-end bundle"
+      "v": "Composite-score wallet mirror",
+      "foot": "BTC-PERP"
     }
   ],
   "systems": {
@@ -176,12 +176,12 @@
         "win_rate_pct": 100
       },
       "generated": {
-        "total_trades": 20,
-        "wins": 16,
+        "total_trades": 21,
+        "wins": 17,
         "losses": 4,
-        "profit_usd": 103.84,
-        "notional_usd": 24981.38,
-        "return_pct_sum": 8.56
+        "profit_usd": 112.82,
+        "notional_usd": 26429.52,
+        "return_pct_sum": 9.18
       },
       "cards": [
         {
@@ -196,28 +196,45 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "20",
+          "v": "21",
           "foot": "generated paper mirror · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "+$103.84",
-          "foot": "80.0% generated win rate"
+          "v": "+$112.82",
+          "foot": "81.0% generated win rate"
         },
         {
           "k": "Average generated return",
-          "v": "+0.43%",
-          "foot": "$24,981.38 cumulative paper notional"
+          "v": "+0.44%",
+          "foot": "$26,429.52 cumulative paper notional"
         },
         {
           "k": "Research + paper records",
-          "v": "40",
-          "foot": "20 ranked wallets · 20 generated paper fills"
+          "v": "41",
+          "foot": "20 ranked wallets · 21 generated paper fills"
         }
       ]
     }
   },
   "trades": [
+    {
+      "id": "2026072108-1",
+      "timestamp": "2026-07-21T08:15:00.000Z",
+      "system": "copy-trader",
+      "asset_type": "Hyperliquid perpetual",
+      "instrument": "BTC-PERP",
+      "side": "BUY",
+      "entry_price": 61973.42,
+      "exit_price": 62357.8,
+      "quantity": 0.02337,
+      "notional_usd": 1448.14,
+      "profit_loss_usd": 8.98,
+      "profit_loss_pct": 0.62,
+      "strategy": "Composite-score wallet mirror",
+      "result": "WIN",
+      "holding_period_hours": "1.30"
+    },
     {
       "id": "2026072019-5",
       "timestamp": "2026-07-20T19:02:00.000Z",
