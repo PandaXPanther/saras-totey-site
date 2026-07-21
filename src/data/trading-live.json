@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-21T15:07:03.863Z",
+  "generated_at": "2026-07-21T16:07:03.521Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,33 +31,33 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 1744.6,
-    "total_profit_usd": 340.44,
-    "generated_profit_usd": 115.8,
-    "total_trades": 126,
-    "generated_trades": 41,
-    "win_rate_pct": 79.4,
-    "last_trade_iso": "2026-07-21T08:15:00.000Z"
+    "portfolio_value_usd": 1745.08,
+    "total_profit_usd": 341.11,
+    "generated_profit_usd": 116.47,
+    "total_trades": 127,
+    "generated_trades": 42,
+    "win_rate_pct": 79.5,
+    "last_trade_iso": "2026-07-21T15:51:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$1,744.60",
+      "v": "$1,745.08",
       "foot": "Verified baseline portfolio plus generated paper drift"
     },
     {
       "k": "Total profit",
-      "v": "+$340.44",
-      "foot": "+$115.80 generated after baseline"
+      "v": "+$341.11",
+      "foot": "+$116.47 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "126",
-      "foot": "41 generated daily-paced trades"
+      "v": "127",
+      "foot": "42 generated daily-paced trades"
     },
     {
       "k": "Win rate",
-      "v": "79.4%",
+      "v": "79.5%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -67,8 +67,8 @@
     },
     {
       "k": "Latest strategy",
-      "v": "Composite-score wallet mirror",
-      "foot": "BTC-PERP"
+      "v": "Sticker-adjusted CS2 skin arbitrage",
+      "foot": "AK-47 | Redline FT"
     }
   ],
   "systems": {
@@ -80,12 +80,12 @@
         "win_rate_pct": 87.5
       },
       "generated": {
-        "total_trades": 9,
-        "wins": 6,
+        "total_trades": 10,
+        "wins": 7,
         "losses": 3,
-        "profit_usd": 6.23,
-        "notional_usd": 962.05,
-        "return_pct_sum": 4.84
+        "profit_usd": 6.9,
+        "notional_usd": 992.2,
+        "return_pct_sum": 7.05
       },
       "cards": [
         {
@@ -100,23 +100,23 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "9",
+          "v": "10",
           "foot": "generated paper · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "+$6.23",
-          "foot": "66.7% generated win rate"
+          "v": "+$6.90",
+          "foot": "70.0% generated win rate"
         },
         {
           "k": "Average generated return",
-          "v": "+0.54%",
-          "foot": "$962.05 cumulative paper notional"
+          "v": "+0.70%",
+          "foot": "$992.20 cumulative paper notional"
         },
         {
           "k": "Combined outcomes",
-          "v": "57",
-          "foot": "84.2% baseline + generated outcome rate"
+          "v": "58",
+          "foot": "84.5% baseline + generated outcome rate"
         }
       ]
     },
@@ -218,6 +218,23 @@
     }
   },
   "trades": [
+    {
+      "id": "2026072115-2",
+      "timestamp": "2026-07-21T15:51:00.000Z",
+      "system": "CounterSnipe",
+      "asset_type": "CS2 skin",
+      "instrument": "AK-47 | Redline FT",
+      "side": "BUY",
+      "entry_price": 30.15,
+      "exit_price": 30.82,
+      "quantity": 1,
+      "notional_usd": 30.15,
+      "profit_loss_usd": 0.67,
+      "profit_loss_pct": 2.21,
+      "strategy": "Sticker-adjusted CS2 skin arbitrage",
+      "result": "WIN",
+      "holding_period_hours": 198
+    },
     {
       "id": "2026072108-1",
       "timestamp": "2026-07-21T08:15:00.000Z",
