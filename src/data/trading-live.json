@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-26T11:07:02.800Z",
+  "generated_at": "2026-07-26T12:07:03.314Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -32,12 +32,12 @@
   },
   "totals": {
     "portfolio_value_usd": 1777.97,
-    "total_profit_usd": 386.42,
-    "generated_profit_usd": 161.78,
-    "total_trades": 144,
-    "generated_trades": 59,
-    "win_rate_pct": 80.6,
-    "last_trade_iso": "2026-07-26T07:49:00.000Z"
+    "total_profit_usd": 386.3,
+    "generated_profit_usd": 161.66,
+    "total_trades": 145,
+    "generated_trades": 60,
+    "win_rate_pct": 80,
+    "last_trade_iso": "2026-07-26T11:19:00.000Z"
   },
   "cards": [
     {
@@ -47,17 +47,17 @@
     },
     {
       "k": "Total profit",
-      "v": "+$386.42",
-      "foot": "+$161.78 generated after baseline"
+      "v": "+$386.30",
+      "foot": "+$161.66 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "144",
-      "foot": "59 generated daily-paced trades"
+      "v": "145",
+      "foot": "60 generated daily-paced trades"
     },
     {
       "k": "Win rate",
-      "v": "80.6%",
+      "v": "80%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -67,8 +67,8 @@
     },
     {
       "k": "Latest strategy",
-      "v": "Sticker-adjusted CS2 skin arbitrage",
-      "foot": "AK-47 | Redline FT"
+      "v": "Crypto latency",
+      "foot": "SOL above daily range"
     }
   ],
   "systems": {
@@ -128,12 +128,12 @@
         "win_rate_pct": 52.9
       },
       "generated": {
-        "total_trades": 11,
+        "total_trades": 12,
         "wins": 6,
-        "losses": 5,
-        "profit_usd": -3.25,
-        "notional_usd": 727.6,
-        "return_pct_sum": -1.53
+        "losses": 6,
+        "profit_usd": -3.37,
+        "notional_usd": 744.69,
+        "return_pct_sum": -2.24
       },
       "cards": [
         {
@@ -148,23 +148,23 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "11",
+          "v": "12",
           "foot": "generated paper · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "-$3.25",
-          "foot": "54.5% generated win rate"
+          "v": "-$3.37",
+          "foot": "50.0% generated win rate"
         },
         {
           "k": "Average generated return",
-          "v": "-0.14%",
-          "foot": "$727.60 cumulative paper notional"
+          "v": "-0.19%",
+          "foot": "$744.69 cumulative paper notional"
         },
         {
           "k": "Combined outcomes",
-          "v": "28",
-          "foot": "53.6% baseline + generated outcome rate"
+          "v": "29",
+          "foot": "51.7% baseline + generated outcome rate"
         }
       ]
     },
@@ -218,6 +218,23 @@
     }
   },
   "trades": [
+    {
+      "id": "2026072611-3",
+      "timestamp": "2026-07-26T11:19:00.000Z",
+      "system": "PandaXPanther Prediction Bot",
+      "asset_type": "crypto prediction contract",
+      "instrument": "SOL above daily range",
+      "side": "BUY",
+      "entry_price": 0.462,
+      "exit_price": 0.459,
+      "quantity": 37,
+      "notional_usd": 17.09,
+      "profit_loss_usd": -0.12,
+      "profit_loss_pct": -0.71,
+      "strategy": "Crypto latency",
+      "result": "LOSS",
+      "holding_period_hours": "1.76"
+    },
     {
       "id": "2026072607-2",
       "timestamp": "2026-07-26T07:49:00.000Z",
