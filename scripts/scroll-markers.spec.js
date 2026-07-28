@@ -155,6 +155,46 @@ test('in-app world spacer tracks a viewport height change after scrolling starts
   await context.close();
 });
 
+test('light WebView scroll keeps copy and chapter rail stable while deliberate scroll remains proportional', async ({ browser }) => {
+  const context = await browser.newContext({
+    viewport: { width: 375, height: 700 },
+    hasTouch: true,
+    isMobile: true,
+    userAgent: 'Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Instagram 390.0.0.0 Mobile Safari/537.36',
+  });
+  const page = await context.newPage();
+  await page.goto(baseUrl);
+
+  const readUi = () => page.evaluate(() => {
+    const card = document.querySelector('.world-copy.is-active')?.getBoundingClientRect();
+    const route = document.querySelector('.world-route')?.getBoundingClientRect();
+    return {
+      marker: document.querySelector('.scroll-world')?.getAttribute('data-marker'),
+      scrollY,
+      cardTop: card?.top,
+      routeTop: route?.top,
+    };
+  });
+  const initial = await readUi();
+
+  await page.evaluate(() => scrollTo(0, 30));
+  await page.setViewportSize({ width: 375, height: 812 });
+  await expect.poll(async () => (await readUi()).scrollY).toBe(30);
+  await expect.poll(async () => Math.abs((await readUi()).cardTop - initial.cardTop)).toBeLessThan(15);
+  await expect.poll(async () => Math.abs((await readUi()).routeTop - initial.routeTop)).toBeLessThan(8);
+  const afterLightScroll = await readUi();
+  expect(afterLightScroll.marker).toBe('0');
+
+  await page.evaluate(() => scrollTo(0, 1_500));
+  await expect(page.locator('.scroll-world')).toHaveAttribute('data-marker', '1');
+  const afterDeliberateScroll = await readUi();
+  expect(afterDeliberateScroll.scrollY).toBe(1_500);
+  expect(afterDeliberateScroll.marker).toBe('1');
+
+  await page.screenshot({ path: '.scroll-world-work/webview-light-scroll-regression.png' });
+  await context.close();
+});
+
 test('ambient audio persists while marker navigation and route navigation run', async ({ page }) => {
   await page.goto(baseUrl);
   await page.locator('.audio-dock button').click();

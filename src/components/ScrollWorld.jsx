@@ -28,6 +28,8 @@ export default function ScrollWorld() {
   const root = useRef(null);
   const videoRef = useRef(null);
   const viewportHeightRef = useRef(0);
+  const initialViewportHeightRef = useRef(0);
+  const viewportGrowthRef = useRef(0);
   const pendingVideoProgressRef = useRef(0);
   const activeRef = useRef(0);
   const [active, setActive] = useState(0);
@@ -52,7 +54,9 @@ export default function ScrollWorld() {
       // viewport so the document cannot run out of scroll distance after chrome
       // collapses and exposes a taller visual viewport.
       const viewportHeight = Math.round(window.visualViewport?.height || window.innerHeight);
+      if (!initialViewportHeightRef.current) initialViewportHeightRef.current = viewportHeight;
       viewportHeightRef.current = viewportHeight;
+      viewportGrowthRef.current = Math.max(0, viewportHeight - initialViewportHeightRef.current);
       node.style.setProperty('--world-height', `${(total + 1) * viewportHeight}px`);
       node.style.setProperty('--world-viewport-height', `${viewportHeight}px`);
       dispatchEvent(new Event('worldviewportchange'));
@@ -162,6 +166,13 @@ export default function ScrollWorld() {
     const update = () => {
       const viewportHeight = viewportHeightRef.current || innerHeight;
       const y = clamp(scrollY - node.offsetTop, 0, node.offsetHeight - viewportHeight);
+      // Collapsing in-app browser chrome grows the visual viewport on the first
+      // light scroll. Keep bottom/center anchored UI visually stable at first,
+      // then release the compensation over a deliberate half-viewport scroll.
+      const compensationDistance = Math.max(1, initialViewportHeightRef.current * 0.5);
+      const viewportCompensation = viewportGrowthRef.current * (1 - clamp(y / compensationDistance));
+      node.style.setProperty('--world-viewport-compensation', `${viewportCompensation}px`);
+      node.style.setProperty('--world-viewport-half-compensation', `${viewportCompensation * 0.5}px`);
       let currentIndex = chain.length - 1;
       chain.forEach((segment, index) => {
         const start = starts[index] * viewportHeight;
