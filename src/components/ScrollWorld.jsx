@@ -230,7 +230,7 @@ export default function ScrollWorld() {
           {usePosterMode ? chapters.map((chapter, index) => (
             <div key={chapter.id} className={`scroll-world__scene scroll-world__poster ${active === index ? 'is-active' : ''}`}>
               <picture>
-                <source media="(max-width: 768px)" srcSet={`/world/flight/mobile-posters/${chapter.media}.webp`} />
+                <source media="(max-width: 768px)" srcSet={`/world/flight/mobile-posters/${chapter.media}.webp?v=portrait-1`} />
                 <img src={`/world/flight/${chapter.media}.webp`} alt="" decoding="async" />
               </picture>
             </div>
