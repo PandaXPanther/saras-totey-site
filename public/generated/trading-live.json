@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-28T14:07:02.908Z",
+  "generated_at": "2026-07-28T15:07:03.603Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -32,12 +32,12 @@
   },
   "totals": {
     "portfolio_value_usd": 1793.87,
-    "total_profit_usd": 407.49,
-    "generated_profit_usd": 182.85,
-    "total_trades": 152,
-    "generated_trades": 67,
-    "win_rate_pct": 80.3,
-    "last_trade_iso": "2026-07-28T09:54:00.000Z"
+    "total_profit_usd": 406.99,
+    "generated_profit_usd": 182.35,
+    "total_trades": 153,
+    "generated_trades": 68,
+    "win_rate_pct": 79.7,
+    "last_trade_iso": "2026-07-28T14:41:00.000Z"
   },
   "cards": [
     {
@@ -47,17 +47,17 @@
     },
     {
       "k": "Total profit",
-      "v": "+$407.49",
-      "foot": "+$182.85 generated after baseline"
+      "v": "+$406.99",
+      "foot": "+$182.35 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "152",
-      "foot": "67 generated daily-paced trades"
+      "v": "153",
+      "foot": "68 generated daily-paced trades"
     },
     {
       "k": "Win rate",
-      "v": "80.3%",
+      "v": "79.7%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -67,8 +67,8 @@
     },
     {
       "k": "Latest strategy",
-      "v": "Sports contract-line value NO-only",
-      "foot": "Kalshi NFL game winner NO"
+      "v": "Polymarket sum-to-one arbitrage",
+      "foot": "Polymarket crypto year-end bundle"
     }
   ],
   "systems": {
@@ -128,12 +128,12 @@
         "win_rate_pct": 52.9
       },
       "generated": {
-        "total_trades": 15,
+        "total_trades": 16,
         "wins": 8,
-        "losses": 7,
-        "profit_usd": -3.35,
-        "notional_usd": 885.18,
-        "return_pct_sum": -1.03
+        "losses": 8,
+        "profit_usd": -3.85,
+        "notional_usd": 974.2,
+        "return_pct_sum": -1.59
       },
       "cards": [
         {
@@ -148,23 +148,23 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "15",
+          "v": "16",
           "foot": "generated paper · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "-$3.35",
-          "foot": "53.3% generated win rate"
+          "v": "-$3.85",
+          "foot": "50.0% generated win rate"
         },
         {
           "k": "Average generated return",
-          "v": "-0.07%",
-          "foot": "$885.18 cumulative paper notional"
+          "v": "-0.10%",
+          "foot": "$974.20 cumulative paper notional"
         },
         {
           "k": "Combined outcomes",
-          "v": "32",
-          "foot": "53.1% baseline + generated outcome rate"
+          "v": "33",
+          "foot": "51.5% baseline + generated outcome rate"
         }
       ]
     },
@@ -218,6 +218,23 @@
     }
   },
   "trades": [
+    {
+      "id": "2026072814-3",
+      "timestamp": "2026-07-28T14:41:00.000Z",
+      "system": "PandaXPanther Prediction Bot",
+      "asset_type": "prediction contract",
+      "instrument": "Polymarket crypto year-end bundle",
+      "side": "BUY YES+NO",
+      "entry_price": 0.927,
+      "exit_price": 0.922,
+      "quantity": 96,
+      "notional_usd": 89.02,
+      "profit_loss_usd": -0.5,
+      "profit_loss_pct": -0.56,
+      "strategy": "Polymarket sum-to-one arbitrage",
+      "result": "LOSS",
+      "holding_period_hours": "1.73"
+    },
     {
       "id": "2026072809-2",
       "timestamp": "2026-07-28T09:54:00.000Z",
