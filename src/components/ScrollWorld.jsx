@@ -25,6 +25,8 @@ const useBrowserLayoutEffect = typeof window === 'undefined' ? useEffect : useLa
 export default function ScrollWorld() {
   const root = useRef(null);
   const videoRef = useRef(null);
+  const viewportHeightRef = useRef(0);
+  const viewportWidthRef = useRef(0);
   const pendingVideoProgressRef = useRef(0);
   const activeRef = useRef(0);
   const [active, setActive] = useState(0);
@@ -36,6 +38,39 @@ export default function ScrollWorld() {
     chapter: index,
     scroll: (flightDurations[index] / flightDuration) * scrollDuration,
   })), []);
+  const total = chain.reduce((sum, segment) => sum + segment.scroll, 0);
+
+  useBrowserLayoutEffect(() => {
+    const node = root.current;
+    if (!node) return undefined;
+    let orientationTimer = 0;
+    const measureViewport = () => {
+      const viewportHeight = Math.round(window.visualViewport?.height || innerHeight);
+      viewportHeightRef.current = viewportHeight;
+      viewportWidthRef.current = innerWidth;
+      node.style.setProperty('--world-height', `${(total + 1) * viewportHeight}px`);
+      node.style.setProperty('--world-viewport-height', `${viewportHeight}px`);
+      dispatchEvent(new Event('worldviewportchange'));
+    };
+    const handleResize = () => {
+      // Mobile WebViews resize only their height while collapsing browser chrome.
+      // Keeping the initial height prevents the sticky stage and scroll math from
+      // shifting under an active momentum scroll.
+      if (Math.abs(innerWidth - viewportWidthRef.current) > 1) measureViewport();
+    };
+    const handleOrientationChange = () => {
+      clearTimeout(orientationTimer);
+      orientationTimer = setTimeout(measureViewport, 180);
+    };
+    measureViewport();
+    addEventListener('resize', handleResize, { passive: true });
+    addEventListener('orientationchange', handleOrientationChange, { passive: true });
+    return () => {
+      clearTimeout(orientationTimer);
+      removeEventListener('resize', handleResize);
+      removeEventListener('orientationchange', handleOrientationChange);
+    };
+  }, [total]);
 
   useEffect(() => {
     const query = matchMedia('(prefers-reduced-motion: reduce)');
@@ -55,7 +90,8 @@ export default function ScrollWorld() {
       if (!snapshot || (!Number.isFinite(snapshot.position) && !Number.isFinite(snapshot.scrollY))) return;
       const node = root.current;
       if (!node) return;
-      const max = Math.max(1, node.offsetHeight - innerHeight);
+      const viewportHeight = viewportHeightRef.current || innerHeight;
+      const max = Math.max(1, node.offsetHeight - viewportHeight);
       const scrollTarget = Number.isFinite(snapshot.position) ? node.offsetTop + clamp(snapshot.position) * max : snapshot.scrollY;
       window.scrollTo(0, scrollTarget);
       const video = videoRef.current;
@@ -72,7 +108,8 @@ export default function ScrollWorld() {
   const rememberPosition = () => {
     const node = root.current;
     if (!node) return;
-    const max = Math.max(1, node.offsetHeight - innerHeight);
+    const viewportHeight = viewportHeightRef.current || innerHeight;
+    const max = Math.max(1, node.offsetHeight - viewportHeight);
     const position = clamp((scrollY - node.offsetTop) / max);
     const snapshot = { scrollY, videoTime: videoRef.current?.currentTime ?? position * flightDuration, position };
     sessionStorage.setItem('saras-world-snapshot', JSON.stringify(snapshot));
@@ -82,7 +119,8 @@ export default function ScrollWorld() {
 
   const jumpTo = (chapterIndex) => {
     const before = chain.slice(0, chapterIndex).reduce((sum, segment) => sum + segment.scroll, 0);
-    window.scrollTo({ top: root.current.offsetTop + before * innerHeight + 2, behavior: reduceMotion ? 'auto' : 'smooth' });
+    const viewportHeight = viewportHeightRef.current || innerHeight;
+    window.scrollTo({ top: root.current.offsetTop + before * viewportHeight + 2, behavior: reduceMotion ? 'auto' : 'smooth' });
   };
 
   useEffect(() => {
@@ -116,15 +154,16 @@ export default function ScrollWorld() {
       }).catch(() => { /* A first touch retries when mobile autoplay is unavailable. */ });
     };
     const update = () => {
-      const y = clamp(scrollY - node.offsetTop, 0, node.offsetHeight - innerHeight);
+      const viewportHeight = viewportHeightRef.current || innerHeight;
+      const y = clamp(scrollY - node.offsetTop, 0, node.offsetHeight - viewportHeight);
       let currentIndex = chain.length - 1;
       chain.forEach((segment, index) => {
-        const start = starts[index] * innerHeight;
-        const end = (starts[index] + segment.scroll) * innerHeight;
+        const start = starts[index] * viewportHeight;
+        const end = (starts[index] + segment.scroll) * viewportHeight;
         if (y >= start && y <= end) currentIndex = index;
       });
-      const local = clamp((y - starts[currentIndex] * innerHeight) / (chain[currentIndex].scroll * innerHeight));
-      pendingVideoProgressRef.current = clamp(y / Math.max(1, node.offsetHeight - innerHeight));
+      const local = clamp((y - starts[currentIndex] * viewportHeight) / (chain[currentIndex].scroll * viewportHeight));
+      pendingVideoProgressRef.current = clamp(y / Math.max(1, node.offsetHeight - viewportHeight));
       queueVideoSync();
       const inBoundaryMask = currentIndex < chain.length - 1 && local > 1 - TEXT_MASK_FRACTION;
       const nextVisible = inBoundaryMask ? null : currentIndex;
@@ -146,18 +185,17 @@ export default function ScrollWorld() {
     addEventListener('scrollend', requestUpdate, { passive: true });
     addEventListener('scroll', dismissHint, { passive: true, once: true });
     addEventListener('pagehide', rememberPosition);
-    addEventListener('resize', requestUpdate, { passive: true });
+    addEventListener('worldviewportchange', requestUpdate);
     const mediaReady = () => { primeVideoDecoder(); requestUpdate(); queueVideoSync(); };
     video?.addEventListener('loadedmetadata', mediaReady);
     video?.addEventListener('loadeddata', mediaReady);
     video?.addEventListener('canplay', mediaReady);
     video?.addEventListener('seeked', mediaReady);
-    return () => { cancelAnimationFrame(seekFrame); clearTimeout(settleTimer); rememberPosition(); removeEventListener('scroll', requestUpdate); removeEventListener('touchmove', requestUpdate); removeEventListener('touchstart', primeVideoDecoder); removeEventListener('scrollend', requestUpdate); removeEventListener('scroll', dismissHint); removeEventListener('pagehide', rememberPosition); removeEventListener('resize', requestUpdate); video?.removeEventListener('loadedmetadata', mediaReady); video?.removeEventListener('loadeddata', mediaReady); video?.removeEventListener('canplay', mediaReady); video?.removeEventListener('seeked', mediaReady); };
+    return () => { cancelAnimationFrame(seekFrame); clearTimeout(settleTimer); rememberPosition(); removeEventListener('scroll', requestUpdate); removeEventListener('touchmove', requestUpdate); removeEventListener('touchstart', primeVideoDecoder); removeEventListener('scrollend', requestUpdate); removeEventListener('scroll', dismissHint); removeEventListener('pagehide', rememberPosition); removeEventListener('worldviewportchange', requestUpdate); video?.removeEventListener('loadedmetadata', mediaReady); video?.removeEventListener('loadeddata', mediaReady); video?.removeEventListener('canplay', mediaReady); video?.removeEventListener('seeked', mediaReady); };
   }, [chain]);
 
-  const total = chain.reduce((sum, segment) => sum + segment.scroll, 0);
   return (
-    <main ref={root} className="scroll-world" data-marker={active} data-scroll-mode="free" style={{ '--world-height': `${total * 100 + 100}vh` }}>
+    <main ref={root} className="scroll-world" data-marker={active} data-scroll-mode="free" style={{ '--world-height': `${total * 100 + 100}svh` }}>
       <div className="scroll-world__sticky">
         <div className="scroll-world__stage" aria-hidden="true">
           <div className="scroll-world__scene"><img src={reduceMotion ? `/world/flight/${chapters[active].media}.webp` : '/world/flight/intro-4k.webp'} alt="" />{!reduceMotion && <video ref={videoRef} muted playsInline autoPlay preload="auto" disablePictureInPicture><source src="/world/flight/continuous-flight-mobile.mp4" media="(max-width: 768px)" type="video/mp4" /><source src="/world/flight/continuous-flight.mp4" type="video/mp4" /></video>}</div>
