@@ -21,29 +21,19 @@ const flightDuration = flightDurations.reduce((sum, duration) => sum + duration,
 const scrollDuration = 9.4;
 const TEXT_MASK_FRACTION = 0.035;
 const useBrowserLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect;
-const isConstrainedBrowser = () => {
-  if (typeof navigator === 'undefined') return false;
-  const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-  const isSlowConnection = connection?.saveData
-    || /(^|-)2g$/.test(connection?.effectiveType || '')
-    || (Number.isFinite(connection?.downlink) && connection.downlink < 1.5);
-  const isInAppBrowser = /Discord|Instagram|FBAN|FBAV|;\s*wv\)|\bwv\b|WebView/i.test(navigator.userAgent);
-  const isMobileLayout = matchMedia('(max-width: 768px), (pointer: coarse)').matches;
-  return Boolean(isSlowConnection || isInAppBrowser || isMobileLayout);
-};
+const isInAppWebView = () => typeof navigator !== 'undefined'
+  && /Instagram|FBAN|FBAV|Discord|;\s*wv\)|\bwv\b|WebView/i.test(navigator.userAgent);
 
 export default function ScrollWorld() {
   const root = useRef(null);
   const videoRef = useRef(null);
   const viewportHeightRef = useRef(0);
-  const viewportWidthRef = useRef(0);
   const pendingVideoProgressRef = useRef(0);
   const activeRef = useRef(0);
   const [active, setActive] = useState(0);
   const [visibleChapter, setVisibleChapter] = useState(0);
   const [hasScrolled, setHasScrolled] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
-  const [videoEnabled, setVideoEnabled] = useState(false);
   const chain = useMemo(() => chapters.map((chapter, index) => ({
     id: chapter.media,
     chapter: index,
@@ -53,32 +43,26 @@ export default function ScrollWorld() {
 
   useBrowserLayoutEffect(() => {
     const node = root.current;
-    if (!node) return undefined;
+    if (!node || !isInAppWebView()) return undefined;
     let orientationTimer = 0;
-    const measureViewport = () => {
-      const viewportHeight = Math.round(window.visualViewport?.height || innerHeight);
+    const measure = () => {
+      // Instagram, Facebook, and Discord WebViews resize the layout viewport as
+      // their own chrome moves. Locking one layout height keeps sticky geometry
+      // and scroll-to-video progress on the same coordinate system.
+      const viewportHeight = Math.round(window.innerHeight);
       viewportHeightRef.current = viewportHeight;
-      viewportWidthRef.current = innerWidth;
       node.style.setProperty('--world-height', `${(total + 1) * viewportHeight}px`);
       node.style.setProperty('--world-viewport-height', `${viewportHeight}px`);
       dispatchEvent(new Event('worldviewportchange'));
     };
-    const handleResize = () => {
-      // Mobile WebViews resize only their height while collapsing browser chrome.
-      // Keeping the initial height prevents the sticky stage and scroll math from
-      // shifting under an active momentum scroll.
-      if (Math.abs(innerWidth - viewportWidthRef.current) > 1) measureViewport();
-    };
     const handleOrientationChange = () => {
       clearTimeout(orientationTimer);
-      orientationTimer = setTimeout(measureViewport, 180);
+      orientationTimer = setTimeout(measure, 250);
     };
-    measureViewport();
-    addEventListener('resize', handleResize, { passive: true });
+    measure();
     addEventListener('orientationchange', handleOrientationChange, { passive: true });
     return () => {
       clearTimeout(orientationTimer);
-      removeEventListener('resize', handleResize);
       removeEventListener('orientationchange', handleOrientationChange);
     };
   }, [total]);
@@ -90,23 +74,6 @@ export default function ScrollWorld() {
     query.addEventListener('change', sync);
     return () => query.removeEventListener('change', sync);
   }, []);
-
-  useEffect(() => {
-    const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-    const sync = () => setVideoEnabled(!isConstrainedBrowser());
-    sync();
-    if (!connection?.addEventListener) return undefined;
-    connection.addEventListener('change', sync);
-    return () => connection.removeEventListener('change', sync);
-  }, []);
-
-  useEffect(() => {
-    if (videoEnabled && !reduceMotion) return;
-    const nextChapter = chapters[Math.min(active + 1, chapters.length - 1)];
-    const preload = new Image();
-    preload.decoding = 'async';
-    preload.src = `/world/flight/${nextChapter.media}.webp`;
-  }, [active, videoEnabled, reduceMotion]);
 
   useBrowserLayoutEffect(() => {
     history.scrollRestoration = 'manual';
@@ -213,36 +180,21 @@ export default function ScrollWorld() {
     addEventListener('scrollend', requestUpdate, { passive: true });
     addEventListener('scroll', dismissHint, { passive: true, once: true });
     addEventListener('pagehide', rememberPosition);
+    addEventListener('resize', requestUpdate, { passive: true });
     addEventListener('worldviewportchange', requestUpdate);
     const mediaReady = () => { primeVideoDecoder(); requestUpdate(); queueVideoSync(); };
     video?.addEventListener('loadedmetadata', mediaReady);
     video?.addEventListener('loadeddata', mediaReady);
     video?.addEventListener('canplay', mediaReady);
     video?.addEventListener('seeked', mediaReady);
-    return () => { cancelAnimationFrame(seekFrame); clearTimeout(settleTimer); rememberPosition(); removeEventListener('scroll', requestUpdate); removeEventListener('touchmove', requestUpdate); removeEventListener('touchstart', primeVideoDecoder); removeEventListener('scrollend', requestUpdate); removeEventListener('scroll', dismissHint); removeEventListener('pagehide', rememberPosition); removeEventListener('worldviewportchange', requestUpdate); video?.removeEventListener('loadedmetadata', mediaReady); video?.removeEventListener('loadeddata', mediaReady); video?.removeEventListener('canplay', mediaReady); video?.removeEventListener('seeked', mediaReady); };
-  }, [chain, videoEnabled, reduceMotion]);
+    return () => { cancelAnimationFrame(seekFrame); clearTimeout(settleTimer); rememberPosition(); removeEventListener('scroll', requestUpdate); removeEventListener('touchmove', requestUpdate); removeEventListener('touchstart', primeVideoDecoder); removeEventListener('scrollend', requestUpdate); removeEventListener('scroll', dismissHint); removeEventListener('pagehide', rememberPosition); removeEventListener('resize', requestUpdate); removeEventListener('worldviewportchange', requestUpdate); video?.removeEventListener('loadedmetadata', mediaReady); video?.removeEventListener('loadeddata', mediaReady); video?.removeEventListener('canplay', mediaReady); video?.removeEventListener('seeked', mediaReady); };
+  }, [chain]);
 
-  const usePosterMode = reduceMotion || !videoEnabled;
   return (
-    <main ref={root} className="scroll-world" data-marker={active} data-scroll-mode={usePosterMode ? 'poster' : 'video'} style={{ '--world-height': `${total * 100 + 100}svh` }}>
+    <main ref={root} className="scroll-world" data-marker={active} data-scroll-mode="free" data-in-app-webview={isInAppWebView() ? 'true' : undefined} style={{ '--world-height': `${total * 100 + 100}vh` }}>
       <div className="scroll-world__sticky">
         <div className="scroll-world__stage" aria-hidden="true">
-          {usePosterMode ? chapters.map((chapter, index) => (
-            <div key={chapter.id} className={`scroll-world__scene scroll-world__poster ${active === index ? 'is-active' : ''}`}>
-              <picture>
-                <source media="(max-width: 768px)" srcSet={`/world/flight/mobile-posters/${chapter.media}.webp?v=portrait-1`} />
-                <img src={`/world/flight/${chapter.media}.webp`} alt="" decoding="async" />
-              </picture>
-            </div>
-          )) : (
-            <div className="scroll-world__scene is-active">
-              <img src="/world/flight/intro-4k.webp" alt="" decoding="async" />
-              <video ref={videoRef} muted playsInline preload="metadata" poster="/world/flight/intro-4k.webp" disablePictureInPicture>
-                <source src="/world/flight/continuous-flight-mobile.mp4" media="(max-width: 768px)" type="video/mp4" />
-                <source src="/world/flight/continuous-flight.mp4" type="video/mp4" />
-              </video>
-            </div>
-          )}
+          <div className="scroll-world__scene"><img src={reduceMotion ? `/world/flight/${chapters[active].media}.webp` : '/world/flight/intro-4k.webp'} alt="" />{!reduceMotion && <video ref={videoRef} muted playsInline autoPlay preload="auto" disablePictureInPicture><source src="/world/flight/continuous-flight-mobile.mp4" media="(max-width: 768px)" type="video/mp4" /><source src="/world/flight/continuous-flight.mp4" type="video/mp4" /></video>}</div>
         </div>
         <div className="world-wash" aria-hidden="true" />
         {chapters.map((chapter, index) => <article key={chapter.id} className={`world-copy world-copy--${chapter.side} world-copy--${chapter.id} ${visibleChapter === index ? 'is-active' : ''}`}><span className="world-copy__count">{String(index + 1).padStart(2, '0')} / {chapters.length}</span><span className="world-copy__eyebrow">{chapter.eyebrow}</span><h1>{chapter.title}</h1><p>{chapter.body}</p>{chapter.note && <small className="world-copy__note">{chapter.note}</small>}{chapter.href && <a className="glass-button" href={chapter.href} data-world-cta="true" onClick={rememberPosition}>Take me there</a>}{chapter.cta && <div className="world-copy__contact"><a href="mailto:sarastotey@icloud.com">Email</a><a href={IDENTITY.linkedin} target="_blank" rel="noreferrer">LinkedIn</a><a href={`https://github.com/${IDENTITY.github_user}`} target="_blank" rel="noreferrer">GitHub</a><a href={IDENTITY.instagram} target="_blank" rel="noreferrer">Instagram</a></div>}</article>)}

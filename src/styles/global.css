@@ -445,11 +445,8 @@ main > div[data-world='india']::before { background: rgba(41, 25, 36, .73); }
 .scroll-world__sticky { position: sticky; top: 0; height: 100vh; overflow: hidden; isolation: isolate; }
 .scroll-world__sticky::after { content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none; background: radial-gradient(circle at 72% 46%, transparent 25%, rgba(243,235,221,.18) 66%, rgba(243,235,221,.58) 100%); }
 .scroll-world__stage { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
-.scroll-world__scene { position: absolute; inset: 0; opacity: 0; will-change: opacity; transition: opacity .42s ease; }
-.scroll-world__scene.is-active { opacity: 1; }
-.scroll-world__poster { z-index: 1; }
-.scroll-world__poster.is-active { z-index: 2; }
-.scroll-world__scene picture { position: absolute; inset: 0; }
+.scroll-world__scene { position: absolute; inset: 0; opacity: 0; will-change: opacity; }
+.scroll-world__scene:first-child { opacity: 1; }
 .scroll-world__scene img,.scroll-world__scene video { position: absolute; width: 64vw; height: 100%; right: 0; top: 0; object-fit: cover; object-position: center; }
 .scroll-world__scene video { z-index: 2; }
 .scroll-world__chapters { position: absolute; left: clamp(28px,6vw,100px); top: 0; width: min(35vw,520px); height: 100%; z-index: 4; pointer-events: none; }
@@ -658,7 +655,8 @@ a,button { touch-action: manipulation; -webkit-tap-highlight-color: rgba(214,75,
 html,body { min-height: 100%; background: #f7e8ed; overscroll-behavior-y: none; }
 body { margin: 0; }
 .scroll-world { min-height: 100dvh; overflow-x: clip; overscroll-behavior: none; }
-.scroll-world__sticky { height: var(--world-viewport-height, 100svh); }
+.scroll-world__sticky { height: 100dvh; }
+.scroll-world[data-in-app-webview='true'] .scroll-world__sticky { height: var(--world-viewport-height); }
 .world-copy--center { width: fit-content; max-width: min(760px,calc(100vw - 44px)); }
 .world-copy--center h1,.world-copy--center p { margin-left: auto; margin-right: auto; }
 .world-copy__contact { justify-content: center; }
@@ -668,7 +666,6 @@ body { margin: 0; }
 .hero-cta { justify-content: center; width: 280px; min-width: 280px; }
 
 @media (max-width:720px) {
-  body::before { position: absolute; }
   .glass-nav { width: calc(100vw - 24px); max-width: none; padding: 0 4px 5px; overscroll-behavior-x: contain; scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch; mask-image: linear-gradient(90deg,transparent,#000 14px,#000 calc(100% - 14px),transparent); -webkit-mask-image: linear-gradient(90deg,transparent,#000 14px,#000 calc(100% - 14px),transparent); }
   .glass-nav::-webkit-scrollbar { display: none; }
   .glass-nav a { flex: 0 0 auto; scroll-snap-align: start; }

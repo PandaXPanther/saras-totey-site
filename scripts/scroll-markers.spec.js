@@ -4,7 +4,6 @@ test.describe.configure({ timeout: 120_000 });
 
 const baseUrl = process.env.BASE_URL || 'http://127.0.0.1:4174/';
 const markerTimes = [0, 6.041667, 12.083334, 18.125001, 22.166668, 28.208335];
-const chapterMedia = ['intro', 'countersnipe', 'prediction', 'ventures', 'att', 'contact'];
 
 const waitForMarker = async (page, marker) => {
   await expect(page.locator('.scroll-world')).toHaveAttribute('data-marker', String(marker));
@@ -66,7 +65,7 @@ test('touch free-scroll reliably traverses the full world in both directions', a
   const page = await context.newPage();
   const session = await context.newCDPSession(page);
   await page.goto(baseUrl);
-  await expect(page.locator('.scroll-world')).toHaveAttribute('data-scroll-mode', 'poster');
+  await waitForVideoMetadata(page);
 
   const swipe = async (fromY, toY) => {
     const startScrollY = await page.evaluate(() => scrollY);
@@ -92,12 +91,8 @@ test('touch free-scroll reliably traverses the full world in both directions', a
       }
       await waitForMarker(page, expectedMarker);
       await expect(page.locator('.world-copy.is-active')).toBeVisible();
-      await expect(page.locator('.scroll-world__poster.is-active img')).toHaveAttribute(
-        'src',
-        `/world/flight/${chapterMedia[expectedMarker]}.webp`,
-      );
-      await expect.poll(() => page.locator('.scroll-world__poster.is-active img').evaluate((image) => image.currentSrc))
-        .toContain(`/world/flight/mobile-posters/${chapterMedia[expectedMarker]}.webp`);
+      const expectedTime = markerTimes[expectedMarker];
+      await expect.poll(() => page.locator('.scroll-world video').evaluate((video) => video.currentTime)).toBeGreaterThanOrEqual(Math.max(0, expectedTime - 0.35));
       if (process.env.CAPTURE_DEPTHS && forward && expectedMarker <= 5) {
         await page.screenshot({ path: `.scroll-world-work/live-mobile-depth-${expectedMarker}.png` });
       }
@@ -109,19 +104,20 @@ test('touch free-scroll reliably traverses the full world in both directions', a
     while (!(await atExtreme())) {
       await swipe(forward ? 700 : 180, forward ? 180 : 700);
     }
+    const expectedProgress = forward ? 1 : 0;
+    await expect.poll(() => page.locator('.scroll-world video').evaluate((video) => video.currentTime / video.duration)).toBeCloseTo(expectedProgress, 1);
   };
 
-  const touchPasses = Number(process.env.MOBILE_PASSES || 5);
-  for (let pass = 1; pass <= touchPasses; pass += 1) {
+  for (let pass = 1; pass <= 5; pass += 1) {
     await traverse('forward');
-    const forwardEndpoint = await page.evaluate(() => ({ scrollY, marker: document.querySelector('.scroll-world')?.dataset.marker }));
+    const forwardEndpoint = await page.evaluate(() => ({ scrollY, videoTime: document.querySelector('.scroll-world video')?.currentTime }));
     await traverse('backward');
     await expect(page.locator('.scroll-world')).toHaveAttribute('data-marker', '0');
-    const backwardEndpoint = await page.evaluate(() => ({ scrollY, marker: document.querySelector('.scroll-world')?.dataset.marker }));
+    const backwardEndpoint = await page.evaluate(() => ({ scrollY, videoTime: document.querySelector('.scroll-world video')?.currentTime }));
     console.log(`mobile touch pass ${pass}:`, { forwardEndpoint, backwardEndpoint });
   }
 
-  await page.screenshot({ path: `.scroll-world-work/mobile-touch-${touchPasses}-pass.png` });
+  await page.screenshot({ path: '.scroll-world-work/mobile-touch-five-pass.png' });
   await context.close();
 });
 
