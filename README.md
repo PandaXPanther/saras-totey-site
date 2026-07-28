@@ -7,4 +7,4 @@ Live: [saras-totey.com](https://sarastotey.com/)
 Every metric on the site is sourced from real repo files, live sites, or logged trade history. No fabricated numbers.
 
 
-Design + build by Saras Totey.
+Design + build by [Saras Totey](https://sarastotey.com).
