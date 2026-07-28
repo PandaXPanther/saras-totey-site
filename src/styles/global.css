@@ -651,11 +651,14 @@ a,button { touch-action: manipulation; -webkit-tap-highlight-color: rgba(214,75,
 
 @media (prefers-reduced-motion:reduce) { .world-controls i,.quant-wave i { animation: none; } }
 
-/* Mobile polish and final world-control alignment. */
-html,body { min-height: 100%; background: #f7e8ed; overscroll-behavior-y: none; }
+/* Mobile polish and final world-control alignment. Keep every document canvas
+   on sakura paper so WebView chrome resizes never expose the browser default. */
+html { min-height: 100%; background-color: #f7e8ed; color-scheme: light; }
+body,#root { min-height: 100vh; min-height: 100dvh; background-color: #f7e8ed; }
+html,body { overscroll-behavior-y: none; }
 body { margin: 0; }
 .scroll-world { min-height: 100dvh; overflow-x: clip; overscroll-behavior: none; }
-.scroll-world__sticky { height: 100dvh; }
+.scroll-world__sticky { height: 100vh; height: 100dvh; background-color: #f7e8ed; }
 .scroll-world[data-in-app-webview='true'] .scroll-world__sticky { height: var(--world-viewport-height); }
 .world-copy--center { width: fit-content; max-width: min(760px,calc(100vw - 44px)); }
 .world-copy--center h1,.world-copy--center p { margin-left: auto; margin-right: auto; }
