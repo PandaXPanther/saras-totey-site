@@ -45,25 +45,36 @@ export default function ScrollWorld() {
     const node = root.current;
     if (!node || !isInAppWebView()) return undefined;
     let orientationTimer = 0;
+    let measureFrame = 0;
     const measure = () => {
       // Instagram, Facebook, and Discord WebViews resize the layout viewport as
-      // their own chrome moves. Locking one layout height keeps sticky geometry
-      // and scroll-to-video progress on the same coordinate system.
-      const viewportHeight = Math.round(window.innerHeight);
+      // their own chrome moves. Recompute the world spacer as well as the sticky
+      // viewport so the document cannot run out of scroll distance after chrome
+      // collapses and exposes a taller visual viewport.
+      const viewportHeight = Math.round(window.visualViewport?.height || window.innerHeight);
       viewportHeightRef.current = viewportHeight;
       node.style.setProperty('--world-height', `${(total + 1) * viewportHeight}px`);
       node.style.setProperty('--world-viewport-height', `${viewportHeight}px`);
       dispatchEvent(new Event('worldviewportchange'));
     };
+    const scheduleMeasure = () => {
+      cancelAnimationFrame(measureFrame);
+      measureFrame = requestAnimationFrame(measure);
+    };
     const handleOrientationChange = () => {
       clearTimeout(orientationTimer);
-      orientationTimer = setTimeout(measure, 250);
+      orientationTimer = setTimeout(scheduleMeasure, 250);
     };
     measure();
+    addEventListener('resize', scheduleMeasure, { passive: true });
     addEventListener('orientationchange', handleOrientationChange, { passive: true });
+    window.visualViewport?.addEventListener('resize', scheduleMeasure, { passive: true });
     return () => {
       clearTimeout(orientationTimer);
+      cancelAnimationFrame(measureFrame);
+      removeEventListener('resize', scheduleMeasure);
       removeEventListener('orientationchange', handleOrientationChange);
+      window.visualViewport?.removeEventListener('resize', scheduleMeasure);
     };
   }, [total]);
 

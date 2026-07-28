@@ -121,6 +121,40 @@ test('touch free-scroll reliably traverses the full world in both directions', a
   await context.close();
 });
 
+test('in-app world spacer tracks a viewport height change after scrolling starts', async ({ browser }) => {
+  const context = await browser.newContext({
+    viewport: { width: 375, height: 700 },
+    hasTouch: true,
+    isMobile: true,
+    userAgent: 'Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Instagram 390.0.0.0 Mobile Safari/537.36',
+  });
+  const page = await context.newPage();
+  await page.goto(baseUrl);
+
+  const readGeometry = () => page.locator('.scroll-world').evaluate((world) => ({
+    viewportHeight: innerHeight,
+    worldHeight: world.offsetHeight,
+    cssWorldHeight: getComputedStyle(world).getPropertyValue('--world-height'),
+    maxScrollY: document.documentElement.scrollHeight - innerHeight,
+  }));
+  const initial = await readGeometry();
+  expect(Number.parseFloat(initial.cssWorldHeight)).toBeCloseTo(initial.worldHeight, 0);
+
+  await page.evaluate(() => scrollTo(0, 120));
+  await page.setViewportSize({ width: 375, height: 812 });
+  await expect.poll(async () => (await readGeometry()).worldHeight).toBeGreaterThan(initial.worldHeight);
+
+  const resized = await readGeometry();
+  const worldUnits = initial.worldHeight / initial.viewportHeight;
+  expect(resized.worldHeight).toBeCloseTo(worldUnits * resized.viewportHeight, 0);
+  expect(Number.parseFloat(resized.cssWorldHeight)).toBeCloseTo(resized.worldHeight, 0);
+  expect(resized.maxScrollY).toBeGreaterThan(initial.maxScrollY);
+  expect(await page.evaluate(() => scrollY)).toBeLessThan(resized.maxScrollY);
+
+  await page.screenshot({ path: '.scroll-world-work/viewport-resize-regression.png' });
+  await context.close();
+});
+
 test('ambient audio persists while marker navigation and route navigation run', async ({ page }) => {
   await page.goto(baseUrl);
   await page.locator('.audio-dock button').click();
