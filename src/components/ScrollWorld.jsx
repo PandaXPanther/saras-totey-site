@@ -227,7 +227,22 @@ export default function ScrollWorld() {
     <main ref={root} className="scroll-world" data-marker={active} data-scroll-mode={usePosterMode ? 'poster' : 'video'} style={{ '--world-height': `${total * 100 + 100}svh` }}>
       <div className="scroll-world__sticky">
         <div className="scroll-world__stage" aria-hidden="true">
-          <div className="scroll-world__scene"><img src={usePosterMode ? `/world/flight/${chapters[active].media}.webp` : '/world/flight/intro-4k.webp'} alt="" decoding="async" />{!usePosterMode && <video ref={videoRef} muted playsInline preload="metadata" poster="/world/flight/intro-4k.webp" disablePictureInPicture><source src="/world/flight/continuous-flight-mobile.mp4" media="(max-width: 768px)" type="video/mp4" /><source src="/world/flight/continuous-flight.mp4" type="video/mp4" /></video>}</div>
+          {usePosterMode ? chapters.map((chapter, index) => (
+            <div key={chapter.id} className={`scroll-world__scene scroll-world__poster ${active === index ? 'is-active' : ''}`}>
+              <picture>
+                <source media="(max-width: 768px)" srcSet={`/world/flight/mobile-posters/${chapter.media}.webp`} />
+                <img src={`/world/flight/${chapter.media}.webp`} alt="" decoding="async" />
+              </picture>
+            </div>
+          )) : (
+            <div className="scroll-world__scene is-active">
+              <img src="/world/flight/intro-4k.webp" alt="" decoding="async" />
+              <video ref={videoRef} muted playsInline preload="metadata" poster="/world/flight/intro-4k.webp" disablePictureInPicture>
+                <source src="/world/flight/continuous-flight-mobile.mp4" media="(max-width: 768px)" type="video/mp4" />
+                <source src="/world/flight/continuous-flight.mp4" type="video/mp4" />
+              </video>
+            </div>
+          )}
         </div>
         <div className="world-wash" aria-hidden="true" />
         {chapters.map((chapter, index) => <article key={chapter.id} className={`world-copy world-copy--${chapter.side} world-copy--${chapter.id} ${visibleChapter === index ? 'is-active' : ''}`}><span className="world-copy__count">{String(index + 1).padStart(2, '0')} / {chapters.length}</span><span className="world-copy__eyebrow">{chapter.eyebrow}</span><h1>{chapter.title}</h1><p>{chapter.body}</p>{chapter.note && <small className="world-copy__note">{chapter.note}</small>}{chapter.href && <a className="glass-button" href={chapter.href} data-world-cta="true" onClick={rememberPosition}>Take me there</a>}{chapter.cta && <div className="world-copy__contact"><a href="mailto:sarastotey@icloud.com">Email</a><a href={IDENTITY.linkedin} target="_blank" rel="noreferrer">LinkedIn</a><a href={`https://github.com/${IDENTITY.github_user}`} target="_blank" rel="noreferrer">GitHub</a><a href={IDENTITY.instagram} target="_blank" rel="noreferrer">Instagram</a></div>}</article>)}
