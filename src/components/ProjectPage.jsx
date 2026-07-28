@@ -30,7 +30,7 @@ const projects = {
 const footerLinks = [['GitHub', `https://github.com/${IDENTITY.github_user}`], ['LinkedIn', IDENTITY.linkedin], ['Buy Me a Coffee', IDENTITY.bmc], ['Instagram', IDENTITY.instagram]];
 
 function SiteFooter() {
-  return <footer className="site-footer"><strong>Site made by Saras Totey</strong><nav aria-label="Social links">{footerLinks.map(([label, href]) => <a key={label} href={href} target="_blank" rel="noreferrer">{label}</a>)}</nav></footer>;
+  return <footer className="site-footer"><strong>Site made by <a href="/">Saras Totey</a></strong><nav aria-label="Social links">{footerLinks.map(([label, href]) => <a key={label} href={href} target="_blank" rel="noreferrer">{label}</a>)}</nav></footer>;
 }
 
 function BackToWorld({ visible }) { return visible ? <a className="take-back" href="/" data-restore-world="true">← Take me back</a> : null; }

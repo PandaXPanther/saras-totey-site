@@ -5,7 +5,7 @@ import ScrollWorld from './components/ScrollWorld.jsx';
 import ProjectPage from './components/ProjectPage.jsx';
 
 const metadata = {
-  '/': ['Saras Totey — Boulder Developer and Quant Researcher', 'Meet Saras Totey, a Boulder full-stack developer building trading bots, economics tools, public-data products, and websites.', '/og-saras-totey.png?v=3'],
+  '/': ['Saras Totey: Developer and Quant Researcher', 'Saras Totey is a Boulder developer and quantitative researcher building trading systems, economics tools, public-data products, and websites.', '/og-saras-totey.png?v=3'],
   '/quant': ['Quantitative Trading Systems and Research | Saras Totey', 'Explore Saras Totey’s independent quantitative trading systems, including live CS2 arbitrage, prediction-market research, and documented experiments.', '/og-saras-totey.png?v=3'],
   '/econ-mom': ['Free Interactive Economics Tools | Econ.mom by Saras Totey', 'Explore 12 free interactive economics tools built by Saras Totey, with visible formulas, clear explanations, and every underlying dataset cited.', '/og-saras-totey.png?v=3'],
   '/local-ledger': ['Local Economic Data Dashboard | Local Ledger by Saras Totey', 'Explore Saras Totey’s local economic data dashboard and simulator covering jobs, housing, schools, and public spending across U.S. counties and metros.', '/og-saras-totey.png?v=3'],
