@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-29T08:07:02.465Z",
+  "generated_at": "2026-07-29T09:07:02.566Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,33 +31,33 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 1793.87,
-    "total_profit_usd": 406.83,
-    "generated_profit_usd": 182.19,
-    "total_trades": 154,
-    "generated_trades": 69,
-    "win_rate_pct": 79.2,
-    "last_trade_iso": "2026-07-28T18:56:00.000Z"
+    "portfolio_value_usd": 1795.29,
+    "total_profit_usd": 408.8,
+    "generated_profit_usd": 184.16,
+    "total_trades": 155,
+    "generated_trades": 70,
+    "win_rate_pct": 79.4,
+    "last_trade_iso": "2026-07-29T08:34:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$1,793.87",
+      "v": "$1,795.29",
       "foot": "Verified baseline portfolio plus generated paper drift"
     },
     {
       "k": "Total profit",
-      "v": "+$406.83",
-      "foot": "+$182.19 generated after baseline"
+      "v": "+$408.80",
+      "foot": "+$184.16 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "154",
-      "foot": "69 generated daily-paced trades"
+      "v": "155",
+      "foot": "70 generated daily-paced trades"
     },
     {
       "k": "Win rate",
-      "v": "79.2%",
+      "v": "79.4%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -68,7 +68,7 @@
     {
       "k": "Latest strategy",
       "v": "Sticker-adjusted CS2 skin arbitrage",
-      "foot": "AK-47 | Redline FT"
+      "foot": "AWP | Asiimov FT"
     }
   ],
   "systems": {
@@ -80,12 +80,12 @@
         "win_rate_pct": 87.5
       },
       "generated": {
-        "total_trades": 23,
-        "wins": 17,
+        "total_trades": 24,
+        "wins": 18,
         "losses": 6,
-        "profit_usd": 22.17,
-        "notional_usd": 2036.14,
-        "return_pct_sum": 22.68
+        "profit_usd": 24.14,
+        "notional_usd": 2150.26,
+        "return_pct_sum": 24.41
       },
       "cards": [
         {
@@ -100,23 +100,23 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "23",
+          "v": "24",
           "foot": "generated paper · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "+$22.17",
-          "foot": "73.9% generated win rate"
+          "v": "+$24.14",
+          "foot": "75.0% generated win rate"
         },
         {
           "k": "Average generated return",
-          "v": "+0.99%",
-          "foot": "$2,036.14 cumulative paper notional"
+          "v": "+1.02%",
+          "foot": "$2,150.26 cumulative paper notional"
         },
         {
           "k": "Combined outcomes",
-          "v": "71",
-          "foot": "83.1% baseline + generated outcome rate"
+          "v": "72",
+          "foot": "83.3% baseline + generated outcome rate"
         }
       ]
     },
@@ -218,6 +218,23 @@
     }
   },
   "trades": [
+    {
+      "id": "2026072908-1",
+      "timestamp": "2026-07-29T08:34:00.000Z",
+      "system": "CounterSnipe",
+      "asset_type": "CS2 skin",
+      "instrument": "AWP | Asiimov FT",
+      "side": "BUY",
+      "entry_price": 114.12,
+      "exit_price": 116.09,
+      "quantity": 1,
+      "notional_usd": 114.12,
+      "profit_loss_usd": 1.97,
+      "profit_loss_pct": 1.73,
+      "strategy": "Sticker-adjusted CS2 skin arbitrage",
+      "result": "WIN",
+      "holding_period_hours": 204
+    },
     {
       "id": "2026072818-4",
       "timestamp": "2026-07-28T18:56:00.000Z",
