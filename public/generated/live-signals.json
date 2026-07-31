@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-30T08:04:16.914Z",
+  "generated_at": "2026-07-31T08:29:55.605Z",
   "cards": [
     {
       "k": "CounterSnipe commits",
@@ -17,18 +17,18 @@
       "foot": "PandaXPanther/copy-trader"
     },
     {
-      "k": "Hyperliquid cohort · top-5 30d ROI",
-      "v": "+82.6%",
-      "foot": "Recomputed from seed_wallets.json + Hyperliquid leaderboard API"
+      "k": "Hyperliquid cohort · top-5 90d ROI",
+      "v": "+396.0%",
+      "foot": "Recomputed from data/seed_wallets.json fallback"
     },
     {
       "k": "Days since CounterSnipe live",
-      "v": "75",
+      "v": "76",
       "foot": "Since May 16, 2026"
     },
     {
       "k": "Days since last commit",
-      "v": "1",
+      "v": "2",
       "foot": "Across the three-repo fleet"
     }
   ],
@@ -38,8 +38,10 @@
       "PandaXPanther/pandaxpanther-prediction-bot",
       "PandaXPanther/copy-trader"
     ],
-    "hyperliquid": "hyperliquid-month",
+    "hyperliquid": "seed-fallback",
     "seed_wallets": "data/seed_wallets.json"
   },
-  "errors": []
+  "errors": [
+    "Hyperliquid: fetch failed"
+  ]
 }
