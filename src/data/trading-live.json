@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-02T06:07:02.049Z",
+  "generated_at": "2026-08-02T07:07:02.741Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,33 +31,33 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 1821.21,
-    "total_profit_usd": 444.42,
-    "generated_profit_usd": 219.78,
-    "total_trades": 166,
-    "generated_trades": 81,
-    "win_rate_pct": 80.1,
-    "last_trade_iso": "2026-08-01T15:16:00.000Z"
+    "portfolio_value_usd": 1821.63,
+    "total_profit_usd": 445,
+    "generated_profit_usd": 220.36,
+    "total_trades": 167,
+    "generated_trades": 82,
+    "win_rate_pct": 80.2,
+    "last_trade_iso": "2026-08-02T06:45:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$1,821.21",
+      "v": "$1,821.63",
       "foot": "Verified baseline portfolio plus generated paper drift"
     },
     {
       "k": "Total profit",
-      "v": "+$444.42",
-      "foot": "+$219.78 generated after baseline"
+      "v": "+$445.00",
+      "foot": "+$220.36 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "166",
-      "foot": "81 generated daily-paced trades"
+      "v": "167",
+      "foot": "82 generated daily-paced trades"
     },
     {
       "k": "Win rate",
-      "v": "80.1%",
+      "v": "80.2%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -67,8 +67,8 @@
     },
     {
       "k": "Latest strategy",
-      "v": "Composite-score wallet mirror",
-      "foot": "HYPE-PERP"
+      "v": "Sticker-adjusted CS2 skin arbitrage",
+      "foot": "Desert Eagle | Printstream FT"
     }
   ],
   "systems": {
@@ -80,12 +80,12 @@
         "win_rate_pct": 87.5
       },
       "generated": {
-        "total_trades": 30,
-        "wins": 23,
+        "total_trades": 31,
+        "wins": 24,
         "losses": 7,
-        "profit_usd": 30.74,
-        "notional_usd": 2641.05,
-        "return_pct_sum": 31.22
+        "profit_usd": 31.32,
+        "notional_usd": 2681.46,
+        "return_pct_sum": 32.65
       },
       "cards": [
         {
@@ -100,23 +100,23 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "30",
+          "v": "31",
           "foot": "generated paper · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "+$30.74",
-          "foot": "76.7% generated win rate"
+          "v": "+$31.32",
+          "foot": "77.4% generated win rate"
         },
         {
           "k": "Average generated return",
-          "v": "+1.04%",
-          "foot": "$2,641.05 cumulative paper notional"
+          "v": "+1.05%",
+          "foot": "$2,681.46 cumulative paper notional"
         },
         {
           "k": "Combined outcomes",
-          "v": "78",
-          "foot": "83.3% baseline + generated outcome rate"
+          "v": "79",
+          "foot": "83.5% baseline + generated outcome rate"
         }
       ]
     },
@@ -218,6 +218,23 @@
     }
   },
   "trades": [
+    {
+      "id": "2026080206-1",
+      "timestamp": "2026-08-02T06:45:00.000Z",
+      "system": "CounterSnipe",
+      "asset_type": "CS2 skin",
+      "instrument": "Desert Eagle | Printstream FT",
+      "side": "BUY",
+      "entry_price": 40.41,
+      "exit_price": 40.99,
+      "quantity": 1,
+      "notional_usd": 40.41,
+      "profit_loss_usd": 0.58,
+      "profit_loss_pct": 1.43,
+      "strategy": "Sticker-adjusted CS2 skin arbitrage",
+      "result": "WIN",
+      "holding_period_hours": 174
+    },
     {
       "id": "2026080115-2",
       "timestamp": "2026-08-01T15:16:00.000Z",
