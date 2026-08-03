@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-03T18:07:02.793Z",
+  "generated_at": "2026-08-03T19:07:02.593Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,33 +31,33 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 1843.23,
-    "total_profit_usd": 470.06,
-    "generated_profit_usd": 245.42,
-    "total_trades": 173,
-    "generated_trades": 88,
-    "win_rate_pct": 79.8,
-    "last_trade_iso": "2026-08-03T15:24:00.000Z"
+    "portfolio_value_usd": 1843.87,
+    "total_profit_usd": 470.95,
+    "generated_profit_usd": 246.31,
+    "total_trades": 174,
+    "generated_trades": 89,
+    "win_rate_pct": 79.9,
+    "last_trade_iso": "2026-08-03T18:24:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$1,843.23",
+      "v": "$1,843.87",
       "foot": "Verified baseline portfolio plus generated paper drift"
     },
     {
       "k": "Total profit",
-      "v": "+$470.06",
-      "foot": "+$245.42 generated after baseline"
+      "v": "+$470.95",
+      "foot": "+$246.31 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "173",
-      "foot": "88 generated daily-paced trades"
+      "v": "174",
+      "foot": "89 generated daily-paced trades"
     },
     {
       "k": "Win rate",
-      "v": "79.8%",
+      "v": "79.9%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -67,8 +67,8 @@
     },
     {
       "k": "Latest strategy",
-      "v": "Composite-score wallet mirror",
-      "foot": "HYPE-PERP"
+      "v": "Crypto latency",
+      "foot": "ETH above weekly range"
     }
   ],
   "systems": {
@@ -128,12 +128,12 @@
         "win_rate_pct": 52.9
       },
       "generated": {
-        "total_trades": 18,
-        "wins": 9,
+        "total_trades": 19,
+        "wins": 10,
         "losses": 9,
-        "profit_usd": -4.83,
-        "notional_usd": 1161.29,
-        "return_pct_sum": -2.42
+        "profit_usd": -3.94,
+        "notional_usd": 1213.2,
+        "return_pct_sum": -0.71
       },
       "cards": [
         {
@@ -148,23 +148,23 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "18",
+          "v": "19",
           "foot": "generated paper · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "-$4.83",
-          "foot": "50.0% generated win rate"
+          "v": "-$3.94",
+          "foot": "52.6% generated win rate"
         },
         {
           "k": "Average generated return",
-          "v": "-0.13%",
-          "foot": "$1,161.29 cumulative paper notional"
+          "v": "-0.04%",
+          "foot": "$1,213.20 cumulative paper notional"
         },
         {
           "k": "Combined outcomes",
-          "v": "35",
-          "foot": "51.4% baseline + generated outcome rate"
+          "v": "36",
+          "foot": "52.8% baseline + generated outcome rate"
         }
       ]
     },
@@ -218,6 +218,23 @@
     }
   },
   "trades": [
+    {
+      "id": "2026080318-5",
+      "timestamp": "2026-08-03T18:24:00.000Z",
+      "system": "PandaXPanther Prediction Bot",
+      "asset_type": "crypto prediction contract",
+      "instrument": "ETH above weekly range",
+      "side": "BUY",
+      "entry_price": 0.455,
+      "exit_price": 0.463,
+      "quantity": 114,
+      "notional_usd": 51.91,
+      "profit_loss_usd": 0.89,
+      "profit_loss_pct": 1.71,
+      "strategy": "Crypto latency",
+      "result": "WIN",
+      "holding_period_hours": "0.58"
+    },
     {
       "id": "2026080315-4",
       "timestamp": "2026-08-03T15:24:00.000Z",
