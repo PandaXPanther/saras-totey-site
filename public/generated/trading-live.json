@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-06T12:07:02.742Z",
+  "generated_at": "2026-08-06T13:07:03.298Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,33 +31,33 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 1868.71,
-    "total_profit_usd": 504.5,
-    "generated_profit_usd": 279.86,
-    "total_trades": 183,
-    "generated_trades": 98,
-    "win_rate_pct": 79.8,
-    "last_trade_iso": "2026-08-06T06:19:00.000Z"
+    "portfolio_value_usd": 1871.65,
+    "total_profit_usd": 508.59,
+    "generated_profit_usd": 283.95,
+    "total_trades": 184,
+    "generated_trades": 99,
+    "win_rate_pct": 79.9,
+    "last_trade_iso": "2026-08-06T12:03:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$1,868.71",
+      "v": "$1,871.65",
       "foot": "Verified baseline portfolio plus generated paper drift"
     },
     {
       "k": "Total profit",
-      "v": "+$504.50",
-      "foot": "+$279.86 generated after baseline"
+      "v": "+$508.59",
+      "foot": "+$283.95 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "183",
-      "foot": "98 generated daily-paced trades"
+      "v": "184",
+      "foot": "99 generated daily-paced trades"
     },
     {
       "k": "Win rate",
-      "v": "79.8%",
+      "v": "79.9%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -67,8 +67,8 @@
     },
     {
       "k": "Latest strategy",
-      "v": "Composite-score wallet mirror",
-      "foot": "ETH-PERP"
+      "v": "Sticker-adjusted CS2 skin arbitrage",
+      "foot": "M4A1-S | Printstream MW"
     }
   ],
   "systems": {
@@ -80,12 +80,12 @@
         "win_rate_pct": 87.5
       },
       "generated": {
-        "total_trades": 34,
-        "wins": 27,
+        "total_trades": 35,
+        "wins": 28,
         "losses": 7,
-        "profit_usd": 37.51,
-        "notional_usd": 3035.76,
-        "return_pct_sum": 37.98
+        "profit_usd": 41.6,
+        "notional_usd": 3218.28,
+        "return_pct_sum": 40.22
       },
       "cards": [
         {
@@ -100,23 +100,23 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "34",
+          "v": "35",
           "foot": "generated paper · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "+$37.51",
-          "foot": "79.4% generated win rate"
+          "v": "+$41.60",
+          "foot": "80.0% generated win rate"
         },
         {
           "k": "Average generated return",
-          "v": "+1.12%",
-          "foot": "$3,035.76 cumulative paper notional"
+          "v": "+1.15%",
+          "foot": "$3,218.28 cumulative paper notional"
         },
         {
           "k": "Combined outcomes",
-          "v": "82",
-          "foot": "84.1% baseline + generated outcome rate"
+          "v": "83",
+          "foot": "84.3% baseline + generated outcome rate"
         }
       ]
     },
@@ -218,6 +218,23 @@
     }
   },
   "trades": [
+    {
+      "id": "2026080612-2",
+      "timestamp": "2026-08-06T12:03:00.000Z",
+      "system": "CounterSnipe",
+      "asset_type": "CS2 skin",
+      "instrument": "M4A1-S | Printstream MW",
+      "side": "BUY",
+      "entry_price": 182.52,
+      "exit_price": 186.61,
+      "quantity": 1,
+      "notional_usd": 182.52,
+      "profit_loss_usd": 4.09,
+      "profit_loss_pct": 2.24,
+      "strategy": "Sticker-adjusted CS2 skin arbitrage",
+      "result": "WIN",
+      "holding_period_hours": 199
+    },
     {
       "id": "2026080606-1",
       "timestamp": "2026-08-06T06:19:00.000Z",
@@ -1730,23 +1747,6 @@
       "strategy": "Composite-score wallet mirror",
       "result": "WIN",
       "holding_period_hours": "0.11"
-    },
-    {
-      "id": "2026071118-4",
-      "timestamp": "2026-07-11T18:11:00.000Z",
-      "system": "PandaXPanther Prediction Bot",
-      "asset_type": "crypto prediction contract",
-      "instrument": "SOL above daily range",
-      "side": "BUY",
-      "entry_price": 0.457,
-      "exit_price": 0.447,
-      "quantity": 84,
-      "notional_usd": 38.37,
-      "profit_loss_usd": -0.84,
-      "profit_loss_pct": -2.18,
-      "strategy": "Crypto latency",
-      "result": "LOSS",
-      "holding_period_hours": "1.24"
     }
   ],
   "config": {
