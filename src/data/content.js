@@ -403,14 +403,14 @@ export const ROADMAP = {
 export const LIVE = {
   eyebrow: 'Live signals · refreshed daily',
   intro: 'The site rebuilds every night at 06:00 UTC via a GitHub Actions workflow. Commit counts and the Hyperliquid cohort ROI regenerate against real APIs. Every number here is reproducible.',
-  last_updated_iso: '2026-08-10T07:05:58.549Z',
+  last_updated_iso: '2026-08-11T06:43:30.891Z',
   cards: [
     { k: "CounterSnipe commits", v: "328", foot: "srtt16/countersnipe" },
     { k: "Prediction bot commits", v: "18", foot: "PandaXPanther/pandaxpanther-prediction-bot" },
     { k: "copy-trader commits", v: "5", foot: "PandaXPanther/copy-trader" },
-    { k: "Hyperliquid cohort · top-5 30d ROI", v: "+79.7%", foot: "Recomputed from seed_wallets.json + Hyperliquid leaderboard API" },
-    { k: "Days since CounterSnipe live", v: "86", foot: "Since May 16, 2026" },
-    { k: "Days since last commit", v: "12", foot: "Across the three-repo fleet" },
+    { k: "Hyperliquid cohort · top-5 30d ROI", v: "+79.2%", foot: "Recomputed from seed_wallets.json + Hyperliquid leaderboard API" },
+    { k: "Days since CounterSnipe live", v: "87", foot: "Since May 16, 2026" },
+    { k: "Days since last commit", v: "13", foot: "Across the three-repo fleet" },
   ],
 };
 
