@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-13T15:07:02.398Z",
+  "generated_at": "2026-08-13T16:07:02.443Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,33 +31,33 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 1938.67,
-    "total_profit_usd": 597.47,
-    "generated_profit_usd": 372.83,
-    "total_trades": 205,
-    "generated_trades": 120,
-    "win_rate_pct": 80.5,
-    "last_trade_iso": "2026-08-13T08:05:00.000Z"
+    "portfolio_value_usd": 1945,
+    "total_profit_usd": 606.26,
+    "generated_profit_usd": 381.62,
+    "total_trades": 206,
+    "generated_trades": 121,
+    "win_rate_pct": 80.6,
+    "last_trade_iso": "2026-08-13T15:19:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$1,938.67",
+      "v": "$1,945.00",
       "foot": "Verified baseline portfolio plus generated paper drift"
     },
     {
       "k": "Total profit",
-      "v": "+$597.47",
-      "foot": "+$372.83 generated after baseline"
+      "v": "+$606.26",
+      "foot": "+$381.62 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "205",
-      "foot": "120 generated daily-paced trades"
+      "v": "206",
+      "foot": "121 generated daily-paced trades"
     },
     {
       "k": "Win rate",
-      "v": "80.5%",
+      "v": "80.6%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -176,12 +176,12 @@
         "win_rate_pct": 100
       },
       "generated": {
-        "total_trades": 53,
-        "wins": 47,
+        "total_trades": 54,
+        "wins": 48,
         "losses": 6,
-        "profit_usd": 322.84,
-        "notional_usd": 69854.98,
-        "return_pct_sum": 25.5
+        "profit_usd": 331.63,
+        "notional_usd": 70936.61,
+        "return_pct_sum": 26.31
       },
       "cards": [
         {
@@ -196,28 +196,45 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "53",
+          "v": "54",
           "foot": "generated paper mirror · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "+$322.84",
-          "foot": "88.7% generated win rate"
+          "v": "+$331.63",
+          "foot": "88.9% generated win rate"
         },
         {
           "k": "Average generated return",
-          "v": "+0.48%",
-          "foot": "$69,854.98 cumulative paper notional"
+          "v": "+0.49%",
+          "foot": "$70,936.61 cumulative paper notional"
         },
         {
           "k": "Research + paper records",
-          "v": "73",
-          "foot": "20 ranked wallets · 53 generated paper fills"
+          "v": "74",
+          "foot": "20 ranked wallets · 54 generated paper fills"
         }
       ]
     }
   },
   "trades": [
+    {
+      "id": "2026081315-2",
+      "timestamp": "2026-08-13T15:19:00.000Z",
+      "system": "copy-trader",
+      "asset_type": "Hyperliquid perpetual",
+      "instrument": "HYPE-PERP",
+      "side": "BUY",
+      "entry_price": 26.07,
+      "exit_price": 26.28,
+      "quantity": 41.49362,
+      "notional_usd": 1081.63,
+      "profit_loss_usd": 8.79,
+      "profit_loss_pct": 0.81,
+      "strategy": "Composite-score wallet mirror",
+      "result": "WIN",
+      "holding_period_hours": "0.16"
+    },
     {
       "id": "2026081308-1",
       "timestamp": "2026-08-13T08:05:00.000Z",
@@ -1730,23 +1747,6 @@
       "strategy": "Sticker-adjusted CS2 skin arbitrage",
       "result": "WIN",
       "holding_period_hours": 181
-    },
-    {
-      "id": "2026071719-5",
-      "timestamp": "2026-07-17T19:00:00.000Z",
-      "system": "PandaXPanther Prediction Bot",
-      "asset_type": "prediction contract",
-      "instrument": "Polymarket crypto year-end bundle",
-      "side": "BUY YES+NO",
-      "entry_price": 0.945,
-      "exit_price": 0.95,
-      "quantity": 49,
-      "notional_usd": 46.28,
-      "profit_loss_usd": 0.26,
-      "profit_loss_pct": 0.55,
-      "strategy": "Polymarket sum-to-one arbitrage",
-      "result": "WIN",
-      "holding_period_hours": "1.51"
     }
   ],
   "config": {
