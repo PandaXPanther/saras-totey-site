@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-16T06:07:02.819Z",
+  "generated_at": "2026-08-16T07:07:02.076Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,29 +31,29 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 1966.24,
-    "total_profit_usd": 634.63,
-    "generated_profit_usd": 409.99,
-    "total_trades": 213,
-    "generated_trades": 128,
+    "portfolio_value_usd": 1966.56,
+    "total_profit_usd": 635.08,
+    "generated_profit_usd": 410.44,
+    "total_trades": 214,
+    "generated_trades": 129,
     "win_rate_pct": 80.8,
-    "last_trade_iso": "2026-08-15T18:57:00.000Z"
+    "last_trade_iso": "2026-08-16T06:14:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$1,966.24",
+      "v": "$1,966.56",
       "foot": "Verified baseline portfolio plus generated paper drift"
     },
     {
       "k": "Total profit",
-      "v": "+$634.63",
-      "foot": "+$409.99 generated after baseline"
+      "v": "+$635.08",
+      "foot": "+$410.44 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "213",
-      "foot": "128 generated daily-paced trades"
+      "v": "214",
+      "foot": "129 generated daily-paced trades"
     },
     {
       "k": "Win rate",
@@ -67,8 +67,8 @@
     },
     {
       "k": "Latest strategy",
-      "v": "Crypto latency",
-      "foot": "SOL above daily range"
+      "v": "Sticker-adjusted CS2 skin arbitrage",
+      "foot": "Glock-18 | Gamma Doppler FN"
     }
   ],
   "systems": {
@@ -80,12 +80,12 @@
         "win_rate_pct": 87.5
       },
       "generated": {
-        "total_trades": 43,
-        "wins": 35,
+        "total_trades": 44,
+        "wins": 36,
         "losses": 8,
-        "profit_usd": 54.71,
-        "notional_usd": 3923.83,
-        "return_pct_sum": 53.19
+        "profit_usd": 55.16,
+        "notional_usd": 3995.42,
+        "return_pct_sum": 53.82
       },
       "cards": [
         {
@@ -100,23 +100,23 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "43",
+          "v": "44",
           "foot": "generated paper · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "+$54.71",
-          "foot": "81.4% generated win rate"
+          "v": "+$55.16",
+          "foot": "81.8% generated win rate"
         },
         {
           "k": "Average generated return",
-          "v": "+1.24%",
-          "foot": "$3,923.83 cumulative paper notional"
+          "v": "+1.22%",
+          "foot": "$3,995.42 cumulative paper notional"
         },
         {
           "k": "Combined outcomes",
-          "v": "91",
-          "foot": "84.6% baseline + generated outcome rate"
+          "v": "92",
+          "foot": "84.8% baseline + generated outcome rate"
         }
       ]
     },
@@ -218,6 +218,23 @@
     }
   },
   "trades": [
+    {
+      "id": "2026081606-1",
+      "timestamp": "2026-08-16T06:14:00.000Z",
+      "system": "CounterSnipe",
+      "asset_type": "CS2 skin",
+      "instrument": "Glock-18 | Gamma Doppler FN",
+      "side": "BUY",
+      "entry_price": 71.59,
+      "exit_price": 72.04,
+      "quantity": 1,
+      "notional_usd": 71.59,
+      "profit_loss_usd": 0.45,
+      "profit_loss_pct": 0.63,
+      "strategy": "Sticker-adjusted CS2 skin arbitrage",
+      "result": "WIN",
+      "holding_period_hours": 178
+    },
     {
       "id": "2026081518-4",
       "timestamp": "2026-08-15T18:57:00.000Z",
@@ -1730,23 +1747,6 @@
       "strategy": "Polymarket sum-to-one arbitrage",
       "result": "WIN",
       "holding_period_hours": "0.94"
-    },
-    {
-      "id": "2026072014-4",
-      "timestamp": "2026-07-20T14:48:00.000Z",
-      "system": "PandaXPanther Prediction Bot",
-      "asset_type": "crypto prediction contract",
-      "instrument": "ETH above weekly range",
-      "side": "BUY",
-      "entry_price": 0.636,
-      "exit_price": 0.627,
-      "quantity": 120,
-      "notional_usd": 76.37,
-      "profit_loss_usd": -1.18,
-      "profit_loss_pct": -1.54,
-      "strategy": "Crypto latency",
-      "result": "LOSS",
-      "holding_period_hours": "0.32"
     }
   ],
   "config": {
