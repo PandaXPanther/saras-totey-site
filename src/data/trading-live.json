@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-16T13:07:02.483Z",
+  "generated_at": "2026-08-16T14:07:02.258Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,33 +31,33 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 1968.84,
-    "total_profit_usd": 638.25,
-    "generated_profit_usd": 413.61,
-    "total_trades": 215,
-    "generated_trades": 130,
-    "win_rate_pct": 80.9,
-    "last_trade_iso": "2026-08-16T10:12:00.000Z"
+    "portfolio_value_usd": 1970.25,
+    "total_profit_usd": 640.21,
+    "generated_profit_usd": 415.57,
+    "total_trades": 216,
+    "generated_trades": 131,
+    "win_rate_pct": 81,
+    "last_trade_iso": "2026-08-16T13:53:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$1,968.84",
+      "v": "$1,970.25",
       "foot": "Verified baseline portfolio plus generated paper drift"
     },
     {
       "k": "Total profit",
-      "v": "+$638.25",
-      "foot": "+$413.61 generated after baseline"
+      "v": "+$640.21",
+      "foot": "+$415.57 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "215",
-      "foot": "130 generated daily-paced trades"
+      "v": "216",
+      "foot": "131 generated daily-paced trades"
     },
     {
       "k": "Win rate",
-      "v": "80.9%",
+      "v": "81%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -68,7 +68,7 @@
     {
       "k": "Latest strategy",
       "v": "Sticker-adjusted CS2 skin arbitrage",
-      "foot": "AWP | Asiimov FT"
+      "foot": "M4A1-S | Printstream MW"
     }
   ],
   "systems": {
@@ -80,12 +80,12 @@
         "win_rate_pct": 87.5
       },
       "generated": {
-        "total_trades": 45,
-        "wins": 37,
+        "total_trades": 46,
+        "wins": 38,
         "losses": 8,
-        "profit_usd": 58.33,
-        "notional_usd": 4109.39,
-        "return_pct_sum": 56.61
+        "profit_usd": 60.29,
+        "notional_usd": 4317.4,
+        "return_pct_sum": 57.55
       },
       "cards": [
         {
@@ -100,23 +100,23 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "45",
+          "v": "46",
           "foot": "generated paper · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "+$58.33",
-          "foot": "82.2% generated win rate"
+          "v": "+$60.29",
+          "foot": "82.6% generated win rate"
         },
         {
           "k": "Average generated return",
-          "v": "+1.26%",
-          "foot": "$4,109.39 cumulative paper notional"
+          "v": "+1.25%",
+          "foot": "$4,317.40 cumulative paper notional"
         },
         {
           "k": "Combined outcomes",
-          "v": "93",
-          "foot": "84.9% baseline + generated outcome rate"
+          "v": "94",
+          "foot": "85.1% baseline + generated outcome rate"
         }
       ]
     },
@@ -218,6 +218,23 @@
     }
   },
   "trades": [
+    {
+      "id": "2026081613-3",
+      "timestamp": "2026-08-16T13:53:00.000Z",
+      "system": "CounterSnipe",
+      "asset_type": "CS2 skin",
+      "instrument": "M4A1-S | Printstream MW",
+      "side": "BUY",
+      "entry_price": 208.01,
+      "exit_price": 209.97,
+      "quantity": 1,
+      "notional_usd": 208.01,
+      "profit_loss_usd": 1.96,
+      "profit_loss_pct": 0.94,
+      "strategy": "Sticker-adjusted CS2 skin arbitrage",
+      "result": "WIN",
+      "holding_period_hours": 212
+    },
     {
       "id": "2026081610-2",
       "timestamp": "2026-08-16T10:12:00.000Z",
@@ -1730,23 +1747,6 @@
       "strategy": "Sticker-adjusted CS2 skin arbitrage",
       "result": "WIN",
       "holding_period_hours": 198
-    },
-    {
-      "id": "2026072108-1",
-      "timestamp": "2026-07-21T08:15:00.000Z",
-      "system": "copy-trader",
-      "asset_type": "Hyperliquid perpetual",
-      "instrument": "BTC-PERP",
-      "side": "BUY",
-      "entry_price": 61973.42,
-      "exit_price": 62357.8,
-      "quantity": 0.02337,
-      "notional_usd": 1448.14,
-      "profit_loss_usd": 8.98,
-      "profit_loss_pct": 0.62,
-      "strategy": "Composite-score wallet mirror",
-      "result": "WIN",
-      "holding_period_hours": "1.30"
     }
   ],
   "config": {
