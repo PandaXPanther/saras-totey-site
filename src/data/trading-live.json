@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-19T14:07:02.582Z",
+  "generated_at": "2026-08-19T15:07:03.113Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,29 +31,29 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 1987.44,
-    "total_profit_usd": 663.61,
-    "generated_profit_usd": 438.97,
-    "total_trades": 224,
-    "generated_trades": 139,
+    "portfolio_value_usd": 1989.13,
+    "total_profit_usd": 665.96,
+    "generated_profit_usd": 441.32,
+    "total_trades": 225,
+    "generated_trades": 140,
     "win_rate_pct": 81.3,
-    "last_trade_iso": "2026-08-19T09:24:00.000Z"
+    "last_trade_iso": "2026-08-19T14:26:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$1,987.44",
+      "v": "$1,989.13",
       "foot": "Verified baseline portfolio plus generated paper drift"
     },
     {
       "k": "Total profit",
-      "v": "+$663.61",
-      "foot": "+$438.97 generated after baseline"
+      "v": "+$665.96",
+      "foot": "+$441.32 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "224",
-      "foot": "139 generated daily-paced trades"
+      "v": "225",
+      "foot": "140 generated daily-paced trades"
     },
     {
       "k": "Win rate",
@@ -80,12 +80,12 @@
         "win_rate_pct": 87.5
       },
       "generated": {
-        "total_trades": 50,
-        "wins": 42,
+        "total_trades": 51,
+        "wins": 43,
         "losses": 8,
-        "profit_usd": 64.93,
-        "notional_usd": 4650.12,
-        "return_pct_sum": 63.16
+        "profit_usd": 67.28,
+        "notional_usd": 4749.98,
+        "return_pct_sum": 65.51
       },
       "cards": [
         {
@@ -100,23 +100,23 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "50",
+          "v": "51",
           "foot": "generated paper · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "+$64.93",
-          "foot": "84.0% generated win rate"
+          "v": "+$67.28",
+          "foot": "84.3% generated win rate"
         },
         {
           "k": "Average generated return",
-          "v": "+1.26%",
-          "foot": "$4,650.12 cumulative paper notional"
+          "v": "+1.28%",
+          "foot": "$4,749.98 cumulative paper notional"
         },
         {
           "k": "Combined outcomes",
-          "v": "98",
-          "foot": "85.7% baseline + generated outcome rate"
+          "v": "99",
+          "foot": "85.9% baseline + generated outcome rate"
         }
       ]
     },
@@ -218,6 +218,23 @@
     }
   },
   "trades": [
+    {
+      "id": "2026081914-3",
+      "timestamp": "2026-08-19T14:26:00.000Z",
+      "system": "CounterSnipe",
+      "asset_type": "CS2 skin",
+      "instrument": "AWP | Asiimov FT",
+      "side": "BUY",
+      "entry_price": 99.86,
+      "exit_price": 102.21,
+      "quantity": 1,
+      "notional_usd": 99.86,
+      "profit_loss_usd": 2.35,
+      "profit_loss_pct": 2.35,
+      "strategy": "Sticker-adjusted CS2 skin arbitrage",
+      "result": "WIN",
+      "holding_period_hours": 184
+    },
     {
       "id": "2026081909-2",
       "timestamp": "2026-08-19T09:24:00.000Z",
@@ -1730,23 +1747,6 @@
       "strategy": "Sticker-adjusted CS2 skin arbitrage",
       "result": "WIN",
       "holding_period_hours": 188
-    },
-    {
-      "id": "2026072318-4",
-      "timestamp": "2026-07-23T18:14:00.000Z",
-      "system": "copy-trader",
-      "asset_type": "Hyperliquid perpetual",
-      "instrument": "BTC-PERP",
-      "side": "BUY",
-      "entry_price": 65530.6,
-      "exit_price": 65972.27,
-      "quantity": 0.00816,
-      "notional_usd": 534.89,
-      "profit_loss_usd": 3.61,
-      "profit_loss_pct": 0.67,
-      "strategy": "Composite-score wallet mirror",
-      "result": "WIN",
-      "holding_period_hours": "1.94"
     }
   ],
   "config": {
