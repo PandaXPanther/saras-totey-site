@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-20T08:07:02.505Z",
+  "generated_at": "2026-08-20T09:07:02.493Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,33 +31,33 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 1992.32,
-    "total_profit_usd": 670.39,
-    "generated_profit_usd": 445.75,
-    "total_trades": 227,
-    "generated_trades": 142,
-    "win_rate_pct": 81.5,
-    "last_trade_iso": "2026-08-20T04:36:00.000Z"
+    "portfolio_value_usd": 2000.07,
+    "total_profit_usd": 681.16,
+    "generated_profit_usd": 456.52,
+    "total_trades": 228,
+    "generated_trades": 143,
+    "win_rate_pct": 81.6,
+    "last_trade_iso": "2026-08-20T08:47:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$1,992.32",
+      "v": "$2,000.07",
       "foot": "Verified baseline portfolio plus generated paper drift"
     },
     {
       "k": "Total profit",
-      "v": "+$670.39",
-      "foot": "+$445.75 generated after baseline"
+      "v": "+$681.16",
+      "foot": "+$456.52 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "227",
-      "foot": "142 generated daily-paced trades"
+      "v": "228",
+      "foot": "143 generated daily-paced trades"
     },
     {
       "k": "Win rate",
-      "v": "81.5%",
+      "v": "81.6%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -67,8 +67,8 @@
     },
     {
       "k": "Latest strategy",
-      "v": "Sticker-adjusted CS2 skin arbitrage",
-      "foot": "M4A1-S | Printstream MW"
+      "v": "Composite-score wallet mirror",
+      "foot": "HYPE-PERP"
     }
   ],
   "systems": {
@@ -176,12 +176,12 @@
         "win_rate_pct": 100
       },
       "generated": {
-        "total_trades": 60,
-        "wins": 54,
+        "total_trades": 61,
+        "wins": 55,
         "losses": 6,
-        "profit_usd": 377.49,
-        "notional_usd": 77406.31,
-        "return_pct_sum": 30.05
+        "profit_usd": 388.26,
+        "notional_usd": 78725.83,
+        "return_pct_sum": 30.87
       },
       "cards": [
         {
@@ -196,28 +196,45 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "60",
+          "v": "61",
           "foot": "generated paper mirror · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "+$377.49",
-          "foot": "90.0% generated win rate"
+          "v": "+$388.26",
+          "foot": "90.2% generated win rate"
         },
         {
           "k": "Average generated return",
-          "v": "+0.50%",
-          "foot": "$77,406.31 cumulative paper notional"
+          "v": "+0.51%",
+          "foot": "$78,725.83 cumulative paper notional"
         },
         {
           "k": "Research + paper records",
-          "v": "80",
-          "foot": "20 ranked wallets · 60 generated paper fills"
+          "v": "81",
+          "foot": "20 ranked wallets · 61 generated paper fills"
         }
       ]
     }
   },
   "trades": [
+    {
+      "id": "2026082008-2",
+      "timestamp": "2026-08-20T08:47:00.000Z",
+      "system": "copy-trader",
+      "asset_type": "Hyperliquid perpetual",
+      "instrument": "HYPE-PERP",
+      "side": "BUY",
+      "entry_price": 27.13,
+      "exit_price": 27.35,
+      "quantity": 48.64373,
+      "notional_usd": 1319.52,
+      "profit_loss_usd": 10.77,
+      "profit_loss_pct": 0.82,
+      "strategy": "Composite-score wallet mirror",
+      "result": "WIN",
+      "holding_period_hours": "0.82"
+    },
     {
       "id": "2026082004-1",
       "timestamp": "2026-08-20T04:36:00.000Z",
@@ -1730,23 +1747,6 @@
       "strategy": "Composite-score wallet mirror",
       "result": "WIN",
       "holding_period_hours": "2.06"
-    },
-    {
-      "id": "2026072413-3",
-      "timestamp": "2026-07-24T13:30:00.000Z",
-      "system": "CounterSnipe",
-      "asset_type": "CS2 skin",
-      "instrument": "AK-47 | Redline FT",
-      "side": "BUY",
-      "entry_price": 33.37,
-      "exit_price": 33.23,
-      "quantity": 1,
-      "notional_usd": 33.37,
-      "profit_loss_usd": -0.14,
-      "profit_loss_pct": -0.41,
-      "strategy": "Sticker-adjusted CS2 skin arbitrage",
-      "result": "LOSS",
-      "holding_period_hours": 200
     }
   ],
   "config": {
