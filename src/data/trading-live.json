@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-29T11:07:03.218Z",
+  "generated_at": "2026-08-29T12:07:02.512Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,33 +31,33 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 2072.71,
-    "total_profit_usd": 778.35,
-    "generated_profit_usd": 553.71,
-    "total_trades": 258,
-    "generated_trades": 173,
-    "win_rate_pct": 81,
-    "last_trade_iso": "2026-08-29T07:09:00.000Z"
+    "portfolio_value_usd": 2081.42,
+    "total_profit_usd": 790.45,
+    "generated_profit_usd": 565.81,
+    "total_trades": 259,
+    "generated_trades": 174,
+    "win_rate_pct": 81.1,
+    "last_trade_iso": "2026-08-29T11:42:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$2,072.71",
+      "v": "$2,081.42",
       "foot": "Verified baseline portfolio plus generated paper drift"
     },
     {
       "k": "Total profit",
-      "v": "+$778.35",
-      "foot": "+$553.71 generated after baseline"
+      "v": "+$790.45",
+      "foot": "+$565.81 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "258",
-      "foot": "173 generated daily-paced trades"
+      "v": "259",
+      "foot": "174 generated daily-paced trades"
     },
     {
       "k": "Win rate",
-      "v": "81%",
+      "v": "81.1%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -176,12 +176,12 @@
         "win_rate_pct": 100
       },
       "generated": {
-        "total_trades": 71,
-        "wins": 65,
+        "total_trades": 72,
+        "wins": 66,
         "losses": 6,
-        "profit_usd": 466.32,
-        "notional_usd": 91904.2,
-        "return_pct_sum": 36.81
+        "profit_usd": 478.42,
+        "notional_usd": 93353.88,
+        "return_pct_sum": 37.64
       },
       "cards": [
         {
@@ -196,28 +196,45 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "71",
+          "v": "72",
           "foot": "generated paper mirror · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "+$466.32",
-          "foot": "91.5% generated win rate"
+          "v": "+$478.42",
+          "foot": "91.7% generated win rate"
         },
         {
           "k": "Average generated return",
           "v": "+0.52%",
-          "foot": "$91,904.20 cumulative paper notional"
+          "foot": "$93,353.88 cumulative paper notional"
         },
         {
           "k": "Research + paper records",
-          "v": "91",
-          "foot": "20 ranked wallets · 71 generated paper fills"
+          "v": "92",
+          "foot": "20 ranked wallets · 72 generated paper fills"
         }
       ]
     }
   },
   "trades": [
+    {
+      "id": "2026082911-2",
+      "timestamp": "2026-08-29T11:42:00.000Z",
+      "system": "copy-trader",
+      "asset_type": "Hyperliquid perpetual",
+      "instrument": "HYPE-PERP",
+      "side": "BUY",
+      "entry_price": 37.16,
+      "exit_price": 37.47,
+      "quantity": 39.01036,
+      "notional_usd": 1449.68,
+      "profit_loss_usd": 12.1,
+      "profit_loss_pct": 0.83,
+      "strategy": "Composite-score wallet mirror",
+      "result": "WIN",
+      "holding_period_hours": "1.66"
+    },
     {
       "id": "2026082907-1",
       "timestamp": "2026-08-29T07:09:00.000Z",
@@ -1730,23 +1747,6 @@
       "strategy": "Composite-score wallet mirror",
       "result": "WIN",
       "holding_period_hours": "0.14"
-    },
-    {
-      "id": "2026080216-3",
-      "timestamp": "2026-08-02T16:39:00.000Z",
-      "system": "copy-trader",
-      "asset_type": "Hyperliquid perpetual",
-      "instrument": "ETH-PERP",
-      "side": "BUY",
-      "entry_price": 3077.93,
-      "exit_price": 3085.94,
-      "quantity": 0.6948,
-      "notional_usd": 2138.54,
-      "profit_loss_usd": 5.56,
-      "profit_loss_pct": 0.26,
-      "strategy": "Composite-score wallet mirror",
-      "result": "WIN",
-      "holding_period_hours": "0.21"
     }
   ],
   "config": {
