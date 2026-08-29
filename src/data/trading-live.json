@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-29T16:07:03.525Z",
+  "generated_at": "2026-08-29T17:07:03.384Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,33 +31,33 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 2081.42,
-    "total_profit_usd": 790.45,
-    "generated_profit_usd": 565.81,
-    "total_trades": 259,
-    "generated_trades": 174,
-    "win_rate_pct": 81.1,
-    "last_trade_iso": "2026-08-29T11:42:00.000Z"
+    "portfolio_value_usd": 2082.04,
+    "total_profit_usd": 791.31,
+    "generated_profit_usd": 566.67,
+    "total_trades": 260,
+    "generated_trades": 175,
+    "win_rate_pct": 81.2,
+    "last_trade_iso": "2026-08-29T16:41:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$2,081.42",
+      "v": "$2,082.04",
       "foot": "Verified baseline portfolio plus generated paper drift"
     },
     {
       "k": "Total profit",
-      "v": "+$790.45",
-      "foot": "+$565.81 generated after baseline"
+      "v": "+$791.31",
+      "foot": "+$566.67 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "259",
-      "foot": "174 generated daily-paced trades"
+      "v": "260",
+      "foot": "175 generated daily-paced trades"
     },
     {
       "k": "Win rate",
-      "v": "81.1%",
+      "v": "81.2%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -67,8 +67,8 @@
     },
     {
       "k": "Latest strategy",
-      "v": "Composite-score wallet mirror",
-      "foot": "HYPE-PERP"
+      "v": "Sports contract-line value NO-only",
+      "foot": "Kalshi Fed decision NO"
     }
   ],
   "systems": {
@@ -128,12 +128,12 @@
         "win_rate_pct": 52.9
       },
       "generated": {
-        "total_trades": 39,
-        "wins": 20,
+        "total_trades": 40,
+        "wins": 21,
         "losses": 19,
-        "profit_usd": -3.05,
-        "notional_usd": 2329.62,
-        "return_pct_sum": -1.35
+        "profit_usd": -2.19,
+        "notional_usd": 2378.58,
+        "return_pct_sum": 0.41
       },
       "cards": [
         {
@@ -148,23 +148,23 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "39",
+          "v": "40",
           "foot": "generated paper · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "-$3.05",
-          "foot": "51.3% generated win rate"
+          "v": "-$2.19",
+          "foot": "52.5% generated win rate"
         },
         {
           "k": "Average generated return",
-          "v": "-0.03%",
-          "foot": "$2,329.62 cumulative paper notional"
+          "v": "+0.01%",
+          "foot": "$2,378.58 cumulative paper notional"
         },
         {
           "k": "Combined outcomes",
-          "v": "56",
-          "foot": "51.8% baseline + generated outcome rate"
+          "v": "57",
+          "foot": "52.6% baseline + generated outcome rate"
         }
       ]
     },
@@ -218,6 +218,23 @@
     }
   },
   "trades": [
+    {
+      "id": "2026082916-3",
+      "timestamp": "2026-08-29T16:41:00.000Z",
+      "system": "PandaXPanther Prediction Bot",
+      "asset_type": "prediction contract",
+      "instrument": "Kalshi Fed decision NO",
+      "side": "BUY NO",
+      "entry_price": 0.636,
+      "exit_price": 0.647,
+      "quantity": 77,
+      "notional_usd": 48.96,
+      "profit_loss_usd": 0.86,
+      "profit_loss_pct": 1.76,
+      "strategy": "Sports contract-line value NO-only",
+      "result": "WIN",
+      "holding_period_hours": "0.66"
+    },
     {
       "id": "2026082911-2",
       "timestamp": "2026-08-29T11:42:00.000Z",
@@ -1730,23 +1747,6 @@
       "strategy": "Composite-score wallet mirror",
       "result": "WIN",
       "holding_period_hours": "1.45"
-    },
-    {
-      "id": "2026080305-1",
-      "timestamp": "2026-08-03T05:24:00.000Z",
-      "system": "copy-trader",
-      "asset_type": "Hyperliquid perpetual",
-      "instrument": "SOL-PERP",
-      "side": "BUY",
-      "entry_price": 142.18,
-      "exit_price": 142.75,
-      "quantity": 8.55249,
-      "notional_usd": 1215.99,
-      "profit_loss_usd": 4.9,
-      "profit_loss_pct": 0.4,
-      "strategy": "Composite-score wallet mirror",
-      "result": "WIN",
-      "holding_period_hours": "0.14"
     }
   ],
   "config": {
