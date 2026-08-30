@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-30T15:07:03.414Z",
+  "generated_at": "2026-08-30T16:07:03.429Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,33 +31,33 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 2086.08,
-    "total_profit_usd": 796.92,
-    "generated_profit_usd": 572.28,
-    "total_trades": 261,
-    "generated_trades": 176,
-    "win_rate_pct": 81.2,
-    "last_trade_iso": "2026-08-30T08:38:00.000Z"
+    "portfolio_value_usd": 2095.13,
+    "total_profit_usd": 809.49,
+    "generated_profit_usd": 584.85,
+    "total_trades": 262,
+    "generated_trades": 177,
+    "win_rate_pct": 81.3,
+    "last_trade_iso": "2026-08-30T15:19:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$2,086.08",
+      "v": "$2,095.13",
       "foot": "Verified baseline portfolio plus generated paper drift"
     },
     {
       "k": "Total profit",
-      "v": "+$796.92",
-      "foot": "+$572.28 generated after baseline"
+      "v": "+$809.49",
+      "foot": "+$584.85 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "261",
-      "foot": "176 generated daily-paced trades"
+      "v": "262",
+      "foot": "177 generated daily-paced trades"
     },
     {
       "k": "Win rate",
-      "v": "81.2%",
+      "v": "81.3%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -68,7 +68,7 @@
     {
       "k": "Latest strategy",
       "v": "Composite-score wallet mirror",
-      "foot": "ETH-PERP"
+      "foot": "HYPE-PERP"
     }
   ],
   "systems": {
@@ -176,12 +176,12 @@
         "win_rate_pct": 100
       },
       "generated": {
-        "total_trades": 73,
-        "wins": 67,
+        "total_trades": 74,
+        "wins": 68,
         "losses": 6,
-        "profit_usd": 484.03,
-        "notional_usd": 94343.9,
-        "return_pct_sum": 38.21
+        "profit_usd": 496.6,
+        "notional_usd": 95792.43,
+        "return_pct_sum": 39.08
       },
       "cards": [
         {
@@ -196,28 +196,45 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "73",
+          "v": "74",
           "foot": "generated paper mirror · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "+$484.03",
-          "foot": "91.8% generated win rate"
+          "v": "+$496.60",
+          "foot": "91.9% generated win rate"
         },
         {
           "k": "Average generated return",
-          "v": "+0.52%",
-          "foot": "$94,343.90 cumulative paper notional"
+          "v": "+0.53%",
+          "foot": "$95,792.43 cumulative paper notional"
         },
         {
           "k": "Research + paper records",
-          "v": "93",
-          "foot": "20 ranked wallets · 73 generated paper fills"
+          "v": "94",
+          "foot": "20 ranked wallets · 74 generated paper fills"
         }
       ]
     }
   },
   "trades": [
+    {
+      "id": "2026083015-2",
+      "timestamp": "2026-08-30T15:19:00.000Z",
+      "system": "copy-trader",
+      "asset_type": "Hyperliquid perpetual",
+      "instrument": "HYPE-PERP",
+      "side": "BUY",
+      "entry_price": 44.72,
+      "exit_price": 45.11,
+      "quantity": 32.39201,
+      "notional_usd": 1448.53,
+      "profit_loss_usd": 12.57,
+      "profit_loss_pct": 0.87,
+      "strategy": "Composite-score wallet mirror",
+      "result": "WIN",
+      "holding_period_hours": "1.04"
+    },
     {
       "id": "2026083008-1",
       "timestamp": "2026-08-30T08:38:00.000Z",
@@ -1730,23 +1747,6 @@
       "strategy": "Composite-score wallet mirror",
       "result": "LOSS",
       "holding_period_hours": "1.29"
-    },
-    {
-      "id": "2026080311-3",
-      "timestamp": "2026-08-03T11:24:00.000Z",
-      "system": "PandaXPanther Prediction Bot",
-      "asset_type": "prediction contract",
-      "instrument": "Polymarket crypto year-end bundle",
-      "side": "BUY YES+NO",
-      "entry_price": 0.971,
-      "exit_price": 0.958,
-      "quantity": 108,
-      "notional_usd": 104.89,
-      "profit_loss_usd": -1.4,
-      "profit_loss_pct": -1.34,
-      "strategy": "Polymarket sum-to-one arbitrage",
-      "result": "LOSS",
-      "holding_period_hours": "1.40"
     }
   ],
   "config": {
