@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-01T17:07:04.105Z",
+  "generated_at": "2026-09-01T18:07:03.302Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -32,12 +32,12 @@
   },
   "totals": {
     "portfolio_value_usd": 2109.29,
-    "total_profit_usd": 828.69,
-    "generated_profit_usd": 604.05,
-    "total_trades": 266,
-    "generated_trades": 181,
-    "win_rate_pct": 81.2,
-    "last_trade_iso": "2026-09-01T11:59:00.000Z"
+    "total_profit_usd": 827.74,
+    "generated_profit_usd": 603.1,
+    "total_trades": 267,
+    "generated_trades": 182,
+    "win_rate_pct": 80.9,
+    "last_trade_iso": "2026-09-01T17:42:00.000Z"
   },
   "cards": [
     {
@@ -47,17 +47,17 @@
     },
     {
       "k": "Total profit",
-      "v": "+$828.69",
-      "foot": "+$604.05 generated after baseline"
+      "v": "+$827.74",
+      "foot": "+$603.10 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "266",
-      "foot": "181 generated daily-paced trades"
+      "v": "267",
+      "foot": "182 generated daily-paced trades"
     },
     {
       "k": "Win rate",
-      "v": "81.2%",
+      "v": "80.9%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -67,8 +67,8 @@
     },
     {
       "k": "Latest strategy",
-      "v": "Crypto latency",
-      "foot": "SOL above daily range"
+      "v": "Sports contract-line value NO-only",
+      "foot": "Kalshi Fed decision NO"
     }
   ],
   "systems": {
@@ -128,12 +128,12 @@
         "win_rate_pct": 52.9
       },
       "generated": {
-        "total_trades": 42,
+        "total_trades": 43,
         "wins": 22,
-        "losses": 20,
-        "profit_usd": -1.39,
-        "notional_usd": 2505.64,
-        "return_pct_sum": 1.53
+        "losses": 21,
+        "profit_usd": -2.34,
+        "notional_usd": 2575.26,
+        "return_pct_sum": 0.16
       },
       "cards": [
         {
@@ -148,23 +148,23 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "42",
+          "v": "43",
           "foot": "generated paper · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "-$1.39",
-          "foot": "52.4% generated win rate"
+          "v": "-$2.34",
+          "foot": "51.2% generated win rate"
         },
         {
           "k": "Average generated return",
-          "v": "+0.04%",
-          "foot": "$2,505.64 cumulative paper notional"
+          "v": "+0.00%",
+          "foot": "$2,575.26 cumulative paper notional"
         },
         {
           "k": "Combined outcomes",
-          "v": "59",
-          "foot": "52.5% baseline + generated outcome rate"
+          "v": "60",
+          "foot": "51.7% baseline + generated outcome rate"
         }
       ]
     },
@@ -218,6 +218,23 @@
     }
   },
   "trades": [
+    {
+      "id": "2026090117-3",
+      "timestamp": "2026-09-01T17:42:00.000Z",
+      "system": "PandaXPanther Prediction Bot",
+      "asset_type": "prediction contract",
+      "instrument": "Kalshi Fed decision NO",
+      "side": "BUY NO",
+      "entry_price": 0.48,
+      "exit_price": 0.474,
+      "quantity": 145,
+      "notional_usd": 69.62,
+      "profit_loss_usd": -0.95,
+      "profit_loss_pct": -1.37,
+      "strategy": "Sports contract-line value NO-only",
+      "result": "LOSS",
+      "holding_period_hours": "0.30"
+    },
     {
       "id": "2026090111-2",
       "timestamp": "2026-09-01T11:59:00.000Z",
@@ -1730,23 +1747,6 @@
       "strategy": "Polymarket sum-to-one arbitrage",
       "result": "WIN",
       "holding_period_hours": "0.26"
-    },
-    {
-      "id": "2026080411-3",
-      "timestamp": "2026-08-04T11:41:00.000Z",
-      "system": "PandaXPanther Prediction Bot",
-      "asset_type": "crypto prediction contract",
-      "instrument": "ETH above weekly range",
-      "side": "BUY",
-      "entry_price": 0.349,
-      "exit_price": 0.345,
-      "quantity": 61,
-      "notional_usd": 21.3,
-      "profit_loss_usd": -0.25,
-      "profit_loss_pct": -1.16,
-      "strategy": "Crypto latency",
-      "result": "LOSS",
-      "holding_period_hours": "0.68"
     }
   ],
   "config": {
