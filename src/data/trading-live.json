@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-04T05:07:02.778Z",
+  "generated_at": "2026-09-04T06:07:02.720Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,33 +31,33 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 2116.31,
-    "total_profit_usd": 837.4,
-    "generated_profit_usd": 612.76,
-    "total_trades": 272,
-    "generated_trades": 187,
-    "win_rate_pct": 80.9,
-    "last_trade_iso": "2026-09-03T15:45:00.000Z"
+    "portfolio_value_usd": 2116.49,
+    "total_profit_usd": 837.65,
+    "generated_profit_usd": 613.01,
+    "total_trades": 273,
+    "generated_trades": 188,
+    "win_rate_pct": 81,
+    "last_trade_iso": "2026-09-04T05:25:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$2,116.31",
+      "v": "$2,116.49",
       "foot": "Verified baseline portfolio plus generated paper drift"
     },
     {
       "k": "Total profit",
-      "v": "+$837.40",
-      "foot": "+$612.76 generated after baseline"
+      "v": "+$837.65",
+      "foot": "+$613.01 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "272",
-      "foot": "187 generated daily-paced trades"
+      "v": "273",
+      "foot": "188 generated daily-paced trades"
     },
     {
       "k": "Win rate",
-      "v": "80.9%",
+      "v": "81%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -80,12 +80,12 @@
         "win_rate_pct": 87.5
       },
       "generated": {
-        "total_trades": 67,
-        "wins": 56,
+        "total_trades": 68,
+        "wins": 57,
         "losses": 11,
-        "profit_usd": 93.26,
-        "notional_usd": 6445.35,
-        "return_pct_sum": 89.29
+        "profit_usd": 93.51,
+        "notional_usd": 6463.79,
+        "return_pct_sum": 90.65
       },
       "cards": [
         {
@@ -100,23 +100,23 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "67",
+          "v": "68",
           "foot": "generated paper · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "+$93.26",
-          "foot": "83.6% generated win rate"
+          "v": "+$93.51",
+          "foot": "83.8% generated win rate"
         },
         {
           "k": "Average generated return",
           "v": "+1.33%",
-          "foot": "$6,445.35 cumulative paper notional"
+          "foot": "$6,463.79 cumulative paper notional"
         },
         {
           "k": "Combined outcomes",
-          "v": "115",
-          "foot": "85.2% baseline + generated outcome rate"
+          "v": "116",
+          "foot": "85.3% baseline + generated outcome rate"
         }
       ]
     },
@@ -218,6 +218,23 @@
     }
   },
   "trades": [
+    {
+      "id": "2026090405-1",
+      "timestamp": "2026-09-04T05:25:00.000Z",
+      "system": "CounterSnipe",
+      "asset_type": "CS2 skin",
+      "instrument": "AK-47 | Redline FT",
+      "side": "BUY",
+      "entry_price": 18.44,
+      "exit_price": 18.7,
+      "quantity": 1,
+      "notional_usd": 18.44,
+      "profit_loss_usd": 0.25,
+      "profit_loss_pct": 1.36,
+      "strategy": "Sticker-adjusted CS2 skin arbitrage",
+      "result": "WIN",
+      "holding_period_hours": 200
+    },
     {
       "id": "2026090315-2",
       "timestamp": "2026-09-03T15:45:00.000Z",
@@ -1730,23 +1747,6 @@
       "strategy": "Sticker-adjusted CS2 skin arbitrage",
       "result": "WIN",
       "holding_period_hours": 199
-    },
-    {
-      "id": "2026080606-1",
-      "timestamp": "2026-08-06T06:19:00.000Z",
-      "system": "copy-trader",
-      "asset_type": "Hyperliquid perpetual",
-      "instrument": "ETH-PERP",
-      "side": "BUY",
-      "entry_price": 2962.26,
-      "exit_price": 2984.51,
-      "quantity": 0.17398,
-      "notional_usd": 515.39,
-      "profit_loss_usd": 3.87,
-      "profit_loss_pct": 0.75,
-      "strategy": "Composite-score wallet mirror",
-      "result": "WIN",
-      "holding_period_hours": "1.63"
     }
   ],
   "config": {
