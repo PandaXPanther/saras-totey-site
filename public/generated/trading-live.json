@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-04T18:07:03.944Z",
+  "generated_at": "2026-09-04T19:07:04.171Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -32,12 +32,12 @@
   },
   "totals": {
     "portfolio_value_usd": 2126.5,
-    "total_profit_usd": 851.14,
-    "generated_profit_usd": 626.5,
-    "total_trades": 276,
-    "generated_trades": 191,
-    "win_rate_pct": 80.8,
-    "last_trade_iso": "2026-09-04T15:09:00.000Z"
+    "total_profit_usd": 850.88,
+    "generated_profit_usd": 626.24,
+    "total_trades": 277,
+    "generated_trades": 192,
+    "win_rate_pct": 80.5,
+    "last_trade_iso": "2026-09-04T18:43:00.000Z"
   },
   "cards": [
     {
@@ -47,17 +47,17 @@
     },
     {
       "k": "Total profit",
-      "v": "+$851.14",
-      "foot": "+$626.50 generated after baseline"
+      "v": "+$850.88",
+      "foot": "+$626.24 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "276",
-      "foot": "191 generated daily-paced trades"
+      "v": "277",
+      "foot": "192 generated daily-paced trades"
     },
     {
       "k": "Win rate",
-      "v": "80.8%",
+      "v": "80.5%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -68,7 +68,7 @@
     {
       "k": "Latest strategy",
       "v": "Sports contract-line value NO-only",
-      "foot": "Kalshi Fed decision NO"
+      "foot": "Kalshi NFL game winner NO"
     }
   ],
   "systems": {
@@ -128,12 +128,12 @@
         "win_rate_pct": 52.9
       },
       "generated": {
-        "total_trades": 45,
+        "total_trades": 46,
         "wins": 23,
-        "losses": 22,
-        "profit_usd": -2.15,
-        "notional_usd": 2673.69,
-        "return_pct_sum": -0.61
+        "losses": 23,
+        "profit_usd": -2.41,
+        "notional_usd": 2714.18,
+        "return_pct_sum": -1.25
       },
       "cards": [
         {
@@ -148,23 +148,23 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "45",
+          "v": "46",
           "foot": "generated paper · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "-$2.15",
-          "foot": "51.1% generated win rate"
+          "v": "-$2.41",
+          "foot": "50.0% generated win rate"
         },
         {
           "k": "Average generated return",
-          "v": "-0.01%",
-          "foot": "$2,673.69 cumulative paper notional"
+          "v": "-0.03%",
+          "foot": "$2,714.18 cumulative paper notional"
         },
         {
           "k": "Combined outcomes",
-          "v": "62",
-          "foot": "51.6% baseline + generated outcome rate"
+          "v": "63",
+          "foot": "50.8% baseline + generated outcome rate"
         }
       ]
     },
@@ -218,6 +218,23 @@
     }
   },
   "trades": [
+    {
+      "id": "2026090418-5",
+      "timestamp": "2026-09-04T18:43:00.000Z",
+      "system": "PandaXPanther Prediction Bot",
+      "asset_type": "prediction contract",
+      "instrument": "Kalshi NFL game winner NO",
+      "side": "BUY NO",
+      "entry_price": 0.445,
+      "exit_price": 0.442,
+      "quantity": 91,
+      "notional_usd": 40.49,
+      "profit_loss_usd": -0.26,
+      "profit_loss_pct": -0.64,
+      "strategy": "Sports contract-line value NO-only",
+      "result": "LOSS",
+      "holding_period_hours": "0.63"
+    },
     {
       "id": "2026090415-4",
       "timestamp": "2026-09-04T15:09:00.000Z",
@@ -1730,23 +1747,6 @@
       "strategy": "Polymarket sum-to-one arbitrage",
       "result": "WIN",
       "holding_period_hours": "0.30"
-    },
-    {
-      "id": "2026080708-2",
-      "timestamp": "2026-08-07T08:26:00.000Z",
-      "system": "PandaXPanther Prediction Bot",
-      "asset_type": "prediction contract",
-      "instrument": "Kalshi Fed decision NO",
-      "side": "BUY NO",
-      "entry_price": 0.602,
-      "exit_price": 0.611,
-      "quantity": 89,
-      "notional_usd": 53.55,
-      "profit_loss_usd": 0.86,
-      "profit_loss_pct": 1.61,
-      "strategy": "Sports contract-line value NO-only",
-      "result": "WIN",
-      "holding_period_hours": "0.11"
     }
   ],
   "config": {
