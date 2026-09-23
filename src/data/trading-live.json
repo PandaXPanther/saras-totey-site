@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-23T16:07:02.985Z",
+  "generated_at": "2026-09-23T17:07:03.333Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,29 +31,29 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 2244.73,
-    "total_profit_usd": 1008.42,
-    "generated_profit_usd": 783.78,
-    "total_trades": 333,
-    "generated_trades": 248,
+    "portfolio_value_usd": 2245.8,
+    "total_profit_usd": 1009.9,
+    "generated_profit_usd": 785.26,
+    "total_trades": 334,
+    "generated_trades": 249,
     "win_rate_pct": 82,
-    "last_trade_iso": "2026-09-23T08:49:00.000Z"
+    "last_trade_iso": "2026-09-23T16:07:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$2,244.73",
+      "v": "$2,245.80",
       "foot": "Verified baseline portfolio plus generated paper drift"
     },
     {
       "k": "Total profit",
-      "v": "+$1,008.42",
-      "foot": "+$783.78 generated after baseline"
+      "v": "+$1,009.90",
+      "foot": "+$785.26 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "333",
-      "foot": "248 generated daily-paced trades"
+      "v": "334",
+      "foot": "249 generated daily-paced trades"
     },
     {
       "k": "Win rate",
@@ -67,8 +67,8 @@
     },
     {
       "k": "Latest strategy",
-      "v": "Composite-score wallet mirror",
-      "foot": "SOL-PERP"
+      "v": "Sticker-adjusted CS2 skin arbitrage",
+      "foot": "AWP | Asiimov FT"
     }
   ],
   "systems": {
@@ -80,12 +80,12 @@
         "win_rate_pct": 87.5
       },
       "generated": {
-        "total_trades": 91,
-        "wins": 79,
+        "total_trades": 92,
+        "wins": 80,
         "losses": 12,
-        "profit_usd": 125.7,
-        "notional_usd": 8432.45,
-        "return_pct_sum": 126.77
+        "profit_usd": 127.18,
+        "notional_usd": 8563.88,
+        "return_pct_sum": 127.9
       },
       "cards": [
         {
@@ -100,22 +100,22 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "91",
+          "v": "92",
           "foot": "generated paper · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "+$125.70",
-          "foot": "86.8% generated win rate"
+          "v": "+$127.18",
+          "foot": "87.0% generated win rate"
         },
         {
           "k": "Average generated return",
           "v": "+1.39%",
-          "foot": "$8,432.45 cumulative paper notional"
+          "foot": "$8,563.88 cumulative paper notional"
         },
         {
           "k": "Combined outcomes",
-          "v": "139",
+          "v": "140",
           "foot": "87.1% baseline + generated outcome rate"
         }
       ]
@@ -218,6 +218,23 @@
     }
   },
   "trades": [
+    {
+      "id": "2026092316-2",
+      "timestamp": "2026-09-23T16:07:00.000Z",
+      "system": "CounterSnipe",
+      "asset_type": "CS2 skin",
+      "instrument": "AWP | Asiimov FT",
+      "side": "BUY",
+      "entry_price": 131.43,
+      "exit_price": 132.92,
+      "quantity": 1,
+      "notional_usd": 131.43,
+      "profit_loss_usd": 1.48,
+      "profit_loss_pct": 1.13,
+      "strategy": "Sticker-adjusted CS2 skin arbitrage",
+      "result": "WIN",
+      "holding_period_hours": 169
+    },
     {
       "id": "2026092308-1",
       "timestamp": "2026-09-23T08:49:00.000Z",
@@ -1730,23 +1747,6 @@
       "strategy": "Composite-score wallet mirror",
       "result": "WIN",
       "holding_period_hours": "0.39"
-    },
-    {
-      "id": "2026082505-1",
-      "timestamp": "2026-08-25T05:28:00.000Z",
-      "system": "CounterSnipe",
-      "asset_type": "CS2 skin",
-      "instrument": "Desert Eagle | Printstream FT",
-      "side": "BUY",
-      "entry_price": 38.79,
-      "exit_price": 39.33,
-      "quantity": 1,
-      "notional_usd": 38.79,
-      "profit_loss_usd": 0.54,
-      "profit_loss_pct": 1.39,
-      "strategy": "Sticker-adjusted CS2 skin arbitrage",
-      "result": "WIN",
-      "holding_period_hours": 176
     }
   ],
   "config": {
