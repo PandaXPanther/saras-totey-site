@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-28T06:07:02.832Z",
+  "generated_at": "2026-09-28T07:07:03.112Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,29 +31,29 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 2270.84,
-    "total_profit_usd": 1043.87,
-    "generated_profit_usd": 819.23,
-    "total_trades": 346,
-    "generated_trades": 261,
+    "portfolio_value_usd": 2280.51,
+    "total_profit_usd": 1057.3,
+    "generated_profit_usd": 832.66,
+    "total_trades": 347,
+    "generated_trades": 262,
     "win_rate_pct": 82.4,
-    "last_trade_iso": "2026-09-27T17:17:00.000Z"
+    "last_trade_iso": "2026-09-28T06:44:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$2,270.84",
+      "v": "$2,280.51",
       "foot": "Verified baseline portfolio plus generated paper drift"
     },
     {
       "k": "Total profit",
-      "v": "+$1,043.87",
-      "foot": "+$819.23 generated after baseline"
+      "v": "+$1,057.30",
+      "foot": "+$832.66 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "346",
-      "foot": "261 generated daily-paced trades"
+      "v": "347",
+      "foot": "262 generated daily-paced trades"
     },
     {
       "k": "Win rate",
@@ -68,7 +68,7 @@
     {
       "k": "Latest strategy",
       "v": "Composite-score wallet mirror",
-      "foot": "BTC-PERP"
+      "foot": "HYPE-PERP"
     }
   ],
   "systems": {
@@ -176,12 +176,12 @@
         "win_rate_pct": 100
       },
       "generated": {
-        "total_trades": 105,
-        "wins": 98,
+        "total_trades": 106,
+        "wins": 99,
         "losses": 7,
-        "profit_usd": 683.23,
-        "notional_usd": 135470.01,
-        "return_pct_sum": 53.5
+        "profit_usd": 696.66,
+        "notional_usd": 137165.47,
+        "return_pct_sum": 54.29
       },
       "cards": [
         {
@@ -196,28 +196,45 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "105",
+          "v": "106",
           "foot": "generated paper mirror · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "+$683.23",
-          "foot": "93.3% generated win rate"
+          "v": "+$696.66",
+          "foot": "93.4% generated win rate"
         },
         {
           "k": "Average generated return",
           "v": "+0.51%",
-          "foot": "$135,470.01 cumulative paper notional"
+          "foot": "$137,165.47 cumulative paper notional"
         },
         {
           "k": "Research + paper records",
-          "v": "125",
-          "foot": "20 ranked wallets · 105 generated paper fills"
+          "v": "126",
+          "foot": "20 ranked wallets · 106 generated paper fills"
         }
       ]
     }
   },
   "trades": [
+    {
+      "id": "2026092806-1",
+      "timestamp": "2026-09-28T06:44:00.000Z",
+      "system": "copy-trader",
+      "asset_type": "Hyperliquid perpetual",
+      "instrument": "HYPE-PERP",
+      "side": "BUY",
+      "entry_price": 27.41,
+      "exit_price": 27.63,
+      "quantity": 61.85477,
+      "notional_usd": 1695.46,
+      "profit_loss_usd": 13.43,
+      "profit_loss_pct": 0.79,
+      "strategy": "Composite-score wallet mirror",
+      "result": "WIN",
+      "holding_period_hours": "1.47"
+    },
     {
       "id": "2026092717-3",
       "timestamp": "2026-09-27T17:17:00.000Z",
@@ -1730,23 +1747,6 @@
       "strategy": "Composite-score wallet mirror",
       "result": "WIN",
       "holding_period_hours": "1.68"
-    },
-    {
-      "id": "2026082818-4",
-      "timestamp": "2026-08-28T18:56:00.000Z",
-      "system": "PandaXPanther Prediction Bot",
-      "asset_type": "crypto prediction contract",
-      "instrument": "SOL above daily range",
-      "side": "BUY",
-      "entry_price": 0.439,
-      "exit_price": 0.434,
-      "quantity": 48,
-      "notional_usd": 21.08,
-      "profit_loss_usd": -0.26,
-      "profit_loss_pct": -1.21,
-      "strategy": "Crypto latency",
-      "result": "LOSS",
-      "holding_period_hours": "2.09"
     }
   ],
   "config": {
