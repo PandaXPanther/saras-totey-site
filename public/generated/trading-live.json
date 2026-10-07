@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-07T06:07:02.951Z",
+  "generated_at": "2026-10-07T07:07:02.881Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,29 +31,29 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 2352.39,
-    "total_profit_usd": 1153.39,
-    "generated_profit_usd": 928.75,
-    "total_trades": 375,
-    "generated_trades": 290,
+    "portfolio_value_usd": 2356.11,
+    "total_profit_usd": 1158.56,
+    "generated_profit_usd": 933.92,
+    "total_trades": 376,
+    "generated_trades": 291,
     "win_rate_pct": 82.7,
-    "last_trade_iso": "2026-10-06T17:53:00.000Z"
+    "last_trade_iso": "2026-10-07T06:10:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$2,352.39",
+      "v": "$2,356.11",
       "foot": "Verified baseline portfolio plus generated paper drift"
     },
     {
       "k": "Total profit",
-      "v": "+$1,153.39",
-      "foot": "+$928.75 generated after baseline"
+      "v": "+$1,158.56",
+      "foot": "+$933.92 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "375",
-      "foot": "290 generated daily-paced trades"
+      "v": "376",
+      "foot": "291 generated daily-paced trades"
     },
     {
       "k": "Win rate",
@@ -67,8 +67,8 @@
     },
     {
       "k": "Latest strategy",
-      "v": "Crypto latency",
-      "foot": "SOL above daily range"
+      "v": "Composite-score wallet mirror",
+      "foot": "ETH-PERP"
     }
   ],
   "systems": {
@@ -176,12 +176,12 @@
         "win_rate_pct": 100
       },
       "generated": {
-        "total_trades": 117,
-        "wins": 109,
+        "total_trades": 118,
+        "wins": 110,
         "losses": 8,
-        "profit_usd": 779.11,
-        "notional_usd": 150021.65,
-        "return_pct_sum": 60.98
+        "profit_usd": 784.28,
+        "notional_usd": 150929.04,
+        "return_pct_sum": 61.55
       },
       "cards": [
         {
@@ -196,28 +196,45 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "117",
+          "v": "118",
           "foot": "generated paper mirror · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "+$779.11",
+          "v": "+$784.28",
           "foot": "93.2% generated win rate"
         },
         {
           "k": "Average generated return",
           "v": "+0.52%",
-          "foot": "$150,021.65 cumulative paper notional"
+          "foot": "$150,929.04 cumulative paper notional"
         },
         {
           "k": "Research + paper records",
-          "v": "137",
-          "foot": "20 ranked wallets · 117 generated paper fills"
+          "v": "138",
+          "foot": "20 ranked wallets · 118 generated paper fills"
         }
       ]
     }
   },
   "trades": [
+    {
+      "id": "2026100706-1",
+      "timestamp": "2026-10-07T06:10:00.000Z",
+      "system": "copy-trader",
+      "asset_type": "Hyperliquid perpetual",
+      "instrument": "ETH-PERP",
+      "side": "BUY",
+      "entry_price": 3884.97,
+      "exit_price": 3907.11,
+      "quantity": 0.23356,
+      "notional_usd": 907.39,
+      "profit_loss_usd": 5.17,
+      "profit_loss_pct": 0.57,
+      "strategy": "Composite-score wallet mirror",
+      "result": "WIN",
+      "holding_period_hours": "0.23"
+    },
     {
       "id": "2026100617-4",
       "timestamp": "2026-10-06T17:53:00.000Z",
@@ -1730,23 +1747,6 @@
       "strategy": "Sticker-adjusted CS2 skin arbitrage",
       "result": "WIN",
       "holding_period_hours": 176
-    },
-    {
-      "id": "2026090806-1",
-      "timestamp": "2026-09-08T06:24:00.000Z",
-      "system": "copy-trader",
-      "asset_type": "Hyperliquid perpetual",
-      "instrument": "BTC-PERP",
-      "side": "BUY",
-      "entry_price": 69519.22,
-      "exit_price": 69691.9,
-      "quantity": 0.00984,
-      "notional_usd": 684.26,
-      "profit_loss_usd": 1.7,
-      "profit_loss_pct": 0.25,
-      "strategy": "Composite-score wallet mirror",
-      "result": "WIN",
-      "holding_period_hours": "0.14"
     }
   ],
   "config": {
