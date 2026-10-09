@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-08T12:22:35.688Z",
+  "generated_at": "2026-10-09T12:12:26.298Z",
   "cards": [
     {
       "k": "CounterSnipe commits",
@@ -23,12 +23,12 @@
     },
     {
       "k": "Days since CounterSnipe live",
-      "v": "145",
+      "v": "146",
       "foot": "Since May 16, 2026"
     },
     {
       "k": "Days since last commit",
-      "v": "71",
+      "v": "72",
       "foot": "Across the three-repo fleet"
     }
   ],
