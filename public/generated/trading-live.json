@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-15T19:07:03.130Z",
+  "generated_at": "2026-10-15T20:07:03.840Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,33 +31,33 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 2429.05,
-    "total_profit_usd": 1256.62,
-    "generated_profit_usd": 1031.98,
-    "total_trades": 405,
-    "generated_trades": 320,
-    "win_rate_pct": 82.2,
-    "last_trade_iso": "2026-10-15T15:25:00.000Z"
+    "portfolio_value_usd": 2436.53,
+    "total_profit_usd": 1267.01,
+    "generated_profit_usd": 1042.37,
+    "total_trades": 406,
+    "generated_trades": 321,
+    "win_rate_pct": 82.3,
+    "last_trade_iso": "2026-10-15T19:15:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$2,429.05",
+      "v": "$2,436.53",
       "foot": "Verified baseline portfolio plus generated paper drift"
     },
     {
       "k": "Total profit",
-      "v": "+$1,256.62",
-      "foot": "+$1,031.98 generated after baseline"
+      "v": "+$1,267.01",
+      "foot": "+$1,042.37 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "405",
-      "foot": "320 generated daily-paced trades"
+      "v": "406",
+      "foot": "321 generated daily-paced trades"
     },
     {
       "k": "Win rate",
-      "v": "82.2%",
+      "v": "82.3%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -67,8 +67,8 @@
     },
     {
       "k": "Latest strategy",
-      "v": "Sticker-adjusted CS2 skin arbitrage",
-      "foot": "AK-47 | Redline FT"
+      "v": "Composite-score wallet mirror",
+      "foot": "HYPE-PERP"
     }
   ],
   "systems": {
@@ -176,12 +176,12 @@
         "win_rate_pct": 100
       },
       "generated": {
-        "total_trades": 125,
-        "wins": 117,
+        "total_trades": 126,
+        "wins": 118,
         "losses": 8,
-        "profit_usd": 862.41,
-        "notional_usd": 160825.98,
-        "return_pct_sum": 66.98
+        "profit_usd": 872.8,
+        "notional_usd": 162142.22,
+        "return_pct_sum": 67.77
       },
       "cards": [
         {
@@ -196,28 +196,45 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "125",
+          "v": "126",
           "foot": "generated paper mirror · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "+$862.41",
-          "foot": "93.6% generated win rate"
+          "v": "+$872.80",
+          "foot": "93.7% generated win rate"
         },
         {
           "k": "Average generated return",
           "v": "+0.54%",
-          "foot": "$160,825.98 cumulative paper notional"
+          "foot": "$162,142.22 cumulative paper notional"
         },
         {
           "k": "Research + paper records",
-          "v": "145",
-          "foot": "20 ranked wallets · 125 generated paper fills"
+          "v": "146",
+          "foot": "20 ranked wallets · 126 generated paper fills"
         }
       ]
     }
   },
   "trades": [
+    {
+      "id": "2026101519-5",
+      "timestamp": "2026-10-15T19:15:00.000Z",
+      "system": "copy-trader",
+      "asset_type": "Hyperliquid perpetual",
+      "instrument": "HYPE-PERP",
+      "side": "BUY",
+      "entry_price": 41.31,
+      "exit_price": 41.63,
+      "quantity": 31.86492,
+      "notional_usd": 1316.24,
+      "profit_loss_usd": 10.39,
+      "profit_loss_pct": 0.79,
+      "strategy": "Composite-score wallet mirror",
+      "result": "WIN",
+      "holding_period_hours": "0.91"
+    },
     {
       "id": "2026101515-4",
       "timestamp": "2026-10-15T15:25:00.000Z",
@@ -1730,23 +1747,6 @@
       "strategy": "Sticker-adjusted CS2 skin arbitrage",
       "result": "WIN",
       "holding_period_hours": 174
-    },
-    {
-      "id": "2026091616-3",
-      "timestamp": "2026-09-16T16:47:00.000Z",
-      "system": "PandaXPanther Prediction Bot",
-      "asset_type": "crypto prediction contract",
-      "instrument": "SOL above daily range",
-      "side": "BUY",
-      "entry_price": 0.718,
-      "exit_price": 0.732,
-      "quantity": 50,
-      "notional_usd": 35.89,
-      "profit_loss_usd": 0.71,
-      "profit_loss_pct": 1.98,
-      "strategy": "Crypto latency",
-      "result": "WIN",
-      "holding_period_hours": "0.51"
     }
   ],
   "config": {
