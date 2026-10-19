@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-19T07:07:03.104Z",
+  "generated_at": "2026-10-19T08:07:02.918Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,29 +31,29 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 2452.26,
-    "total_profit_usd": 1286.91,
-    "generated_profit_usd": 1062.27,
-    "total_trades": 418,
-    "generated_trades": 333,
+    "portfolio_value_usd": 2453.89,
+    "total_profit_usd": 1289.17,
+    "generated_profit_usd": 1064.53,
+    "total_trades": 419,
+    "generated_trades": 334,
     "win_rate_pct": 82.3,
-    "last_trade_iso": "2026-10-19T04:49:00.000Z"
+    "last_trade_iso": "2026-10-19T07:53:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$2,452.26",
+      "v": "$2,453.89",
       "foot": "Verified baseline portfolio plus generated paper drift"
     },
     {
       "k": "Total profit",
-      "v": "+$1,286.91",
-      "foot": "+$1,062.27 generated after baseline"
+      "v": "+$1,289.17",
+      "foot": "+$1,064.53 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "418",
-      "foot": "333 generated daily-paced trades"
+      "v": "419",
+      "foot": "334 generated daily-paced trades"
     },
     {
       "k": "Win rate",
@@ -68,7 +68,7 @@
     {
       "k": "Latest strategy",
       "v": "Sticker-adjusted CS2 skin arbitrage",
-      "foot": "AK-47 | Redline FT"
+      "foot": "AWP | Asiimov FT"
     }
   ],
   "systems": {
@@ -80,12 +80,12 @@
         "win_rate_pct": 87.5
       },
       "generated": {
-        "total_trades": 132,
-        "wins": 116,
+        "total_trades": 133,
+        "wins": 117,
         "losses": 16,
-        "profit_usd": 183.56,
-        "notional_usd": 12007.91,
-        "return_pct_sum": 188.41
+        "profit_usd": 185.82,
+        "notional_usd": 12125.45,
+        "return_pct_sum": 190.33
       },
       "cards": [
         {
@@ -100,22 +100,22 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "132",
+          "v": "133",
           "foot": "generated paper · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "+$183.56",
-          "foot": "87.9% generated win rate"
+          "v": "+$185.82",
+          "foot": "88.0% generated win rate"
         },
         {
           "k": "Average generated return",
           "v": "+1.43%",
-          "foot": "$12,007.91 cumulative paper notional"
+          "foot": "$12,125.45 cumulative paper notional"
         },
         {
           "k": "Combined outcomes",
-          "v": "180",
+          "v": "181",
           "foot": "87.8% baseline + generated outcome rate"
         }
       ]
@@ -218,6 +218,23 @@
     }
   },
   "trades": [
+    {
+      "id": "2026101907-2",
+      "timestamp": "2026-10-19T07:53:00.000Z",
+      "system": "CounterSnipe",
+      "asset_type": "CS2 skin",
+      "instrument": "AWP | Asiimov FT",
+      "side": "BUY",
+      "entry_price": 117.54,
+      "exit_price": 119.8,
+      "quantity": 1,
+      "notional_usd": 117.54,
+      "profit_loss_usd": 2.26,
+      "profit_loss_pct": 1.92,
+      "strategy": "Sticker-adjusted CS2 skin arbitrage",
+      "result": "WIN",
+      "holding_period_hours": 176
+    },
     {
       "id": "2026101904-1",
       "timestamp": "2026-10-19T04:49:00.000Z",
@@ -1730,23 +1747,6 @@
       "strategy": "Sticker-adjusted CS2 skin arbitrage",
       "result": "WIN",
       "holding_period_hours": 210
-    },
-    {
-      "id": "2026092112-3",
-      "timestamp": "2026-09-21T12:39:00.000Z",
-      "system": "copy-trader",
-      "asset_type": "Hyperliquid perpetual",
-      "instrument": "BTC-PERP",
-      "side": "BUY",
-      "entry_price": 70728.78,
-      "exit_price": 71219.04,
-      "quantity": 0.01819,
-      "notional_usd": 1286.26,
-      "profit_loss_usd": 8.92,
-      "profit_loss_pct": 0.69,
-      "strategy": "Composite-score wallet mirror",
-      "result": "WIN",
-      "holding_period_hours": "1.97"
     }
   ],
   "config": {
