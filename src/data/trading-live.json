@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-20T14:07:02.920Z",
+  "generated_at": "2026-10-20T15:07:02.702Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,29 +31,29 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 2463.43,
-    "total_profit_usd": 1302.42,
-    "generated_profit_usd": 1077.78,
-    "total_trades": 425,
-    "generated_trades": 340,
+    "portfolio_value_usd": 2467.19,
+    "total_profit_usd": 1307.64,
+    "generated_profit_usd": 1083,
+    "total_trades": 426,
+    "generated_trades": 341,
     "win_rate_pct": 82.6,
-    "last_trade_iso": "2026-10-20T12:03:00.000Z"
+    "last_trade_iso": "2026-10-20T14:53:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$2,463.43",
+      "v": "$2,467.19",
       "foot": "Verified baseline portfolio plus generated paper drift"
     },
     {
       "k": "Total profit",
-      "v": "+$1,302.42",
-      "foot": "+$1,077.78 generated after baseline"
+      "v": "+$1,307.64",
+      "foot": "+$1,083.00 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "425",
-      "foot": "340 generated daily-paced trades"
+      "v": "426",
+      "foot": "341 generated daily-paced trades"
     },
     {
       "k": "Win rate",
@@ -68,7 +68,7 @@
     {
       "k": "Latest strategy",
       "v": "Sticker-adjusted CS2 skin arbitrage",
-      "foot": "AK-47 | Redline FT"
+      "foot": "M4A1-S | Printstream MW"
     }
   ],
   "systems": {
@@ -80,12 +80,12 @@
         "win_rate_pct": 87.5
       },
       "generated": {
-        "total_trades": 135,
-        "wins": 119,
+        "total_trades": 136,
+        "wins": 120,
         "losses": 16,
-        "profit_usd": 186.73,
-        "notional_usd": 12184.85,
-        "return_pct_sum": 193.33
+        "profit_usd": 191.95,
+        "notional_usd": 12455.77,
+        "return_pct_sum": 195.26
       },
       "cards": [
         {
@@ -100,22 +100,22 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "135",
+          "v": "136",
           "foot": "generated paper · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "+$186.73",
-          "foot": "88.1% generated win rate"
+          "v": "+$191.95",
+          "foot": "88.2% generated win rate"
         },
         {
           "k": "Average generated return",
-          "v": "+1.43%",
-          "foot": "$12,184.85 cumulative paper notional"
+          "v": "+1.44%",
+          "foot": "$12,455.77 cumulative paper notional"
         },
         {
           "k": "Combined outcomes",
-          "v": "183",
+          "v": "184",
           "foot": "88.0% baseline + generated outcome rate"
         }
       ]
@@ -218,6 +218,23 @@
     }
   },
   "trades": [
+    {
+      "id": "2026102014-4",
+      "timestamp": "2026-10-20T14:53:00.000Z",
+      "system": "CounterSnipe",
+      "asset_type": "CS2 skin",
+      "instrument": "M4A1-S | Printstream MW",
+      "side": "BUY",
+      "entry_price": 270.92,
+      "exit_price": 276.14,
+      "quantity": 1,
+      "notional_usd": 270.92,
+      "profit_loss_usd": 5.22,
+      "profit_loss_pct": 1.93,
+      "strategy": "Sticker-adjusted CS2 skin arbitrage",
+      "result": "WIN",
+      "holding_period_hours": 199
+    },
     {
       "id": "2026102012-3",
       "timestamp": "2026-10-20T12:03:00.000Z",
@@ -1730,23 +1747,6 @@
       "strategy": "Sticker-adjusted CS2 skin arbitrage",
       "result": "WIN",
       "holding_period_hours": 168
-    },
-    {
-      "id": "2026092411-2",
-      "timestamp": "2026-09-24T11:39:00.000Z",
-      "system": "CounterSnipe",
-      "asset_type": "CS2 skin",
-      "instrument": "Desert Eagle | Printstream FT",
-      "side": "BUY",
-      "entry_price": 57.02,
-      "exit_price": 57.53,
-      "quantity": 1,
-      "notional_usd": 57.02,
-      "profit_loss_usd": 0.5,
-      "profit_loss_pct": 0.88,
-      "strategy": "Sticker-adjusted CS2 skin arbitrage",
-      "result": "WIN",
-      "holding_period_hours": 169
     }
   ],
   "config": {
