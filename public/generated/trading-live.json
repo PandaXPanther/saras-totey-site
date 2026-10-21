@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-21T10:07:02.467Z",
+  "generated_at": "2026-10-21T11:07:02.096Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,33 +31,33 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 2479.39,
-    "total_profit_usd": 1324.58,
-    "generated_profit_usd": 1099.94,
-    "total_trades": 428,
-    "generated_trades": 343,
-    "win_rate_pct": 82.7,
-    "last_trade_iso": "2026-10-21T05:04:00.000Z"
+    "portfolio_value_usd": 2480.13,
+    "total_profit_usd": 1325.61,
+    "generated_profit_usd": 1100.97,
+    "total_trades": 429,
+    "generated_trades": 344,
+    "win_rate_pct": 82.8,
+    "last_trade_iso": "2026-10-21T10:23:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$2,479.39",
+      "v": "$2,480.13",
       "foot": "Verified baseline portfolio plus generated paper drift"
     },
     {
       "k": "Total profit",
-      "v": "+$1,324.58",
-      "foot": "+$1,099.94 generated after baseline"
+      "v": "+$1,325.61",
+      "foot": "+$1,100.97 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "428",
-      "foot": "343 generated daily-paced trades"
+      "v": "429",
+      "foot": "344 generated daily-paced trades"
     },
     {
       "k": "Win rate",
-      "v": "82.7%",
+      "v": "82.8%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -67,8 +67,8 @@
     },
     {
       "k": "Latest strategy",
-      "v": "Composite-score wallet mirror",
-      "foot": "BTC-PERP"
+      "v": "Polymarket sum-to-one arbitrage",
+      "foot": "Polymarket crypto year-end bundle"
     }
   ],
   "systems": {
@@ -128,12 +128,12 @@
         "win_rate_pct": 52.9
       },
       "generated": {
-        "total_trades": 74,
-        "wins": 38,
+        "total_trades": 75,
+        "wins": 39,
         "losses": 36,
-        "profit_usd": -3.97,
-        "notional_usd": 4449.31,
-        "return_pct_sum": 0.77
+        "profit_usd": -2.94,
+        "notional_usd": 4539.8,
+        "return_pct_sum": 1.91
       },
       "cards": [
         {
@@ -148,23 +148,23 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "74",
+          "v": "75",
           "foot": "generated paper · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "-$3.97",
-          "foot": "51.4% generated win rate"
+          "v": "-$2.94",
+          "foot": "52.0% generated win rate"
         },
         {
           "k": "Average generated return",
-          "v": "+0.01%",
-          "foot": "$4,449.31 cumulative paper notional"
+          "v": "+0.03%",
+          "foot": "$4,539.80 cumulative paper notional"
         },
         {
           "k": "Combined outcomes",
-          "v": "91",
-          "foot": "51.6% baseline + generated outcome rate"
+          "v": "92",
+          "foot": "52.2% baseline + generated outcome rate"
         }
       ]
     },
@@ -218,6 +218,23 @@
     }
   },
   "trades": [
+    {
+      "id": "2026102110-2",
+      "timestamp": "2026-10-21T10:23:00.000Z",
+      "system": "PandaXPanther Prediction Bot",
+      "asset_type": "prediction contract",
+      "instrument": "Polymarket crypto year-end bundle",
+      "side": "BUY YES+NO",
+      "entry_price": 0.953,
+      "exit_price": 0.963,
+      "quantity": 95,
+      "notional_usd": 90.49,
+      "profit_loss_usd": 1.03,
+      "profit_loss_pct": 1.14,
+      "strategy": "Polymarket sum-to-one arbitrage",
+      "result": "WIN",
+      "holding_period_hours": "1.27"
+    },
     {
       "id": "2026102105-1",
       "timestamp": "2026-10-21T05:04:00.000Z",
@@ -1730,23 +1747,6 @@
       "strategy": "Composite-score wallet mirror",
       "result": "WIN",
       "holding_period_hours": "0.70"
-    },
-    {
-      "id": "2026092510-2",
-      "timestamp": "2026-09-25T10:26:00.000Z",
-      "system": "CounterSnipe",
-      "asset_type": "CS2 skin",
-      "instrument": "Glock-18 | Gamma Doppler FN",
-      "side": "BUY",
-      "entry_price": 62.9,
-      "exit_price": 64.23,
-      "quantity": 1,
-      "notional_usd": 62.9,
-      "profit_loss_usd": 1.33,
-      "profit_loss_pct": 2.11,
-      "strategy": "Sticker-adjusted CS2 skin arbitrage",
-      "result": "WIN",
-      "holding_period_hours": 211
     }
   ],
   "config": {
