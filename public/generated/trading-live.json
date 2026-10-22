@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-22T05:07:02.003Z",
+  "generated_at": "2026-10-22T06:07:02.742Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,29 +31,29 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 2480.13,
-    "total_profit_usd": 1315.72,
-    "generated_profit_usd": 1091.08,
-    "total_trades": 431,
-    "generated_trades": 346,
+    "portfolio_value_usd": 2482.11,
+    "total_profit_usd": 1318.47,
+    "generated_profit_usd": 1093.83,
+    "total_trades": 432,
+    "generated_trades": 347,
     "win_rate_pct": 82.4,
-    "last_trade_iso": "2026-10-21T18:55:00.000Z"
+    "last_trade_iso": "2026-10-22T05:07:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$2,480.13",
+      "v": "$2,482.11",
       "foot": "Verified baseline portfolio plus generated paper drift"
     },
     {
       "k": "Total profit",
-      "v": "+$1,315.72",
-      "foot": "+$1,091.08 generated after baseline"
+      "v": "+$1,318.47",
+      "foot": "+$1,093.83 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "431",
-      "foot": "346 generated daily-paced trades"
+      "v": "432",
+      "foot": "347 generated daily-paced trades"
     },
     {
       "k": "Win rate",
@@ -67,8 +67,8 @@
     },
     {
       "k": "Latest strategy",
-      "v": "Composite-score wallet mirror",
-      "foot": "HYPE-PERP"
+      "v": "Sticker-adjusted CS2 skin arbitrage",
+      "foot": "AWP | Asiimov FT"
     }
   ],
   "systems": {
@@ -80,12 +80,12 @@
         "win_rate_pct": 87.5
       },
       "generated": {
-        "total_trades": 136,
-        "wins": 120,
+        "total_trades": 137,
+        "wins": 121,
         "losses": 16,
-        "profit_usd": 191.95,
-        "notional_usd": 12455.77,
-        "return_pct_sum": 195.26
+        "profit_usd": 194.7,
+        "notional_usd": 12564.33,
+        "return_pct_sum": 197.79
       },
       "cards": [
         {
@@ -100,23 +100,23 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "136",
+          "v": "137",
           "foot": "generated paper · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "+$191.95",
-          "foot": "88.2% generated win rate"
+          "v": "+$194.70",
+          "foot": "88.3% generated win rate"
         },
         {
           "k": "Average generated return",
           "v": "+1.44%",
-          "foot": "$12,455.77 cumulative paper notional"
+          "foot": "$12,564.33 cumulative paper notional"
         },
         {
           "k": "Combined outcomes",
-          "v": "184",
-          "foot": "88.0% baseline + generated outcome rate"
+          "v": "185",
+          "foot": "88.1% baseline + generated outcome rate"
         }
       ]
     },
@@ -218,6 +218,23 @@
     }
   },
   "trades": [
+    {
+      "id": "2026102205-1",
+      "timestamp": "2026-10-22T05:07:00.000Z",
+      "system": "CounterSnipe",
+      "asset_type": "CS2 skin",
+      "instrument": "AWP | Asiimov FT",
+      "side": "BUY",
+      "entry_price": 108.56,
+      "exit_price": 111.31,
+      "quantity": 1,
+      "notional_usd": 108.56,
+      "profit_loss_usd": 2.75,
+      "profit_loss_pct": 2.53,
+      "strategy": "Sticker-adjusted CS2 skin arbitrage",
+      "result": "WIN",
+      "holding_period_hours": 208
+    },
     {
       "id": "2026102118-4",
       "timestamp": "2026-10-21T18:55:00.000Z",
@@ -1730,23 +1747,6 @@
       "strategy": "Composite-score wallet mirror",
       "result": "WIN",
       "holding_period_hours": "1.73"
-    },
-    {
-      "id": "2026092608-1",
-      "timestamp": "2026-09-26T08:55:00.000Z",
-      "system": "CounterSnipe",
-      "asset_type": "CS2 skin",
-      "instrument": "M4A1-S | Printstream MW",
-      "side": "BUY",
-      "entry_price": 269.38,
-      "exit_price": 273.49,
-      "quantity": 1,
-      "notional_usd": 269.38,
-      "profit_loss_usd": 4.11,
-      "profit_loss_pct": 1.53,
-      "strategy": "Sticker-adjusted CS2 skin arbitrage",
-      "result": "WIN",
-      "holding_period_hours": 179
     }
   ],
   "config": {
