@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-25T11:07:02.167Z",
+  "generated_at": "2026-10-25T12:07:02.251Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -32,12 +32,12 @@
   },
   "totals": {
     "portfolio_value_usd": 2514.19,
-    "total_profit_usd": 1352.39,
-    "generated_profit_usd": 1127.75,
-    "total_trades": 446,
-    "generated_trades": 361,
-    "win_rate_pct": 81.8,
-    "last_trade_iso": "2026-10-25T08:11:00.000Z"
+    "total_profit_usd": 1351.89,
+    "generated_profit_usd": 1127.25,
+    "total_trades": 447,
+    "generated_trades": 362,
+    "win_rate_pct": 81.7,
+    "last_trade_iso": "2026-10-25T11:48:00.000Z"
   },
   "cards": [
     {
@@ -47,17 +47,17 @@
     },
     {
       "k": "Total profit",
-      "v": "+$1,352.39",
-      "foot": "+$1,127.75 generated after baseline"
+      "v": "+$1,351.89",
+      "foot": "+$1,127.25 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "446",
-      "foot": "361 generated daily-paced trades"
+      "v": "447",
+      "foot": "362 generated daily-paced trades"
     },
     {
       "k": "Win rate",
-      "v": "81.8%",
+      "v": "81.7%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -67,8 +67,8 @@
     },
     {
       "k": "Latest strategy",
-      "v": "Crypto latency",
-      "foot": "ETH above weekly range"
+      "v": "Sports contract-line value NO-only",
+      "foot": "Kalshi Fed decision NO"
     }
   ],
   "systems": {
@@ -128,12 +128,12 @@
         "win_rate_pct": 52.9
       },
       "generated": {
-        "total_trades": 84,
+        "total_trades": 85,
         "wins": 43,
-        "losses": 41,
-        "profit_usd": -4.98,
-        "notional_usd": 5062.44,
-        "return_pct_sum": -0.32
+        "losses": 42,
+        "profit_usd": -5.48,
+        "notional_usd": 5093.23,
+        "return_pct_sum": -1.95
       },
       "cards": [
         {
@@ -148,23 +148,23 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "84",
+          "v": "85",
           "foot": "generated paper · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "-$4.98",
-          "foot": "51.2% generated win rate"
+          "v": "-$5.48",
+          "foot": "50.6% generated win rate"
         },
         {
           "k": "Average generated return",
-          "v": "+0.00%",
-          "foot": "$5,062.44 cumulative paper notional"
+          "v": "-0.02%",
+          "foot": "$5,093.23 cumulative paper notional"
         },
         {
           "k": "Combined outcomes",
-          "v": "101",
-          "foot": "51.5% baseline + generated outcome rate"
+          "v": "102",
+          "foot": "51.0% baseline + generated outcome rate"
         }
       ]
     },
@@ -218,6 +218,23 @@
     }
   },
   "trades": [
+    {
+      "id": "2026102511-3",
+      "timestamp": "2026-10-25T11:48:00.000Z",
+      "system": "PandaXPanther Prediction Bot",
+      "asset_type": "prediction contract",
+      "instrument": "Kalshi Fed decision NO",
+      "side": "BUY NO",
+      "entry_price": 0.592,
+      "exit_price": 0.582,
+      "quantity": 52,
+      "notional_usd": 30.79,
+      "profit_loss_usd": -0.5,
+      "profit_loss_pct": -1.63,
+      "strategy": "Sports contract-line value NO-only",
+      "result": "LOSS",
+      "holding_period_hours": "1.42"
+    },
     {
       "id": "2026102508-2",
       "timestamp": "2026-10-25T08:11:00.000Z",
@@ -1730,23 +1747,6 @@
       "strategy": "Composite-score wallet mirror",
       "result": "WIN",
       "holding_period_hours": "0.23"
-    },
-    {
-      "id": "2026100205-1",
-      "timestamp": "2026-10-02T05:13:00.000Z",
-      "system": "CounterSnipe",
-      "asset_type": "CS2 skin",
-      "instrument": "USP-S | Kill Confirmed MW",
-      "side": "BUY",
-      "entry_price": 107.41,
-      "exit_price": 110.04,
-      "quantity": 1,
-      "notional_usd": 107.41,
-      "profit_loss_usd": 2.63,
-      "profit_loss_pct": 2.45,
-      "strategy": "Sticker-adjusted CS2 skin arbitrage",
-      "result": "WIN",
-      "holding_period_hours": 212
     }
   ],
   "config": {
