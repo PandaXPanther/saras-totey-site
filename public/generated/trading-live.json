@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-27T05:07:02.078Z",
+  "generated_at": "2026-10-27T06:07:02.904Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,33 +31,33 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 2523.09,
-    "total_profit_usd": 1364.09,
-    "generated_profit_usd": 1139.45,
-    "total_trades": 452,
-    "generated_trades": 367,
-    "win_rate_pct": 81.6,
-    "last_trade_iso": "2026-10-26T16:37:00.000Z"
+    "portfolio_value_usd": 2530.22,
+    "total_profit_usd": 1373.99,
+    "generated_profit_usd": 1149.35,
+    "total_trades": 453,
+    "generated_trades": 368,
+    "win_rate_pct": 81.7,
+    "last_trade_iso": "2026-10-27T05:03:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$2,523.09",
+      "v": "$2,530.22",
       "foot": "Verified baseline portfolio plus generated paper drift"
     },
     {
       "k": "Total profit",
-      "v": "+$1,364.09",
-      "foot": "+$1,139.45 generated after baseline"
+      "v": "+$1,373.99",
+      "foot": "+$1,149.35 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "452",
-      "foot": "367 generated daily-paced trades"
+      "v": "453",
+      "foot": "368 generated daily-paced trades"
     },
     {
       "k": "Win rate",
-      "v": "81.6%",
+      "v": "81.7%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -67,8 +67,8 @@
     },
     {
       "k": "Latest strategy",
-      "v": "Sticker-adjusted CS2 skin arbitrage",
-      "foot": "M4A1-S | Printstream MW"
+      "v": "Composite-score wallet mirror",
+      "foot": "SOL-PERP"
     }
   ],
   "systems": {
@@ -176,12 +176,12 @@
         "win_rate_pct": 100
       },
       "generated": {
-        "total_trades": 141,
-        "wins": 131,
+        "total_trades": 142,
+        "wins": 132,
         "losses": 10,
-        "profit_usd": 945.87,
-        "notional_usd": 182060.93,
-        "return_pct_sum": 73.45
+        "profit_usd": 955.77,
+        "notional_usd": 183293.29,
+        "return_pct_sum": 74.25
       },
       "cards": [
         {
@@ -196,28 +196,45 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "141",
+          "v": "142",
           "foot": "generated paper mirror · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "+$945.87",
-          "foot": "92.9% generated win rate"
+          "v": "+$955.77",
+          "foot": "93.0% generated win rate"
         },
         {
           "k": "Average generated return",
           "v": "+0.52%",
-          "foot": "$182,060.93 cumulative paper notional"
+          "foot": "$183,293.29 cumulative paper notional"
         },
         {
           "k": "Research + paper records",
-          "v": "161",
-          "foot": "20 ranked wallets · 141 generated paper fills"
+          "v": "162",
+          "foot": "20 ranked wallets · 142 generated paper fills"
         }
       ]
     }
   },
   "trades": [
+    {
+      "id": "2026102705-1",
+      "timestamp": "2026-10-27T05:03:00.000Z",
+      "system": "copy-trader",
+      "asset_type": "Hyperliquid perpetual",
+      "instrument": "SOL-PERP",
+      "side": "BUY",
+      "entry_price": 188.83,
+      "exit_price": 190.35,
+      "quantity": 6.52626,
+      "notional_usd": 1232.36,
+      "profit_loss_usd": 9.9,
+      "profit_loss_pct": 0.8,
+      "strategy": "Composite-score wallet mirror",
+      "result": "WIN",
+      "holding_period_hours": "0.40"
+    },
     {
       "id": "2026102616-3",
       "timestamp": "2026-10-26T16:37:00.000Z",
@@ -1730,23 +1747,6 @@
       "strategy": "Sports contract-line value NO-only",
       "result": "WIN",
       "holding_period_hours": "0.06"
-    },
-    {
-      "id": "2026100312-2",
-      "timestamp": "2026-10-03T12:07:00.000Z",
-      "system": "copy-trader",
-      "asset_type": "Hyperliquid perpetual",
-      "instrument": "HYPE-PERP",
-      "side": "BUY",
-      "entry_price": 46.64,
-      "exit_price": 47.03,
-      "quantity": 42.29038,
-      "notional_usd": 1972.23,
-      "profit_loss_usd": 16.74,
-      "profit_loss_pct": 0.85,
-      "strategy": "Composite-score wallet mirror",
-      "result": "WIN",
-      "holding_period_hours": "2.08"
     }
   ],
   "config": {
