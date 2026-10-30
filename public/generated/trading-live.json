@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-30T10:07:02.865Z",
+  "generated_at": "2026-10-30T11:07:02.986Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,29 +31,29 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 2560.14,
-    "total_profit_usd": 1410.28,
-    "generated_profit_usd": 1185.64,
-    "total_trades": 464,
-    "generated_trades": 379,
+    "portfolio_value_usd": 2562.8,
+    "total_profit_usd": 1413.98,
+    "generated_profit_usd": 1189.34,
+    "total_trades": 465,
+    "generated_trades": 380,
     "win_rate_pct": 81.3,
-    "last_trade_iso": "2026-10-30T05:59:00.000Z"
+    "last_trade_iso": "2026-10-30T10:22:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$2,560.14",
+      "v": "$2,562.80",
       "foot": "Verified baseline portfolio plus generated paper drift"
     },
     {
       "k": "Total profit",
-      "v": "+$1,410.28",
-      "foot": "+$1,185.64 generated after baseline"
+      "v": "+$1,413.98",
+      "foot": "+$1,189.34 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "464",
-      "foot": "379 generated daily-paced trades"
+      "v": "465",
+      "foot": "380 generated daily-paced trades"
     },
     {
       "k": "Win rate",
@@ -67,8 +67,8 @@
     },
     {
       "k": "Latest strategy",
-      "v": "Composite-score wallet mirror",
-      "foot": "SOL-PERP"
+      "v": "Sticker-adjusted CS2 skin arbitrage",
+      "foot": "M4A1-S | Printstream MW"
     }
   ],
   "systems": {
@@ -80,12 +80,12 @@
         "win_rate_pct": 87.5
       },
       "generated": {
-        "total_trades": 142,
-        "wins": 124,
+        "total_trades": 143,
+        "wins": 125,
         "losses": 18,
-        "profit_usd": 200.38,
-        "notional_usd": 13087.85,
-        "return_pct_sum": 199.83
+        "profit_usd": 204.08,
+        "notional_usd": 13277.15,
+        "return_pct_sum": 201.78
       },
       "cards": [
         {
@@ -100,22 +100,22 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "142",
+          "v": "143",
           "foot": "generated paper · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "+$200.38",
-          "foot": "87.3% generated win rate"
+          "v": "+$204.08",
+          "foot": "87.4% generated win rate"
         },
         {
           "k": "Average generated return",
           "v": "+1.41%",
-          "foot": "$13,087.85 cumulative paper notional"
+          "foot": "$13,277.15 cumulative paper notional"
         },
         {
           "k": "Combined outcomes",
-          "v": "190",
+          "v": "191",
           "foot": "87.4% baseline + generated outcome rate"
         }
       ]
@@ -218,6 +218,23 @@
     }
   },
   "trades": [
+    {
+      "id": "2026103010-2",
+      "timestamp": "2026-10-30T10:22:00.000Z",
+      "system": "CounterSnipe",
+      "asset_type": "CS2 skin",
+      "instrument": "M4A1-S | Printstream MW",
+      "side": "BUY",
+      "entry_price": 189.3,
+      "exit_price": 193,
+      "quantity": 1,
+      "notional_usd": 189.3,
+      "profit_loss_usd": 3.7,
+      "profit_loss_pct": 1.95,
+      "strategy": "Sticker-adjusted CS2 skin arbitrage",
+      "result": "WIN",
+      "holding_period_hours": 194
+    },
     {
       "id": "2026103005-1",
       "timestamp": "2026-10-30T05:59:00.000Z",
@@ -1730,23 +1747,6 @@
       "strategy": "Composite-score wallet mirror",
       "result": "WIN",
       "holding_period_hours": "0.23"
-    },
-    {
-      "id": "2026100617-4",
-      "timestamp": "2026-10-06T17:53:00.000Z",
-      "system": "PandaXPanther Prediction Bot",
-      "asset_type": "crypto prediction contract",
-      "instrument": "SOL above daily range",
-      "side": "BUY",
-      "entry_price": 0.455,
-      "exit_price": 0.458,
-      "quantity": 65,
-      "notional_usd": 29.54,
-      "profit_loss_usd": 0.22,
-      "profit_loss_pct": 0.73,
-      "strategy": "Crypto latency",
-      "result": "WIN",
-      "holding_period_hours": "0.10"
     }
   ],
   "config": {
