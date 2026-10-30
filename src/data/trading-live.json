@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-30T17:07:02.251Z",
+  "generated_at": "2026-10-30T18:07:02.349Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,33 +31,33 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 2562.8,
-    "total_profit_usd": 1413.01,
-    "generated_profit_usd": 1188.37,
-    "total_trades": 466,
-    "generated_trades": 381,
-    "win_rate_pct": 81.1,
-    "last_trade_iso": "2026-10-30T13:35:00.000Z"
+    "portfolio_value_usd": 2563.17,
+    "total_profit_usd": 1413.52,
+    "generated_profit_usd": 1188.88,
+    "total_trades": 467,
+    "generated_trades": 382,
+    "win_rate_pct": 81.2,
+    "last_trade_iso": "2026-10-30T17:39:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$2,562.80",
+      "v": "$2,563.17",
       "foot": "Verified baseline portfolio plus generated paper drift"
     },
     {
       "k": "Total profit",
-      "v": "+$1,413.01",
-      "foot": "+$1,188.37 generated after baseline"
+      "v": "+$1,413.52",
+      "foot": "+$1,188.88 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "466",
-      "foot": "381 generated daily-paced trades"
+      "v": "467",
+      "foot": "382 generated daily-paced trades"
     },
     {
       "k": "Win rate",
-      "v": "81.1%",
+      "v": "81.2%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -67,8 +67,8 @@
     },
     {
       "k": "Latest strategy",
-      "v": "Sticker-adjusted CS2 skin arbitrage",
-      "foot": "M4A1-S | Printstream MW"
+      "v": "Polymarket sum-to-one arbitrage",
+      "foot": "Polymarket crypto year-end bundle"
     }
   ],
   "systems": {
@@ -128,12 +128,12 @@
         "win_rate_pct": 52.9
       },
       "generated": {
-        "total_trades": 89,
-        "wins": 45,
+        "total_trades": 90,
+        "wins": 46,
         "losses": 44,
-        "profit_usd": -4.63,
-        "notional_usd": 5330.91,
-        "return_pct_sum": -2.75
+        "profit_usd": -4.12,
+        "notional_usd": 5428.56,
+        "return_pct_sum": -2.23
       },
       "cards": [
         {
@@ -148,23 +148,23 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "89",
+          "v": "90",
           "foot": "generated paper · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "-$4.63",
-          "foot": "50.6% generated win rate"
+          "v": "-$4.12",
+          "foot": "51.1% generated win rate"
         },
         {
           "k": "Average generated return",
-          "v": "-0.03%",
-          "foot": "$5,330.91 cumulative paper notional"
+          "v": "-0.02%",
+          "foot": "$5,428.56 cumulative paper notional"
         },
         {
           "k": "Combined outcomes",
-          "v": "106",
-          "foot": "50.9% baseline + generated outcome rate"
+          "v": "107",
+          "foot": "51.4% baseline + generated outcome rate"
         }
       ]
     },
@@ -218,6 +218,23 @@
     }
   },
   "trades": [
+    {
+      "id": "2026103017-4",
+      "timestamp": "2026-10-30T17:39:00.000Z",
+      "system": "PandaXPanther Prediction Bot",
+      "asset_type": "prediction contract",
+      "instrument": "Polymarket crypto year-end bundle",
+      "side": "BUY YES+NO",
+      "entry_price": 0.976,
+      "exit_price": 0.982,
+      "quantity": 100,
+      "notional_usd": 97.65,
+      "profit_loss_usd": 0.51,
+      "profit_loss_pct": 0.52,
+      "strategy": "Polymarket sum-to-one arbitrage",
+      "result": "WIN",
+      "holding_period_hours": "1.82"
+    },
     {
       "id": "2026103013-3",
       "timestamp": "2026-10-30T13:35:00.000Z",
@@ -1730,23 +1747,6 @@
       "strategy": "Sticker-adjusted CS2 skin arbitrage",
       "result": "WIN",
       "holding_period_hours": 194
-    },
-    {
-      "id": "2026100709-2",
-      "timestamp": "2026-10-07T09:47:00.000Z",
-      "system": "CounterSnipe",
-      "asset_type": "CS2 skin",
-      "instrument": "Desert Eagle | Printstream FT",
-      "side": "BUY",
-      "entry_price": 42.25,
-      "exit_price": 43.3,
-      "quantity": 1,
-      "notional_usd": 42.25,
-      "profit_loss_usd": 1.05,
-      "profit_loss_pct": 2.48,
-      "strategy": "Sticker-adjusted CS2 skin arbitrage",
-      "result": "WIN",
-      "holding_period_hours": 184
     }
   ],
   "config": {
