@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-31T07:07:02.969Z",
+  "generated_at": "2026-10-31T08:07:02.524Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,29 +31,29 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 2563.17,
-    "total_profit_usd": 1413.52,
-    "generated_profit_usd": 1188.88,
-    "total_trades": 467,
-    "generated_trades": 382,
+    "portfolio_value_usd": 2565.97,
+    "total_profit_usd": 1417.41,
+    "generated_profit_usd": 1192.77,
+    "total_trades": 468,
+    "generated_trades": 383,
     "win_rate_pct": 81.2,
-    "last_trade_iso": "2026-10-30T17:39:00.000Z"
+    "last_trade_iso": "2026-10-31T07:51:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$2,563.17",
+      "v": "$2,565.97",
       "foot": "Verified baseline portfolio plus generated paper drift"
     },
     {
       "k": "Total profit",
-      "v": "+$1,413.52",
-      "foot": "+$1,188.88 generated after baseline"
+      "v": "+$1,417.41",
+      "foot": "+$1,192.77 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "467",
-      "foot": "382 generated daily-paced trades"
+      "v": "468",
+      "foot": "383 generated daily-paced trades"
     },
     {
       "k": "Win rate",
@@ -67,8 +67,8 @@
     },
     {
       "k": "Latest strategy",
-      "v": "Polymarket sum-to-one arbitrage",
-      "foot": "Polymarket crypto year-end bundle"
+      "v": "Composite-score wallet mirror",
+      "foot": "ETH-PERP"
     }
   ],
   "systems": {
@@ -176,12 +176,12 @@
         "win_rate_pct": 100
       },
       "generated": {
-        "total_trades": 148,
-        "wins": 137,
+        "total_trades": 149,
+        "wins": 138,
         "losses": 11,
-        "profit_usd": 989.89,
-        "notional_usd": 190453.51,
-        "return_pct_sum": 76.59
+        "profit_usd": 993.78,
+        "notional_usd": 190996.08,
+        "return_pct_sum": 77.31
       },
       "cards": [
         {
@@ -196,28 +196,45 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "148",
+          "v": "149",
           "foot": "generated paper mirror · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "+$989.89",
+          "v": "+$993.78",
           "foot": "92.6% generated win rate"
         },
         {
           "k": "Average generated return",
           "v": "+0.52%",
-          "foot": "$190,453.51 cumulative paper notional"
+          "foot": "$190,996.08 cumulative paper notional"
         },
         {
           "k": "Research + paper records",
-          "v": "168",
-          "foot": "20 ranked wallets · 148 generated paper fills"
+          "v": "169",
+          "foot": "20 ranked wallets · 149 generated paper fills"
         }
       ]
     }
   },
   "trades": [
+    {
+      "id": "2026103107-1",
+      "timestamp": "2026-10-31T07:51:00.000Z",
+      "system": "copy-trader",
+      "asset_type": "Hyperliquid perpetual",
+      "instrument": "ETH-PERP",
+      "side": "BUY",
+      "entry_price": 3687.13,
+      "exit_price": 3713.54,
+      "quantity": 0.14715,
+      "notional_usd": 542.57,
+      "profit_loss_usd": 3.89,
+      "profit_loss_pct": 0.72,
+      "strategy": "Composite-score wallet mirror",
+      "result": "WIN",
+      "holding_period_hours": "0.44"
+    },
     {
       "id": "2026103017-4",
       "timestamp": "2026-10-30T17:39:00.000Z",
@@ -1730,23 +1747,6 @@
       "strategy": "Composite-score wallet mirror",
       "result": "WIN",
       "holding_period_hours": "1.91"
-    },
-    {
-      "id": "2026100714-3",
-      "timestamp": "2026-10-07T14:26:00.000Z",
-      "system": "CounterSnipe",
-      "asset_type": "CS2 skin",
-      "instrument": "AK-47 | Redline FT",
-      "side": "BUY",
-      "entry_price": 33.44,
-      "exit_price": 34.37,
-      "quantity": 1,
-      "notional_usd": 33.44,
-      "profit_loss_usd": 0.93,
-      "profit_loss_pct": 2.77,
-      "strategy": "Sticker-adjusted CS2 skin arbitrage",
-      "result": "WIN",
-      "holding_period_hours": 194
     }
   ],
   "config": {
