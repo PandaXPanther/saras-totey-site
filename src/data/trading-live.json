@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-03T11:07:02.566Z",
+  "generated_at": "2026-11-03T12:07:02.026Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,29 +31,29 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 2575.3,
-    "total_profit_usd": 1430.37,
-    "generated_profit_usd": 1205.73,
-    "total_trades": 475,
-    "generated_trades": 390,
+    "portfolio_value_usd": 2575.72,
+    "total_profit_usd": 1430.96,
+    "generated_profit_usd": 1206.32,
+    "total_trades": 476,
+    "generated_trades": 391,
     "win_rate_pct": 81.5,
-    "last_trade_iso": "2026-11-03T08:31:00.000Z"
+    "last_trade_iso": "2026-11-03T11:51:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$2,575.30",
+      "v": "$2,575.72",
       "foot": "Verified baseline portfolio plus generated paper drift"
     },
     {
       "k": "Total profit",
-      "v": "+$1,430.37",
-      "foot": "+$1,205.73 generated after baseline"
+      "v": "+$1,430.96",
+      "foot": "+$1,206.32 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "475",
-      "foot": "390 generated daily-paced trades"
+      "v": "476",
+      "foot": "391 generated daily-paced trades"
     },
     {
       "k": "Win rate",
@@ -68,7 +68,7 @@
     {
       "k": "Latest strategy",
       "v": "Sticker-adjusted CS2 skin arbitrage",
-      "foot": "Glock-18 | Gamma Doppler FN"
+      "foot": "Desert Eagle | Printstream FT"
     }
   ],
   "systems": {
@@ -80,12 +80,12 @@
         "win_rate_pct": 87.5
       },
       "generated": {
-        "total_trades": 151,
-        "wins": 132,
+        "total_trades": 152,
+        "wins": 133,
         "losses": 19,
-        "profit_usd": 216.07,
-        "notional_usd": 14447.14,
-        "return_pct_sum": 210.65
+        "profit_usd": 216.66,
+        "notional_usd": 14509.24,
+        "return_pct_sum": 211.6
       },
       "cards": [
         {
@@ -100,23 +100,23 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "151",
+          "v": "152",
           "foot": "generated paper · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "+$216.07",
-          "foot": "87.4% generated win rate"
+          "v": "+$216.66",
+          "foot": "87.5% generated win rate"
         },
         {
           "k": "Average generated return",
-          "v": "+1.40%",
-          "foot": "$14,447.14 cumulative paper notional"
+          "v": "+1.39%",
+          "foot": "$14,509.24 cumulative paper notional"
         },
         {
           "k": "Combined outcomes",
-          "v": "199",
-          "foot": "87.4% baseline + generated outcome rate"
+          "v": "200",
+          "foot": "87.5% baseline + generated outcome rate"
         }
       ]
     },
@@ -218,6 +218,23 @@
     }
   },
   "trades": [
+    {
+      "id": "2026110311-3",
+      "timestamp": "2026-11-03T11:51:00.000Z",
+      "system": "CounterSnipe",
+      "asset_type": "CS2 skin",
+      "instrument": "Desert Eagle | Printstream FT",
+      "side": "BUY",
+      "entry_price": 62.1,
+      "exit_price": 62.69,
+      "quantity": 1,
+      "notional_usd": 62.1,
+      "profit_loss_usd": 0.59,
+      "profit_loss_pct": 0.95,
+      "strategy": "Sticker-adjusted CS2 skin arbitrage",
+      "result": "WIN",
+      "holding_period_hours": 196
+    },
     {
       "id": "2026110308-2",
       "timestamp": "2026-11-03T08:31:00.000Z",
@@ -1730,23 +1747,6 @@
       "strategy": "Sticker-adjusted CS2 skin arbitrage",
       "result": "LOSS",
       "holding_period_hours": 183
-    },
-    {
-      "id": "2026100915-4",
-      "timestamp": "2026-10-09T15:46:00.000Z",
-      "system": "PandaXPanther Prediction Bot",
-      "asset_type": "prediction contract",
-      "instrument": "Kalshi Fed decision NO",
-      "side": "BUY NO",
-      "entry_price": 0.289,
-      "exit_price": 0.283,
-      "quantity": 81,
-      "notional_usd": 23.41,
-      "profit_loss_usd": -0.45,
-      "profit_loss_pct": -1.93,
-      "strategy": "Sports contract-line value NO-only",
-      "result": "LOSS",
-      "holding_period_hours": "1.69"
     }
   ],
   "config": {
