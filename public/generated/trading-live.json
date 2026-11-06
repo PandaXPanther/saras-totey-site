@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-06T11:07:03.552Z",
+  "generated_at": "2026-11-06T12:07:02.425Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,33 +31,33 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 2604.66,
-    "total_profit_usd": 1466.56,
-    "generated_profit_usd": 1241.92,
-    "total_trades": 488,
-    "generated_trades": 403,
-    "win_rate_pct": 81.1,
-    "last_trade_iso": "2026-11-06T06:06:00.000Z"
+    "portfolio_value_usd": 2607.56,
+    "total_profit_usd": 1470.59,
+    "generated_profit_usd": 1245.95,
+    "total_trades": 489,
+    "generated_trades": 404,
+    "win_rate_pct": 81.2,
+    "last_trade_iso": "2026-11-06T11:48:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$2,604.66",
+      "v": "$2,607.56",
       "foot": "Verified baseline portfolio plus generated paper drift"
     },
     {
       "k": "Total profit",
-      "v": "+$1,466.56",
-      "foot": "+$1,241.92 generated after baseline"
+      "v": "+$1,470.59",
+      "foot": "+$1,245.95 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "488",
-      "foot": "403 generated daily-paced trades"
+      "v": "489",
+      "foot": "404 generated daily-paced trades"
     },
     {
       "k": "Win rate",
-      "v": "81.1%",
+      "v": "81.2%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -176,12 +176,12 @@
         "win_rate_pct": 100
       },
       "generated": {
-        "total_trades": 154,
-        "wins": 143,
+        "total_trades": 155,
+        "wins": 144,
         "losses": 11,
-        "profit_usd": 1029.38,
-        "notional_usd": 197340,
-        "return_pct_sum": 80.15
+        "profit_usd": 1033.41,
+        "notional_usd": 198026.05,
+        "return_pct_sum": 80.74
       },
       "cards": [
         {
@@ -196,28 +196,45 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "154",
+          "v": "155",
           "foot": "generated paper mirror · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "+$1029.38",
+          "v": "+$1033.41",
           "foot": "92.9% generated win rate"
         },
         {
           "k": "Average generated return",
           "v": "+0.52%",
-          "foot": "$197,340.00 cumulative paper notional"
+          "foot": "$198,026.05 cumulative paper notional"
         },
         {
           "k": "Research + paper records",
-          "v": "174",
-          "foot": "20 ranked wallets · 154 generated paper fills"
+          "v": "175",
+          "foot": "20 ranked wallets · 155 generated paper fills"
         }
       ]
     }
   },
   "trades": [
+    {
+      "id": "2026110611-2",
+      "timestamp": "2026-11-06T11:48:00.000Z",
+      "system": "copy-trader",
+      "asset_type": "Hyperliquid perpetual",
+      "instrument": "BTC-PERP",
+      "side": "BUY",
+      "entry_price": 70515.01,
+      "exit_price": 70929.42,
+      "quantity": 0.00973,
+      "notional_usd": 686.05,
+      "profit_loss_usd": 4.03,
+      "profit_loss_pct": 0.59,
+      "strategy": "Composite-score wallet mirror",
+      "result": "WIN",
+      "holding_period_hours": "0.95"
+    },
     {
       "id": "2026110606-1",
       "timestamp": "2026-11-06T06:06:00.000Z",
@@ -1730,23 +1747,6 @@
       "strategy": "Sticker-adjusted CS2 skin arbitrage",
       "result": "WIN",
       "holding_period_hours": 190
-    },
-    {
-      "id": "2026101317-3",
-      "timestamp": "2026-10-13T17:55:00.000Z",
-      "system": "PandaXPanther Prediction Bot",
-      "asset_type": "crypto prediction contract",
-      "instrument": "SOL above daily range",
-      "side": "BUY",
-      "entry_price": 0.638,
-      "exit_price": 0.624,
-      "quantity": 131,
-      "notional_usd": 83.53,
-      "profit_loss_usd": -1.78,
-      "profit_loss_pct": -2.13,
-      "strategy": "Crypto latency",
-      "result": "LOSS",
-      "holding_period_hours": "0.27"
     }
   ],
   "config": {
