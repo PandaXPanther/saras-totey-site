@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-12T08:07:02.549Z",
+  "generated_at": "2026-11-12T09:07:02.811Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,29 +31,29 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 2650.25,
-    "total_profit_usd": 1523.92,
-    "generated_profit_usd": 1299.28,
-    "total_trades": 507,
-    "generated_trades": 422,
+    "portfolio_value_usd": 2654.2,
+    "total_profit_usd": 1529.4,
+    "generated_profit_usd": 1304.76,
+    "total_trades": 508,
+    "generated_trades": 423,
     "win_rate_pct": 80.5,
-    "last_trade_iso": "2026-11-12T05:33:00.000Z"
+    "last_trade_iso": "2026-11-12T08:29:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$2,650.25",
+      "v": "$2,654.20",
       "foot": "Verified baseline portfolio plus generated paper drift"
     },
     {
       "k": "Total profit",
-      "v": "+$1,523.92",
-      "foot": "+$1,299.28 generated after baseline"
+      "v": "+$1,529.40",
+      "foot": "+$1,304.76 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "507",
-      "foot": "422 generated daily-paced trades"
+      "v": "508",
+      "foot": "423 generated daily-paced trades"
     },
     {
       "k": "Win rate",
@@ -68,7 +68,7 @@
     {
       "k": "Latest strategy",
       "v": "Composite-score wallet mirror",
-      "foot": "ETH-PERP"
+      "foot": "HYPE-PERP"
     }
   ],
   "systems": {
@@ -176,12 +176,12 @@
         "win_rate_pct": 100
       },
       "generated": {
-        "total_trades": 162,
-        "wins": 150,
+        "total_trades": 163,
+        "wins": 151,
         "losses": 12,
-        "profit_usd": 1084.36,
-        "notional_usd": 207433.03,
-        "return_pct_sum": 84.25
+        "profit_usd": 1089.84,
+        "notional_usd": 208451.76,
+        "return_pct_sum": 84.79
       },
       "cards": [
         {
@@ -196,28 +196,45 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "162",
+          "v": "163",
           "foot": "generated paper mirror · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "+$1084.36",
+          "v": "+$1089.84",
           "foot": "92.6% generated win rate"
         },
         {
           "k": "Average generated return",
           "v": "+0.52%",
-          "foot": "$207,433.03 cumulative paper notional"
+          "foot": "$208,451.76 cumulative paper notional"
         },
         {
           "k": "Research + paper records",
-          "v": "182",
-          "foot": "20 ranked wallets · 162 generated paper fills"
+          "v": "183",
+          "foot": "20 ranked wallets · 163 generated paper fills"
         }
       ]
     }
   },
   "trades": [
+    {
+      "id": "2026111208-2",
+      "timestamp": "2026-11-12T08:29:00.000Z",
+      "system": "copy-trader",
+      "asset_type": "Hyperliquid perpetual",
+      "instrument": "HYPE-PERP",
+      "side": "BUY",
+      "entry_price": 46.74,
+      "exit_price": 47,
+      "quantity": 21.79367,
+      "notional_usd": 1018.73,
+      "profit_loss_usd": 5.48,
+      "profit_loss_pct": 0.54,
+      "strategy": "Composite-score wallet mirror",
+      "result": "WIN",
+      "holding_period_hours": "2.11"
+    },
     {
       "id": "2026111205-1",
       "timestamp": "2026-11-12T05:33:00.000Z",
@@ -1730,23 +1747,6 @@
       "strategy": "Sticker-adjusted CS2 skin arbitrage",
       "result": "WIN",
       "holding_period_hours": 176
-    },
-    {
-      "id": "2026101904-1",
-      "timestamp": "2026-10-19T04:49:00.000Z",
-      "system": "CounterSnipe",
-      "asset_type": "CS2 skin",
-      "instrument": "AK-47 | Redline FT",
-      "side": "BUY",
-      "entry_price": 25.08,
-      "exit_price": 25.32,
-      "quantity": 1,
-      "notional_usd": 25.08,
-      "profit_loss_usd": 0.24,
-      "profit_loss_pct": 0.96,
-      "strategy": "Sticker-adjusted CS2 skin arbitrage",
-      "result": "WIN",
-      "holding_period_hours": 178
     }
   ],
   "config": {
