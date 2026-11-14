@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-14T15:07:03.323Z",
+  "generated_at": "2026-11-14T16:07:04.070Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,29 +31,29 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 2672.39,
-    "total_profit_usd": 1541.58,
-    "generated_profit_usd": 1316.94,
-    "total_trades": 517,
-    "generated_trades": 432,
+    "portfolio_value_usd": 2673.02,
+    "total_profit_usd": 1542.45,
+    "generated_profit_usd": 1317.81,
+    "total_trades": 518,
+    "generated_trades": 433,
     "win_rate_pct": 80.3,
-    "last_trade_iso": "2026-11-14T12:12:00.000Z"
+    "last_trade_iso": "2026-11-14T15:49:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$2,672.39",
+      "v": "$2,673.02",
       "foot": "Verified baseline portfolio plus generated paper drift"
     },
     {
       "k": "Total profit",
-      "v": "+$1,541.58",
-      "foot": "+$1,316.94 generated after baseline"
+      "v": "+$1,542.45",
+      "foot": "+$1,317.81 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "517",
-      "foot": "432 generated daily-paced trades"
+      "v": "518",
+      "foot": "433 generated daily-paced trades"
     },
     {
       "k": "Win rate",
@@ -67,8 +67,8 @@
     },
     {
       "k": "Latest strategy",
-      "v": "Crypto latency",
-      "foot": "SOL above daily range"
+      "v": "Sticker-adjusted CS2 skin arbitrage",
+      "foot": "Glock-18 | Gamma Doppler FN"
     }
   ],
   "systems": {
@@ -80,12 +80,12 @@
         "win_rate_pct": 87.5
       },
       "generated": {
-        "total_trades": 161,
-        "wins": 138,
+        "total_trades": 162,
+        "wins": 139,
         "losses": 23,
-        "profit_usd": 220.96,
-        "notional_usd": 15339.9,
-        "return_pct_sum": 214.78
+        "profit_usd": 221.83,
+        "notional_usd": 15404.74,
+        "return_pct_sum": 216.12
       },
       "cards": [
         {
@@ -100,23 +100,23 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "161",
+          "v": "162",
           "foot": "generated paper · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "+$220.96",
-          "foot": "85.7% generated win rate"
+          "v": "+$221.83",
+          "foot": "85.8% generated win rate"
         },
         {
           "k": "Average generated return",
           "v": "+1.33%",
-          "foot": "$15,339.90 cumulative paper notional"
+          "foot": "$15,404.74 cumulative paper notional"
         },
         {
           "k": "Combined outcomes",
-          "v": "209",
-          "foot": "86.1% baseline + generated outcome rate"
+          "v": "210",
+          "foot": "86.2% baseline + generated outcome rate"
         }
       ]
     },
@@ -218,6 +218,23 @@
     }
   },
   "trades": [
+    {
+      "id": "2026111415-4",
+      "timestamp": "2026-11-14T15:49:00.000Z",
+      "system": "CounterSnipe",
+      "asset_type": "CS2 skin",
+      "instrument": "Glock-18 | Gamma Doppler FN",
+      "side": "BUY",
+      "entry_price": 64.84,
+      "exit_price": 65.71,
+      "quantity": 1,
+      "notional_usd": 64.84,
+      "profit_loss_usd": 0.87,
+      "profit_loss_pct": 1.34,
+      "strategy": "Sticker-adjusted CS2 skin arbitrage",
+      "result": "WIN",
+      "holding_period_hours": 208
+    },
     {
       "id": "2026111412-3",
       "timestamp": "2026-11-14T12:12:00.000Z",
@@ -1730,23 +1747,6 @@
       "strategy": "Polymarket sum-to-one arbitrage",
       "result": "WIN",
       "holding_period_hours": "1.27"
-    },
-    {
-      "id": "2026102105-1",
-      "timestamp": "2026-10-21T05:04:00.000Z",
-      "system": "copy-trader",
-      "asset_type": "Hyperliquid perpetual",
-      "instrument": "BTC-PERP",
-      "side": "BUY",
-      "entry_price": 69494.15,
-      "exit_price": 70068.36,
-      "quantity": 0.02829,
-      "notional_usd": 1966.21,
-      "profit_loss_usd": 16.25,
-      "profit_loss_pct": 0.83,
-      "strategy": "Composite-score wallet mirror",
-      "result": "WIN",
-      "holding_period_hours": "1.51"
     }
   ],
   "config": {
