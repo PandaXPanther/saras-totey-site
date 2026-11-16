@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-16T16:07:02.606Z",
+  "generated_at": "2026-11-16T17:07:03.703Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,29 +31,29 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 2677.36,
-    "total_profit_usd": 1548.26,
-    "generated_profit_usd": 1323.62,
-    "total_trades": 523,
-    "generated_trades": 438,
+    "portfolio_value_usd": 2678.64,
+    "total_profit_usd": 1550.04,
+    "generated_profit_usd": 1325.4,
+    "total_trades": 524,
+    "generated_trades": 439,
     "win_rate_pct": 80.3,
-    "last_trade_iso": "2026-11-16T11:32:00.000Z"
+    "last_trade_iso": "2026-11-16T16:55:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$2,677.36",
+      "v": "$2,678.64",
       "foot": "Verified baseline portfolio plus generated paper drift"
     },
     {
       "k": "Total profit",
-      "v": "+$1,548.26",
-      "foot": "+$1,323.62 generated after baseline"
+      "v": "+$1,550.04",
+      "foot": "+$1,325.40 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "523",
-      "foot": "438 generated daily-paced trades"
+      "v": "524",
+      "foot": "439 generated daily-paced trades"
     },
     {
       "k": "Win rate",
@@ -68,7 +68,7 @@
     {
       "k": "Latest strategy",
       "v": "Sticker-adjusted CS2 skin arbitrage",
-      "foot": "USP-S | Kill Confirmed MW"
+      "foot": "AWP | Asiimov FT"
     }
   ],
   "systems": {
@@ -80,12 +80,12 @@
         "win_rate_pct": 87.5
       },
       "generated": {
-        "total_trades": 165,
-        "wins": 141,
+        "total_trades": 166,
+        "wins": 142,
         "losses": 24,
-        "profit_usd": 224.11,
-        "notional_usd": 15570.47,
-        "return_pct_sum": 218.06
+        "profit_usd": 225.89,
+        "notional_usd": 15665.76,
+        "return_pct_sum": 219.93
       },
       "cards": [
         {
@@ -100,23 +100,23 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "165",
+          "v": "166",
           "foot": "generated paper · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "+$224.11",
+          "v": "+$225.89",
           "foot": "85.5% generated win rate"
         },
         {
           "k": "Average generated return",
           "v": "+1.32%",
-          "foot": "$15,570.47 cumulative paper notional"
+          "foot": "$15,665.76 cumulative paper notional"
         },
         {
           "k": "Combined outcomes",
-          "v": "213",
-          "foot": "85.9% baseline + generated outcome rate"
+          "v": "214",
+          "foot": "86.0% baseline + generated outcome rate"
         }
       ]
     },
@@ -218,6 +218,23 @@
     }
   },
   "trades": [
+    {
+      "id": "2026111616-3",
+      "timestamp": "2026-11-16T16:55:00.000Z",
+      "system": "CounterSnipe",
+      "asset_type": "CS2 skin",
+      "instrument": "AWP | Asiimov FT",
+      "side": "BUY",
+      "entry_price": 95.29,
+      "exit_price": 97.08,
+      "quantity": 1,
+      "notional_usd": 95.29,
+      "profit_loss_usd": 1.78,
+      "profit_loss_pct": 1.87,
+      "strategy": "Sticker-adjusted CS2 skin arbitrage",
+      "result": "WIN",
+      "holding_period_hours": 210
+    },
     {
       "id": "2026111611-2",
       "timestamp": "2026-11-16T11:32:00.000Z",
@@ -1730,23 +1747,6 @@
       "strategy": "Sports contract-line value NO-only",
       "result": "WIN",
       "holding_period_hours": "2.01"
-    },
-    {
-      "id": "2026102214-3",
-      "timestamp": "2026-10-22T14:24:00.000Z",
-      "system": "PandaXPanther Prediction Bot",
-      "asset_type": "prediction contract",
-      "instrument": "Polymarket crypto year-end bundle",
-      "side": "BUY YES+NO",
-      "entry_price": 0.972,
-      "exit_price": 0.965,
-      "quantity": 140,
-      "notional_usd": 136.02,
-      "profit_loss_usd": -0.96,
-      "profit_loss_pct": -0.71,
-      "strategy": "Polymarket sum-to-one arbitrage",
-      "result": "LOSS",
-      "holding_period_hours": "1.79"
     }
   ],
   "config": {
