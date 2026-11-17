@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-17T18:07:02.829Z",
+  "generated_at": "2026-11-17T19:07:04.116Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,33 +31,33 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 2691.47,
-    "total_profit_usd": 1565.95,
-    "generated_profit_usd": 1341.31,
-    "total_trades": 528,
-    "generated_trades": 443,
-    "win_rate_pct": 80.1,
-    "last_trade_iso": "2026-11-17T15:33:00.000Z"
+    "portfolio_value_usd": 2691.53,
+    "total_profit_usd": 1566.04,
+    "generated_profit_usd": 1341.4,
+    "total_trades": 529,
+    "generated_trades": 444,
+    "win_rate_pct": 80.2,
+    "last_trade_iso": "2026-11-17T18:39:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$2,691.47",
+      "v": "$2,691.53",
       "foot": "Verified baseline portfolio plus generated paper drift"
     },
     {
       "k": "Total profit",
-      "v": "+$1,565.95",
-      "foot": "+$1,341.31 generated after baseline"
+      "v": "+$1,566.04",
+      "foot": "+$1,341.40 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "528",
-      "foot": "443 generated daily-paced trades"
+      "v": "529",
+      "foot": "444 generated daily-paced trades"
     },
     {
       "k": "Win rate",
-      "v": "80.1%",
+      "v": "80.2%",
       "foot": "Baseline receipts plus generated trade outcomes"
     },
     {
@@ -67,8 +67,8 @@
     },
     {
       "k": "Latest strategy",
-      "v": "Crypto latency",
-      "foot": "SOL above daily range"
+      "v": "Sports contract-line value NO-only",
+      "foot": "Kalshi Fed decision NO"
     }
   ],
   "systems": {
@@ -128,12 +128,12 @@
         "win_rate_pct": 52.9
       },
       "generated": {
-        "total_trades": 107,
-        "wins": 54,
+        "total_trades": 108,
+        "wins": 55,
         "losses": 53,
-        "profit_usd": -4.46,
-        "notional_usd": 6543.48,
-        "return_pct_sum": -2.76
+        "profit_usd": -4.37,
+        "notional_usd": 6561.51,
+        "return_pct_sum": -2.26
       },
       "cards": [
         {
@@ -148,23 +148,23 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "107",
+          "v": "108",
           "foot": "generated paper · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "-$4.46",
-          "foot": "50.5% generated win rate"
+          "v": "-$4.37",
+          "foot": "50.9% generated win rate"
         },
         {
           "k": "Average generated return",
-          "v": "-0.03%",
-          "foot": "$6,543.48 cumulative paper notional"
+          "v": "-0.02%",
+          "foot": "$6,561.51 cumulative paper notional"
         },
         {
           "k": "Combined outcomes",
-          "v": "124",
-          "foot": "50.8% baseline + generated outcome rate"
+          "v": "125",
+          "foot": "51.2% baseline + generated outcome rate"
         }
       ]
     },
@@ -218,6 +218,23 @@
     }
   },
   "trades": [
+    {
+      "id": "2026111718-5",
+      "timestamp": "2026-11-17T18:39:00.000Z",
+      "system": "PandaXPanther Prediction Bot",
+      "asset_type": "prediction contract",
+      "instrument": "Kalshi Fed decision NO",
+      "side": "BUY NO",
+      "entry_price": 0.286,
+      "exit_price": 0.288,
+      "quantity": 63,
+      "notional_usd": 18.03,
+      "profit_loss_usd": 0.09,
+      "profit_loss_pct": 0.5,
+      "strategy": "Sports contract-line value NO-only",
+      "result": "WIN",
+      "holding_period_hours": "1.32"
+    },
     {
       "id": "2026111715-4",
       "timestamp": "2026-11-17T15:33:00.000Z",
@@ -1730,23 +1747,6 @@
       "strategy": "Crypto latency",
       "result": "LOSS",
       "holding_period_hours": "2.34"
-    },
-    {
-      "id": "2026102315-4",
-      "timestamp": "2026-10-23T15:36:00.000Z",
-      "system": "PandaXPanther Prediction Bot",
-      "asset_type": "prediction contract",
-      "instrument": "Polymarket crypto year-end bundle",
-      "side": "BUY YES+NO",
-      "entry_price": 0.939,
-      "exit_price": 0.946,
-      "quantity": 73,
-      "notional_usd": 68.56,
-      "profit_loss_usd": 0.47,
-      "profit_loss_pct": 0.68,
-      "strategy": "Polymarket sum-to-one arbitrage",
-      "result": "WIN",
-      "holding_period_hours": "0.53"
     }
   ],
   "config": {
