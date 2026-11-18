@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-18T11:07:03.050Z",
+  "generated_at": "2026-11-18T12:07:02.591Z",
   "baseline": {
     "as_of": "2026-07-10T00:00:00.000Z",
     "source": "Baseline from sarastotey.com static metrics on 2026-07-10",
@@ -31,29 +31,29 @@
     }
   },
   "totals": {
-    "portfolio_value_usd": 2697.7,
-    "total_profit_usd": 1574.61,
-    "generated_profit_usd": 1349.97,
-    "total_trades": 530,
-    "generated_trades": 445,
+    "portfolio_value_usd": 2698.35,
+    "total_profit_usd": 1575.51,
+    "generated_profit_usd": 1350.87,
+    "total_trades": 531,
+    "generated_trades": 446,
     "win_rate_pct": 80.2,
-    "last_trade_iso": "2026-11-18T06:30:00.000Z"
+    "last_trade_iso": "2026-11-18T11:50:00.000Z"
   },
   "cards": [
     {
       "k": "Portfolio value",
-      "v": "$2,697.70",
+      "v": "$2,698.35",
       "foot": "Verified baseline portfolio plus generated paper drift"
     },
     {
       "k": "Total profit",
-      "v": "+$1,574.61",
-      "foot": "+$1,349.97 generated after baseline"
+      "v": "+$1,575.51",
+      "foot": "+$1,350.87 generated after baseline"
     },
     {
       "k": "Total trades",
-      "v": "530",
-      "foot": "445 generated daily-paced trades"
+      "v": "531",
+      "foot": "446 generated daily-paced trades"
     },
     {
       "k": "Win rate",
@@ -67,8 +67,8 @@
     },
     {
       "k": "Latest strategy",
-      "v": "Composite-score wallet mirror",
-      "foot": "BTC-PERP"
+      "v": "Sticker-adjusted CS2 skin arbitrage",
+      "foot": "Glock-18 | Gamma Doppler FN"
     }
   ],
   "systems": {
@@ -80,12 +80,12 @@
         "win_rate_pct": 87.5
       },
       "generated": {
-        "total_trades": 166,
-        "wins": 142,
+        "total_trades": 167,
+        "wins": 143,
         "losses": 24,
-        "profit_usd": 225.89,
-        "notional_usd": 15665.76,
-        "return_pct_sum": 219.93
+        "profit_usd": 226.79,
+        "notional_usd": 15732.88,
+        "return_pct_sum": 221.28
       },
       "cards": [
         {
@@ -100,22 +100,22 @@
         },
         {
           "k": "Generated paper fills",
-          "v": "166",
+          "v": "167",
           "foot": "generated paper · appended by the shared trade log"
         },
         {
           "k": "Generated paper P&L",
-          "v": "+$225.89",
-          "foot": "85.5% generated win rate"
+          "v": "+$226.79",
+          "foot": "85.6% generated win rate"
         },
         {
           "k": "Average generated return",
-          "v": "+1.32%",
-          "foot": "$15,665.76 cumulative paper notional"
+          "v": "+1.33%",
+          "foot": "$15,732.88 cumulative paper notional"
         },
         {
           "k": "Combined outcomes",
-          "v": "214",
+          "v": "215",
           "foot": "86.0% baseline + generated outcome rate"
         }
       ]
@@ -218,6 +218,23 @@
     }
   },
   "trades": [
+    {
+      "id": "2026111811-2",
+      "timestamp": "2026-11-18T11:50:00.000Z",
+      "system": "CounterSnipe",
+      "asset_type": "CS2 skin",
+      "instrument": "Glock-18 | Gamma Doppler FN",
+      "side": "BUY",
+      "entry_price": 67.12,
+      "exit_price": 68.02,
+      "quantity": 1,
+      "notional_usd": 67.12,
+      "profit_loss_usd": 0.9,
+      "profit_loss_pct": 1.35,
+      "strategy": "Sticker-adjusted CS2 skin arbitrage",
+      "result": "WIN",
+      "holding_period_hours": 169
+    },
     {
       "id": "2026111806-1",
       "timestamp": "2026-11-18T06:30:00.000Z",
@@ -1730,23 +1747,6 @@
       "strategy": "Crypto latency",
       "result": "LOSS",
       "holding_period_hours": "0.16"
-    },
-    {
-      "id": "2026102405-1",
-      "timestamp": "2026-10-24T05:10:00.000Z",
-      "system": "copy-trader",
-      "asset_type": "Hyperliquid perpetual",
-      "instrument": "SOL-PERP",
-      "side": "BUY",
-      "entry_price": 117.32,
-      "exit_price": 118.25,
-      "quantity": 16.99781,
-      "notional_usd": 1994.16,
-      "profit_loss_usd": 15.83,
-      "profit_loss_pct": 0.79,
-      "strategy": "Composite-score wallet mirror",
-      "result": "WIN",
-      "holding_period_hours": "1.11"
     }
   ],
   "config": {
