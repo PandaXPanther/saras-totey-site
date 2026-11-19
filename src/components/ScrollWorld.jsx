@@ -35,6 +35,43 @@ function getAge(now = new Date()) {
   return now.getFullYear() - 2009 - (now < birthday ? 1 : 0);
 }
 
+function chooseFlight() {
+  if (matchMedia('(max-width: 720px) and (max-aspect-ratio: 5/8)').matches) return 'continuous-flight-portrait.mp4';
+  if (matchMedia('(max-width: 768px)').matches) return 'continuous-flight-mobile.mp4';
+  return 'continuous-flight.mp4';
+}
+
+function useFlightSource(video, enabled, onFailure) {
+  useEffect(() => {
+    const player = video.current;
+    if (!enabled || !player) return;
+    const name = chooseFlight();
+    const url = flightPath + name;
+    const request = new AbortController();
+    let objectUrl;
+    player.dataset.flightSource = name;
+    // Some static hosts return the complete file even for a Range request.
+    // Use that response directly as a seekable local file on those hosts.
+    async function prepare() {
+      const response = await fetch(url, { headers: { Range: 'bytes=0-0' }, signal: request.signal });
+      if (!response.ok || !response.headers.get('Content-Type')?.startsWith('video/')) throw new Error('Flight video unavailable');
+      if (response.status === 206) {
+        if (!request.signal.aborted) player.src = url;
+        return;
+      }
+      const movie = await response.blob();
+      if (request.signal.aborted) return;
+      objectUrl = URL.createObjectURL(movie);
+      player.src = objectUrl;
+    }
+    prepare().catch(() => { if (!request.signal.aborted) onFailure(true); });
+    return () => {
+      request.abort();
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, [video, enabled, onFailure]);
+}
+
 const chapters = [
   { id: 'intro', media: 'continuous-flight-poster', label: 'Home', eyebrow: 'Boulder, Colorado', title: 'Saras Totey.', body: `I’m a ${getAge()}-year-old full-stack developer who grew up in Boulder. I build trading bots, research markets, and make other cool projects.`, note: 'Pronounced “sahr-iss.” Age updates automatically every June 25.', side: 'left' },
   { id: 'trading', media: 'countersnipe', label: 'Trading systems', eyebrow: 'Markets, then code', title: 'I like finding the moment a market disagrees with itself.', body: 'That puzzle is why I build trading bots. What began with Roblox items became live CS2 arbitrage, prediction-market research, and systems where the logs and mistakes are as interesting as the wins.', href: '/quant', side: 'left' },
@@ -74,9 +111,10 @@ export default function ScrollWorld() {
   const [active, setActive] = useState(0);
   const activeRef = useRef(0);
   const [hasScrolled, setHasScrolled] = useState(false);
-  const [reduced, setReduced] = useState(false);
+  const [reduced, setReduced] = useState(null);
   const [mediaFailed, setMediaFailed] = useState(false);
   const staticWorld = reduced || mediaFailed;
+  const playFlight = reduced === false && !mediaFailed;
 
   useBrowserLayoutEffect(() => {
     const motion = matchMedia('(prefers-reduced-motion: reduce)');
@@ -99,14 +137,13 @@ export default function ScrollWorld() {
     let hintHidden = window.scrollY > 6;
     let targetFrame = 0;
     let compensation = -1;
-    let previousPlayerFrame = -1;
     let framePresented = false;
 
     function seek() {
       if (!player || player.readyState < 1 || !Number.isFinite(player.duration) || player.seeking) return;
       const time = targetFrame ? Math.min((targetFrame + .12) / fps, player.duration - .5 / fps) : 0;
       if (Math.abs(player.currentTime - time) < .02) return;
-      previousPlayerFrame = targetFrame;
+      if (!player.seekable.length || time > player.seekable.end(player.seekable.length - 1)) return;
       player.currentTime = time;
     }
 
@@ -134,7 +171,7 @@ export default function ScrollWorld() {
       }
       // Keep the detailed poster visible until there is an actual scrubbed frame.
       if (!targetFrame) delete node.dataset.flightReady;
-      if (targetFrame > 0 && framePresented && !player?.seeking && previousPlayerFrame > 0) {
+      if (targetFrame > 0 && framePresented && !player?.seeking) {
         node.dataset.flightReady = 'true';
       }
       seek();
@@ -174,7 +211,7 @@ export default function ScrollWorld() {
     }
 
     function frameReady() {
-      framePresented = player.readyState >= 2;
+      framePresented = player.readyState >= 2 && player.currentTime >= .5 / fps;
       queue();
     }
     function mediaError() {
@@ -187,6 +224,7 @@ export default function ScrollWorld() {
     window.addEventListener('resize', measure, { passive: true });
     viewport?.addEventListener('resize', measure, { passive: true });
     player?.addEventListener('loadedmetadata', queue);
+    player?.addEventListener('progress', queue);
     player?.addEventListener('loadeddata', frameReady);
     player?.addEventListener('seeked', frameReady);
     player?.addEventListener('error', mediaError);
@@ -197,11 +235,13 @@ export default function ScrollWorld() {
       window.removeEventListener('resize', measure);
       viewport?.removeEventListener('resize', measure);
       player?.removeEventListener('loadedmetadata', queue);
+      player?.removeEventListener('progress', queue);
       player?.removeEventListener('loadeddata', frameReady);
       player?.removeEventListener('seeked', frameReady);
       player?.removeEventListener('error', mediaError);
     };
-  }, [staticWorld]);
+  }, [playFlight]);
+  useFlightSource(video, playFlight, setMediaFailed);
 
   function jumpTo(index) {
     const { top, distance } = dimensions.current;
@@ -215,11 +255,7 @@ export default function ScrollWorld() {
       <div className="scroll-world__stage" aria-hidden="true">
         <div className="scroll-world__scene">
           <img src={staticWorld ? `${flightPath}${chapters[active].media}.webp` : flightPoster} alt="" fetchpriority="high" />
-          {!staticWorld && <video ref={video} muted playsInline preload="auto" disablePictureInPicture>
-            <source src={`${flightPath}continuous-flight-portrait.mp4`} media="(max-width: 720px) and (max-aspect-ratio: 5/8)" type="video/mp4" />
-            <source src={`${flightPath}continuous-flight-mobile.mp4`} media="(max-width: 768px)" type="video/mp4" />
-            <source src={`${flightPath}continuous-flight.mp4`} type="video/mp4" />
-          </video>}
+          {playFlight && <video ref={video} muted playsInline preload="auto" disablePictureInPicture />}
         </div>
       </div>
       <div className="world-wash" aria-hidden="true" />

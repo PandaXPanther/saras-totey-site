@@ -5,7 +5,7 @@ const video = (page) => world(page).locator('video');
 const mediaTime = (page) => video(page).evaluate((player) => player.currentTime);
 
 async function waitForVideo(page) {
-  await expect.poll(() => video(page).evaluate((player) => player.readyState)).toBeGreaterThanOrEqual(2);
+  await expect.poll(() => video(page).evaluate((player) => player.readyState), { timeout: 15_000 }).toBeGreaterThanOrEqual(2);
 }
 
 test('the original homepage scrubs the same desktop film and settles on the right chapters', async ({ page }) => {
@@ -17,9 +17,9 @@ test('the original homepage scrubs the same desktop film and settles on the righ
   await expect(world(page).locator('.scroll-world__scene img')).toHaveAttribute('src', '/world/flight/continuous-flight-poster.webp');
   await waitForVideo(page);
   const source = await video(page).evaluate((player) => ({
-    path: new URL(player.currentSrc).pathname, width: player.videoWidth,
+    name: player.dataset.flightSource, width: player.videoWidth,
   }));
-  expect(source).toEqual({ path: '/world/flight/continuous-flight.mp4', width: 2560 });
+  expect(source).toEqual({ name: 'continuous-flight.mp4', width: 2560 });
   await expect.poll(() => mediaTime(page)).toBeLessThan(.05);
   await expect(world(page)).not.toHaveAttribute('data-flight-ready');
 
@@ -60,9 +60,9 @@ test('mobile uses the sharper portrait crop and preserves progress when browser 
     await page.goto('/');
     await waitForVideo(page);
     const source = await video(page).evaluate((player) => ({
-      path: new URL(player.currentSrc).pathname, width: player.videoWidth, height: player.videoHeight,
+      name: player.dataset.flightSource, width: player.videoWidth, height: player.videoHeight,
     }));
-    expect(source).toEqual({ path: '/world/flight/continuous-flight-portrait.mp4', width: 800, height: 1280 });
+    expect(source).toEqual({ name: 'continuous-flight-portrait.mp4', width: 800, height: 1280 });
     const session = await context.newCDPSession(page);
     await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: 156, y: 601 }] });
     for (let step = 1; step <= 8; step++) {
