@@ -22,9 +22,9 @@ test('the camera paints multiple intermediate frames between wheel movements', a
       .observe(element, { attributes: true, attributeFilter: ['data-rendered-frame'] });
   });
   await page.mouse.wheel(0, 320);
-  await expect.poll(() => renderedFrame(page)).toBeGreaterThan(35);
+  await expect.poll(() => renderedFrame(page)).toBeGreaterThanOrEqual(59);
   const frames = await page.evaluate(() => flightFrames);
-  expect(new Set(frames.filter((frame) => frame > 0 && frame < 35)).size).toBeGreaterThanOrEqual(2);
+  expect(new Set(frames.filter((frame) => frame > 0 && frame < 54)).size).toBeGreaterThanOrEqual(2);
 
   await chapter(page, 'Local Ledger').click();
   await expect(activeCopy(page)).toContainText('A public-data observatory', { timeout: 10_000 });

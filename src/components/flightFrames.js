@@ -3,6 +3,7 @@ const framesPerPack = 24;
 const overviewStep = 12;
 const motionStep = 2;
 const motionColumns = 4;
+const tilesPerSheet = framesPerPack / motionStep;
 const overviewColumns = 10;
 const formats = {
   wide: { overview: [192, 108], motion: [768, 432], canvas: [1920, 1080] },
@@ -45,10 +46,10 @@ async function decode(blob) {
 
 const release = (image) => image?.close?.();
 
-async function load(url, controller) {
+async function load(url, controller, priority = 'auto') {
   const timeout = setTimeout(() => controller.abort(), 8000);
   try {
-    const response = await fetch(url, { signal: controller.signal });
+    const response = await fetch(url, { signal: controller.signal, priority });
     if (!response.ok) throw new Error('Flight media unavailable');
     return await response.blob();
   } finally {
@@ -62,6 +63,8 @@ function sheetFrame(target, step) {
   if (frame >= 340 && frame <= 346) return target <= 339 ? 338 / step : 348 / step;
   return frame / step;
 }
+
+const motionGroup = (frame) => Math.floor(sheetFrame(frame, motionStep) / tilesPerSheet);
 
 export function createFlightFrames(canvas, variant, onDraw, onUnavailable) {
   const context = canvas.getContext('2d', { alpha: false });
@@ -78,6 +81,7 @@ export function createFlightFrames(canvas, variant, onDraw, onUnavailable) {
   const lastSheet = Math.floor(lastFrame / framesPerPack);
   const enableDetail = variant === 'wide' && !matchMedia('(pointer: coarse)').matches && !navigator.connection?.saveData;
   let overview;
+  let overviewPending = true;
   let still;
   let detailRequest;
   let detailTimer;
@@ -96,10 +100,9 @@ export function createFlightFrames(canvas, variant, onDraw, onUnavailable) {
   function draw() {
     paintRequest = 0;
     const index = sheetFrame(target, motionStep);
-    const perSheet = framesPerPack / motionStep;
-    const group = Math.floor(index / perSheet);
+    const group = Math.floor(index / tilesPerSheet);
     let source = sheets.get(group);
-    let tile = index % perSheet;
+    let tile = index % tilesPerSheet;
     let size = motionSize;
     let columns = motionColumns;
     let frame = Math.min(lastFrame, index * motionStep);
@@ -149,12 +152,12 @@ export function createFlightFrames(canvas, variant, onDraw, onUnavailable) {
       }
       sheets.set(group, image);
       if (sheets.size > 3) {
-        const current = Math.floor(sheetFrame(target, motionStep) * motionStep / framesPerPack);
+        const current = motionGroup(target);
         const farthest = [...sheets.keys()].sort((a, b) => Math.abs(b - current) - Math.abs(a - current))[0];
         release(sheets.get(farthest));
         sheets.delete(farthest);
       }
-      if (group === Math.floor(sheetFrame(target, motionStep) * motionStep / framesPerPack)) queueSheet(group + direction);
+      if (!overviewPending && group === motionGroup(target)) queueSheet(group + direction);
       requestPaint();
     }).catch(() => {
       if (requests.get(group) === controller) failedAt.set(group, Date.now());
@@ -171,7 +174,7 @@ export function createFlightFrames(canvas, variant, onDraw, onUnavailable) {
     detailRequest = controller;
     const group = String(Math.floor(frame / framesPerPack)).padStart(2, '0');
     try {
-      const data = await load(`/world/flight/frames/wide/${group}.bin`, controller);
+      const data = await load(`/world/flight/frames/wide/${group}.bin`, controller, 'low');
       const image = await decode(stillFromPack(await data.arrayBuffer(), frame % framesPerPack));
       if (disposed || controller.signal.aborted) {
         release(image);
@@ -187,13 +190,17 @@ export function createFlightFrames(canvas, variant, onDraw, onUnavailable) {
     }
   }
 
-  load(`${path}overview.webp`, overviewRequest).then(decode).then((image) => {
+  load(`${path}overview.webp`, overviewRequest, 'high').then(decode).then((image) => {
     if (disposed) release(image);
-    else {
-      overview = image;
-      requestPaint();
-    }
-  }).catch(requestPaint);
+    else overview = image;
+  }).catch(() => {
+    // The individual motion sheets can still render if the overview is unavailable.
+  }).finally(() => {
+    if (disposed) return;
+    overviewPending = false;
+    queueSheet(motionGroup(target));
+    requestPaint();
+  });
 
   return {
     show(frame, resting) {
@@ -206,15 +213,16 @@ export function createFlightFrames(canvas, variant, onDraw, onUnavailable) {
       }
       target = frame;
       isResting = resting;
-      const group = Math.floor(sheetFrame(frame, motionStep) * motionStep / framesPerPack);
+      const group = motionGroup(frame);
       const ahead = group + direction;
       for (const [pending, controller] of requests) {
         if (pending === group || pending === ahead) continue;
         requests.delete(pending);
         controller.abort();
       }
-      queueSheet(group);
-      if (sheets.has(group) || frame % framesPerPack >= 8) queueSheet(ahead);
+      // Start with broad coverage. An early swipe can also request its immediate view.
+      if (!overviewPending || frame > 0) queueSheet(group);
+      if (!overviewPending && (sheets.has(group) || frame % framesPerPack >= 8)) queueSheet(ahead);
       if (enableDetail && resting && frame && !detailTimer && detailAttempt !== frame) {
         detailTimer = setTimeout(() => refine(frame), 480);
       }
