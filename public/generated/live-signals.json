@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-18T14:42:57.763Z",
+  "generated_at": "2026-11-19T05:57:06.295Z",
   "cards": [
     {
       "k": "CounterSnipe commits",
@@ -18,17 +18,17 @@
     },
     {
       "k": "Hyperliquid cohort · top-5 30d ROI",
-      "v": "+166.5%",
+      "v": "+185.6%",
       "foot": "Recomputed from seed_wallets.json + Hyperliquid leaderboard API"
     },
     {
       "k": "Days since CounterSnipe live",
-      "v": "186",
+      "v": "187",
       "foot": "Since May 16, 2026"
     },
     {
       "k": "Days since last commit",
-      "v": "112",
+      "v": "113",
       "foot": "Across the three-repo fleet"
     }
   ],
@@ -39,7 +39,7 @@
       "PandaXPanther/copy-trader"
     ],
     "hyperliquid": "hyperliquid-month",
-    "seed_wallets": "data/seed_wallets.json"
+    "seed_wallets": "data\\seed_wallets.json"
   },
   "errors": []
 }

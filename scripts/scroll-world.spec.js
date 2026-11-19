@@ -33,6 +33,28 @@ test('the camera paints multiple intermediate frames between wheel movements', a
   await expect.poll(() => renderedFrame(page), { timeout: 10_000 }).toBe(0);
 });
 
+test('a missing motion sheet cannot freeze the island or hold the chapter links', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.route('**/world/flight/motion-v1/wide/*.webp', async (route) => {
+    if (route.request().url().endsWith('/overview.webp')) await route.continue();
+    else await route.abort();
+  });
+  await page.route('**/world/flight/frames/wide/*.bin', (route) => route.abort());
+  await page.goto('/');
+  await expect(world(page)).toHaveAttribute('data-flight-quality', 'overview');
+  await expect.poll(() => renderedFrame(page)).toBe(0);
+
+  for (const [delta, minimum] of [[420, 48], [460, 100], [-640, 20]]) {
+    await page.mouse.wheel(0, delta);
+    if (delta > 0) await expect.poll(() => renderedFrame(page)).toBeGreaterThan(minimum);
+    else await expect.poll(() => renderedFrame(page)).toBeLessThan(70);
+  }
+  await expect.poll(() => renderedFrame(page)).toBeGreaterThan(20);
+  await chapter(page, 'Roblox games').click();
+  await expect(activeCopy(page).getByRole('link', { name: 'Take me there' })).toHaveAttribute('href', '/roblox');
+  await expect.poll(() => renderedFrame(page)).toBeGreaterThan(595);
+});
+
 test('portrait touch scroll and browser chrome resize preserve the flight', async ({ browser }) => {
   const model = devices['iPhone 13'];
   const context = await browser.newContext({
@@ -40,10 +62,11 @@ test('portrait touch scroll and browser chrome resize preserve the flight', asyn
   });
   try {
     const page = await context.newPage();
-    await page.goto('/');
+    await page.goto('/?utm_source=ig_bio', { referer: 'https://l.instagram.com/' });
+    await expect(world(page)).toHaveAttribute('data-in-app-webview', 'true');
     await expect.poll(() => renderedFrame(page)).toBe(0);
     const canvasSize = await world(page).locator('canvas').evaluate(({ width, height }) => [width, height]);
-    expect(canvasSize).toEqual([800, 1280]);
+    expect(canvasSize).toEqual([600, 960]);
     const session = await context.newCDPSession(page);
     await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: 156, y: 601 }] });
     for (let step = 1; step <= 8; step++) {
@@ -56,6 +79,9 @@ test('portrait touch scroll and browser chrome resize preserve the flight', asyn
     await page.setViewportSize({ width: 390, height: 805 });
     await expect.poll(() => world(page).evaluate((element) => element.style.getPropertyValue('--world-viewport-height'))).toBe('805px');
     expect(await readDistance()).toBe(before);
+    await page.setViewportSize({ width: 805, height: 390 });
+    await expect.poll(() => world(page).locator('canvas').evaluate(({ width }) => width)).toBe(1920);
+    await expect.poll(() => renderedFrame(page)).toBeGreaterThan(32);
     await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight));
     await expect(activeCopy(page)).toContainText('Contact me.', { timeout: 10_000 });
     await expect.poll(() => renderedFrame(page)).toBe(821);
@@ -114,6 +140,8 @@ test('one glass navigation fits every page at 320px and shows its active tab', a
     expect(tabs).toHaveLength(6);
     for (const tab of tabs) {
       const bounds = await tab.boundingBox();
+      expect(bounds.width).toBeGreaterThanOrEqual(44);
+      expect(bounds.height).toBeGreaterThanOrEqual(44);
       expect(bounds.x).toBeGreaterThanOrEqual(0);
       expect(bounds.x + bounds.width).toBeLessThanOrEqual(320);
     }

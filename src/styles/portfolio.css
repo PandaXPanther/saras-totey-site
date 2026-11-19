@@ -5,7 +5,7 @@
   --portfolio-link: #833c2d;
   --portfolio-rule: rgba(54, 38, 28, .2);
   --portfolio-gutter: clamp(20px, 5vw, 80px);
-  scroll-padding-top: 82px;
+  scroll-padding-top: calc(72px + env(safe-area-inset-top));
 }
 
 html, body { min-height: 100%; background: var(--portfolio-paper); }
@@ -157,7 +157,7 @@ section[id] { scroll-margin-top: 8px; }
 }
 
 @media (max-width: 530px) {
-  :root { scroll-padding-top: 64px; }
+  :root { scroll-padding-top: calc(64px + env(safe-area-inset-top)); }
 
   .agency-grid, .game-grid { grid-template-columns: minmax(0, 1fr); }
 
@@ -166,14 +166,14 @@ section[id] { scroll-margin-top: 8px; }
 
 /* Project pages retain the original portfolio's type, glass and spacing. */
 .folio-wrap { padding-inline: clamp(22px, 6vw, 90px); }
-.project-return { position: relative; top: 66px; z-index: 3; height: 0; padding-block: 0; }
+.project-return { position: relative; top: calc(66px + env(safe-area-inset-top)); z-index: 3; height: 0; padding-block: 0; }
 .project-return a { display: inline-block; padding-block: 4px; color: var(--text-dim); }
 .portfolio-hero {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   min-height: min(72svh, 710px);
-  padding-block: clamp(116px, 14vh, 158px) clamp(62px, 9vh, 105px);
+  padding-block: clamp(calc(116px + env(safe-area-inset-top)), 14vh, 160px) clamp(62px, 9vh, 105px);
 }
 .portfolio-hero h1 {
   color: var(--portfolio-ink);
@@ -238,28 +238,75 @@ section[id] { scroll-margin-top: 8px; }
   --portfolio-background: linear-gradient(145deg, #271e29, #1c171e 42%);
 }
 .misc-heading { min-height: min(56svh, 515px); }
+.misc-heading__chess { align-self: flex-start; padding-block: 12px; margin-top: 8px; color: #f2bf99; }
 .misc-library { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; border-top: 1px solid var(--portfolio-rule); }
 .misc-feature { display: block; color: inherit; }
-.misc-feature:hover h2, .misc-row a:hover { color: var(--portfolio-link); }
+.misc-feature:hover h2 { color: var(--portfolio-link); }
 .misc-feature { border: 1px solid var(--portfolio-rule); border-radius: 8px; background: #271f29; padding: 16px; height: 100%; }
 .misc-feature img { width: 100%; height: auto; display: block; border-radius: 5px; margin-bottom: 12px; }
-.misc-feature span, .misc-row span { font-size: 14px; color: var(--portfolio-link); }
+.misc-feature span { font-size: 14px; color: var(--portfolio-link); }
 .misc-feature h2 { font-size: clamp(24px, 3vw, 40px); margin: 6px 0; font-weight: 650; }
 .misc-feature p { margin: 8px 0 0; color: var(--portfolio-muted); }
-.misc-directory { padding-block: 24px clamp(55px, 7vw, 94px); border-top: 1px solid var(--portfolio-rule); }
-.misc-directory > h2 { margin-bottom: 20px; }
-.misc-row { display: grid; grid-template-columns: minmax(0, .75fr) minmax(0, 1.25fr); gap: 20px; padding-block: 17px; border-top: 1px solid var(--portfolio-rule); align-items: start; }
-.misc-row h3 { font-size: 22px; margin-bottom: 5px; }
-.misc-row p { margin: 0; }
+.misc-chess { padding-bottom: clamp(47px, 7vw, 94px); }
+.chess-panel {
+  display: grid;
+  grid-template-columns: minmax(0, .75fr) minmax(0, 1fr);
+  gap: 22px 32px;
+  align-items: end;
+  padding: clamp(20px, 4vw, 43px);
+  border: 1px solid #d6a57c50;
+  border-radius: 12px;
+  background: radial-gradient(ellipse at 100% 0%, #6f463c80, transparent 83%), #2c202a;
+}
+.chess-panel .folio-kicker { color: #f2bf99; margin: 0 0 9px; }
+.chess-panel h2 { font-size: clamp(29px, 4vw, 51px); margin-bottom: 16px; }
+.chess-panel .folio-link { color: #f2bf99; }
+.chess-panel__ratings dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin: 0 0 10px; }
+.chess-panel__ratings dl div { min-width: 0; border-top: 1px solid #d6a57c60; padding: 8px 3px 0; }
+.chess-panel__ratings dt, .chess-panel__ratings :is(p, time) { color: #e3c9c7; font-size: 13px; }
+.chess-panel__ratings dd { margin: 0; color: #ffe8cb; font: 650 clamp(29px, 5vw, 43px)/1.16 var(--font-display); font-variant-numeric: tabular-nums; }
+.chess-panel__ratings p { display: inline; margin-right: 6px; }
+
+.project-page--economics {
+  --portfolio-background: radial-gradient(ellipse 62% 440px at 87% 10%, #d5b8f8a8, transparent 95%), linear-gradient(150deg, #fff2f5, #f2e7fa 53%, #f8edf6);
+}
+.economics-heading h1 { color: #51376f; }
+.econ-tool-list { border-top: 3px solid #a07acc; }
+.ledger-coverage { border-top: 3px solid #81ab8a; }
+.project-page--att-agency {
+  --portfolio-background: radial-gradient(ellipse 66% 550px at 93% 8%, #f19d7cd0, transparent 90%), linear-gradient(140deg, #fff0eb, #f5cdd5 56%, #eeb2b0);
+}
+.agency-heading h1 { color: #471f2b; }
+.agency-heading__actions span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  border: 1px solid #b454514a;
+  border-radius: 999px;
+  background: #fff6f0b3;
+}
+.agency-heading__actions strong { color: #953c2d; line-height: 1.1; }
+.agency-card img { transition: box-shadow .2s ease; }
+.agency-card:hover img { box-shadow: 0 8px 24px #84384139; }
+.project-page--roblox {
+  --portfolio-background: radial-gradient(ellipse 75% 550px at 87% 6%, #a2d5be, transparent 94%), linear-gradient(150deg, #f2f7ed, #e7f4ed 54%, #dcebe9);
+}
+.roblox-heading h1 em { color: #086154; }
+.roblox-roles article { border-left: 3px solid #4d9b83; }
+.project-page--misc {
+  --portfolio-background: radial-gradient(ellipse 80% 505px at 86% 2%, #5236598c, transparent 92%), linear-gradient(145deg, #271e29, #1c171e 53%);
+}
+.misc-feature { border-top-color: #b47ca0a3; }
+.misc-feature:hover { border-color: #e4a3cba3; }
 
 @media (max-width: 760px) {
   .econ-feature__grid, .roblox-heading { grid-template-columns: minmax(0, 1fr); }
-  .page-heading { padding-top: 110px; }
+  .page-heading { padding-top: calc(104px + env(safe-area-inset-top)); }
   .portfolio-hero h1 { font-size: clamp(48px, 12vw, 82px); }
   .agency-heading h1 { font-size: clamp(42px, 9vw, 68px); }
   .misc-heading { min-height: 0; }
 }
 @media (max-width: 530px) {
-  .misc-library, .misc-row { grid-template-columns: minmax(0, 1fr); }
-  .misc-row { gap: 7px; }
+  .misc-library, .chess-panel { grid-template-columns: minmax(0, 1fr); }
 }

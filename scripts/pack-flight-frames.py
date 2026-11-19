@@ -14,18 +14,14 @@ FLIGHT = ROOT / "public/world/flight"
 SOURCE = FLIGHT / "continuous-flight.mp4"
 FRAMES_PER_PACK = 24
 FRAME_COUNT = 822
-VARIANTS = {
-    "wide": "scale=1920:1080:flags=lanczos",
-    "portrait": "crop=900:1440:996:0,scale=800:1280:flags=lanczos",
-}
 
 
-def pack_frames(ffmpeg, variant, filters, scratch):
-    output = FLIGHT / "frames" / variant
+def pack_frames(ffmpeg, scratch):
+    output = FLIGHT / "frames" / "wide"
     output.mkdir(parents=True, exist_ok=True)
     subprocess.run([
         ffmpeg, "-v", "error", "-y", "-threads", "3", "-i", str(SOURCE),
-        "-vf", filters, "-an", "-c:v", "libwebp", "-quality", "76",
+        "-vf", "scale=1920:1080:flags=lanczos", "-an", "-c:v", "libwebp", "-quality", "76",
         "-compression_level", "3", "-threads", "6", str(scratch / "%04d.webp"),
     ], check=True)
     frames = sorted(scratch.glob("*.webp"))
@@ -38,9 +34,8 @@ def pack_frames(ffmpeg, variant, filters, scratch):
             stream.write(struct.pack(f"<I{len(images)}I", len(images), *(len(image) for image in images)))
             for image in images:
                 stream.write(image)
-    if variant == "wide":
-        for frame, name in ((605, "roblox"), (682, "misc")):
-            (FLIGHT / f"{name}.webp").write_bytes(frames[frame].read_bytes())
+    for frame, name in ((605, "roblox"), (682, "misc")):
+        (FLIGHT / f"{name}.webp").write_bytes(frames[frame].read_bytes())
 
 
 def measure_pacing(ffmpeg):
@@ -76,7 +71,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--ffmpeg", default="ffmpeg")
     args = parser.parse_args()
-    for variant, filters in VARIANTS.items():
-        with tempfile.TemporaryDirectory() as temporary:
-            pack_frames(args.ffmpeg, variant, filters, Path(temporary))
+    with tempfile.TemporaryDirectory() as temporary:
+        pack_frames(args.ffmpeg, Path(temporary))
     measure_pacing(args.ffmpeg)

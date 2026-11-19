@@ -6,7 +6,6 @@ import pacing from '../data/flight-pacing.json';
 const flightPath = '/world/flight/';
 const flightPoster = `${flightPath}continuous-flight-poster.webp`;
 const chapterStarts = [0, 145, 290, 435, 532, 605, 682, 757];
-const fps = 24;
 const scrollScreens = 9.4;
 const beamStart = 336;
 const beamEnd = 348;
@@ -37,11 +36,7 @@ function getAge(now = new Date()) {
   return now.getFullYear() - 2009 - (now < birthday ? 1 : 0);
 }
 
-function chooseFlight() {
-  if (matchMedia('(max-width: 720px) and (max-aspect-ratio: 5/8)').matches) return 'continuous-flight-portrait.mp4';
-  if (matchMedia('(max-width: 768px)').matches) return 'continuous-flight-mobile.mp4';
-  return 'continuous-flight.mp4';
-}
+const portraitFlight = '(max-width: 760px) and (orientation: portrait)';
 
 const references = {
   intro: { name: 'Hunter License', title: 'Hunter × Hunter', symbol: '×', text: 'A Hunter License for the first step off the map.' },
@@ -52,37 +47,6 @@ const references = {
   roblox: { name: 'Tall grass', title: 'Pokémon', symbol: '◉', text: 'A red-and-white trail charm for the first route out of town.' },
 };
 
-function useFlightSource(video, enabled, onFailure) {
-  useEffect(() => {
-    const player = video.current;
-    if (!enabled || !player) return;
-    const name = chooseFlight();
-    const url = flightPath + name;
-    const request = new AbortController();
-    let objectUrl;
-    player.dataset.flightSource = name;
-    // Some static hosts return the complete file even for a Range request.
-    // Use that response directly as a seekable local file on those hosts.
-    async function prepare() {
-      const response = await fetch(url, { headers: { Range: 'bytes=0-0' }, signal: request.signal });
-      if (!response.ok || !response.headers.get('Content-Type')?.startsWith('video/')) throw new Error('Flight video unavailable');
-      if (response.status === 206) {
-        if (!request.signal.aborted) player.src = url;
-        return;
-      }
-      const movie = await response.blob();
-      if (request.signal.aborted) return;
-      objectUrl = URL.createObjectURL(movie);
-      player.src = objectUrl;
-    }
-    prepare().catch(() => { if (!request.signal.aborted) onFailure(true); });
-    return () => {
-      request.abort();
-      if (objectUrl) URL.revokeObjectURL(objectUrl);
-    };
-  }, [video, enabled, onFailure]);
-}
-
 const chapters = [
   { id: 'intro', media: 'continuous-flight-poster', label: 'Home', eyebrow: 'Boulder, Colorado', title: 'Saras Totey.', body: `I’m a ${getAge()}-year-old full-stack developer who grew up in Boulder. I build trading bots, research markets, and make other cool projects.`, note: 'Pronounced “sahr-iss.” Age updates automatically every June 25.', side: 'left' },
   { id: 'trading', media: 'countersnipe', label: 'Trading systems', eyebrow: 'Markets, then code', title: 'I like finding the moment a market disagrees with itself.', body: 'That puzzle is why I build trading bots. What began with Roblox items became live CS2 arbitrage, prediction-market research, and systems where the logs and mistakes are as interesting as the wins.', href: '/quant', side: 'left' },
@@ -90,7 +54,7 @@ const chapters = [
   { id: 'local-ledger', media: 'ventures', label: 'Local Ledger', eyebrow: 'A public-data observatory', title: 'I wanted to see a place as a living system.', body: 'That curiosity became Local Ledger: jobs, income, housing, schools, and public spending on one research desk, plus a simulator for asking what might change next.', href: '/economics#local-ledger', side: 'right' },
   { id: 'att', media: 'att', label: 'ATT Agency', eyebrow: 'attagency.co', title: 'Want a site that looks like this? I co-founded the studio that builds them.', body: 'At ATT Agency, I help turn a business into a brand, website, campaign, and measurement system without passing the work between disconnected vendors.', href: '/att-agency', side: 'right' },
   { id: 'roblox', media: 'roblox', label: 'Roblox games', eyebrow: 'Roblox game development', title: 'I build games with Ryder.', body: 'I write the gameplay and systems. Ryder designs the worlds, models, and interfaces. You can play our latest releases on Roblox.', href: '/roblox', side: 'left' },
-  { id: 'misc', media: 'misc', label: 'Miscellaneous projects', eyebrow: 'More projects', title: 'The other things I build.', body: 'A Discord historian, a national extemp scoreboard, a student esports league, and my chess games.', href: '/misc', side: 'right' },
+  { id: 'misc', media: 'misc', label: 'Miscellaneous projects', eyebrow: 'More projects', title: 'The other things I build.', body: 'A Discord historian, a national extemp scoreboard, and my Chess.com ratings.', href: '/misc', side: 'right' },
   { id: 'contact', media: 'contact', label: 'Contact', eyebrow: 'Boulder to anywhere', title: 'Contact me.', body: 'Discord: PandaXPanther · sarastotey@icloud.com · 720-415-9085', side: 'center' },
 ];
 
@@ -104,7 +68,7 @@ function WorldReference({ reference }) {
 
 function WorldChapter({ chapter, index, active }) {
   const Heading = index === 0 ? 'h1' : 'h2';
-  return <article aria-hidden={!active} className={`world-copy world-copy--${chapter.side} world-copy--${chapter.id}${active ? ' is-active' : ''}`}>
+  return <article data-chapter={chapter.id} aria-hidden={!active} className={`world-copy world-copy--${chapter.side} world-copy--${chapter.id}${active ? ' is-active' : ''}`}>
     <span className="world-copy__count">{String(index + 1).padStart(2, '0')} / {chapters.length}</span>
     <span className="world-copy__eyebrow">{chapter.eyebrow}</span>
     {index === 0 ? (
@@ -127,107 +91,91 @@ function WorldChapter({ chapter, index, active }) {
 
 export default function ScrollWorld() {
   const root = useRef(null);
-  const video = useRef(null);
   const canvas = useRef(null);
-  const dimensions = useRef({ top: 0, distance: 1, height: 0, width: 0, growth: 0 });
+  const dimensions = useRef({ top: 0, distance: 1, height: 0, width: 0 });
   const [active, setActive] = useState(0);
   const activeRef = useRef(0);
   const [hasScrolled, setHasScrolled] = useState(false);
   const [reduced, setReduced] = useState(null);
-  const [mediaFailed, setMediaFailed] = useState(false);
-  const [framesFailed, setFramesFailed] = useState(false);
-  const staticWorld = reduced || mediaFailed;
-  const playFlight = reduced === false && !mediaFailed;
-  const useFrames = playFlight && !framesFailed;
-  const useVideo = playFlight && framesFailed;
+  const [variant, setVariant] = useState('wide');
+  const [hasView, setHasView] = useState(false);
+  const playFlight = reduced === false;
 
   useBrowserLayoutEffect(() => {
     const motion = matchMedia('(prefers-reduced-motion: reduce)');
     const sync = () => setReduced(motion.matches);
     sync();
+    const portrait = matchMedia(portraitFlight);
+    const orient = () => setVariant(portrait.matches ? 'portrait' : 'wide');
+    orient();
     motion.addEventListener('change', sync);
-    return () => motion.removeEventListener('change', sync);
+    portrait.addEventListener('change', orient);
+    return () => {
+      motion.removeEventListener('change', sync);
+      portrait.removeEventListener('change', orient);
+    };
   }, []);
 
   useBrowserLayoutEffect(() => {
     const node = root.current;
-    const player = video.current;
-    delete node.dataset.flightReady;
     const viewport = window.visualViewport;
-    const inApp = isInAppWebView();
-    // A stable scroll distance keeps the film and chapter anchors fixed as mobile
-    // browser chrome changes the visible height.
+    delete node.dataset.flightReady;
+    delete node.dataset.renderedFrame;
+    delete node.dataset.flightQuality;
+    setHasView(false);
     let paint = 0;
+    let resize = 0;
     let settleTimer = 0;
     let settled = true;
     let hintHidden = window.scrollY > 6;
-    let targetFrame = 0;
-    let compensation = -1;
-    let framePresented = false;
     let camera = null;
     let lastPaint = 0;
     let frames;
+    let viewing = false;
 
-    function displayChapter(frame) {
-      const chapter = chapterStarts.findLastIndex((start) => frame >= start);
-      if (chapter === activeRef.current) return;
-      activeRef.current = chapter;
-      setActive(chapter);
-    }
-
-    if (useFrames) {
+    if (playFlight) {
       try {
-        const variant = chooseFlight().includes('portrait') ? 'portrait' : 'wide';
-        frames = createFlightFrames(canvas.current, variant, (frame) => {
+        frames = createFlightFrames(canvas.current, variant, (frame, quality) => {
+          if (!viewing) setHasView(true);
+          viewing = true;
           node.dataset.renderedFrame = frame;
-          if (frame > 0) node.dataset.flightReady = 'true';
+          node.dataset.flightQuality = quality;
+          if (frame) node.dataset.flightReady = '';
           else delete node.dataset.flightReady;
-          displayChapter(frame);
-        }, () => setFramesFailed(true));
+        }, () => {
+          if (!viewing) return;
+          viewing = false;
+          delete node.dataset.flightReady;
+          delete node.dataset.renderedFrame;
+          delete node.dataset.flightQuality;
+          setHasView(false);
+        });
       } catch {
-        setFramesFailed(true);
+        // The chapter stills remain usable if the WebView cannot create a canvas.
       }
-    }
-
-    function seek() {
-      if (!player || player.readyState < 1 || !Number.isFinite(player.duration) || player.seeking) return;
-      const time = targetFrame ? Math.min((targetFrame + .12) / fps, player.duration - .5 / fps) : 0;
-      if (Math.abs(player.currentTime - time) < .02) return;
-      if (!player.seekable.length || time > player.seekable.end(player.seekable.length - 1)) return;
-      player.currentTime = time;
     }
 
     function update(now) {
       paint = 0;
-      const { top, distance, height, growth } = dimensions.current;
+      const { top, distance } = dimensions.current;
       const y = window.scrollY - top;
       const progress = clamp(y / distance);
-      if (camera === null || !playFlight) camera = progress;
+      if (camera === null || !frames) camera = progress;
       else {
-        const elapsed = Math.min(22, now - lastPaint);
-        camera += (progress - camera) * (1 - Math.exp(-elapsed / 42));
-        if (Math.abs(progress - camera) < .0005) camera = progress;
+        const elapsed = Math.min(16, now - lastPaint);
+        camera += (progress - camera) * (1 - Math.exp(-elapsed / 32));
+        if (Math.abs(progress - camera) < .0004) camera = progress;
       }
       lastPaint = now;
-      targetFrame = mediaFrame(camera, settled && camera === progress);
-      if (frames) frames.show(targetFrame);
-      else displayChapter(targetFrame);
+      const chapter = chapterStarts.findLastIndex((start) => progress >= progressAtFrame(start));
+      if (chapter !== activeRef.current) {
+        activeRef.current = chapter;
+        setActive(chapter);
+      }
+      frames?.show(mediaFrame(camera, settled && camera === progress), settled && camera === progress);
       if (!hintHidden && y > 6) {
         hintHidden = true;
         setHasScrolled(true);
-      }
-      if (inApp) {
-        const next = Math.round(growth * (1 - clamp(y / (height * .5))));
-        if (next !== compensation) {
-          compensation = next;
-          node.style.setProperty('--world-viewport-compensation', `${next}px`);
-        }
-      }
-      // Keep the detailed poster visible until there is an actual scrubbed frame.
-      if (!frames) {
-        if (!targetFrame) delete node.dataset.flightReady;
-        if (targetFrame > 0 && framePresented && !player?.seeking) node.dataset.flightReady = 'true';
-        seek();
       }
       if (camera !== progress) queue();
     }
@@ -239,25 +187,23 @@ export default function ScrollWorld() {
     function scroll() {
       settled = false;
       queue();
-      // Only an obscured transition needs a settle pass. All other scroll
-      // positions already resolve directly to an original movie frame.
       clearTimeout(settleTimer);
       settleTimer = setTimeout(() => { settled = true; queue(); }, 120);
     }
 
     function measure() {
+      resize = 0;
       if (viewport && Math.abs(viewport.scale - 1) > .02) return;
       const old = dimensions.current;
-      const width = document.documentElement.clientWidth;
-      const height = inApp ? Math.round(viewport?.height ?? window.innerHeight) : window.innerHeight;
-      const top = node.getBoundingClientRect().top + window.scrollY;
-      const layoutHeight = Math.max(height, document.documentElement.clientHeight, window.innerHeight);
+      const { clientWidth: width, clientHeight } = document.documentElement;
+      const height = Math.round(viewport?.height ?? window.innerHeight);
       const reflow = old.width !== width;
       const stableHeight = reflow ? height : old.height || height;
       const distance = stableHeight * scrollScreens;
-      dimensions.current = { top, width, height: stableHeight, distance, growth: Math.max(0, height - stableHeight) };
+      const top = node.getBoundingClientRect().top + window.scrollY;
+      dimensions.current = { top, width, height: stableHeight, distance };
       node.style.setProperty('--world-scroll-distance', `${distance}px`);
-      node.style.setProperty('--world-height', `${distance + layoutHeight}px`);
+      node.style.setProperty('--world-height', `${distance + Math.max(clientHeight, height)}px`);
       node.style.setProperty('--world-viewport-height', `${height}px`);
       if (reflow && old.width && window.scrollY > old.top) {
         window.scrollTo(0, top + clamp((window.scrollY - old.top) / old.distance) * distance);
@@ -265,54 +211,40 @@ export default function ScrollWorld() {
       queue();
     }
 
-    function frameReady() {
-      framePresented = player.readyState >= 2 && player.currentTime >= .5 / fps;
-      queue();
-    }
-    function mediaError() {
-      setMediaFailed(true);
+    function queueMeasure() {
+      if (!resize) resize = requestAnimationFrame(measure);
     }
 
     measure();
     if (hintHidden) setHasScrolled(true);
     window.addEventListener('scroll', scroll, { passive: true });
-    window.addEventListener('resize', measure, { passive: true });
-    viewport?.addEventListener('resize', measure, { passive: true });
-    player?.addEventListener('loadedmetadata', queue);
-    player?.addEventListener('progress', queue);
-    player?.addEventListener('loadeddata', frameReady);
-    player?.addEventListener('seeked', frameReady);
-    player?.addEventListener('error', mediaError);
+    window.addEventListener('resize', queueMeasure, { passive: true });
+    viewport?.addEventListener('resize', queueMeasure, { passive: true });
     return () => {
       cancelAnimationFrame(paint);
+      cancelAnimationFrame(resize);
       frames?.dispose();
       clearTimeout(settleTimer);
       window.removeEventListener('scroll', scroll);
-      window.removeEventListener('resize', measure);
-      viewport?.removeEventListener('resize', measure);
-      player?.removeEventListener('loadedmetadata', queue);
-      player?.removeEventListener('progress', queue);
-      player?.removeEventListener('loadeddata', frameReady);
-      player?.removeEventListener('seeked', frameReady);
-      player?.removeEventListener('error', mediaError);
+      window.removeEventListener('resize', queueMeasure);
+      viewport?.removeEventListener('resize', queueMeasure);
     };
-  }, [playFlight, useFrames]);
-  useFlightSource(video, useVideo, setMediaFailed);
+  }, [playFlight, variant]);
 
   function jumpTo(index) {
     const { top, distance } = dimensions.current;
-    const offset = progressAtFrame(chapterStarts[index]) * distance;
-    window.scrollTo({ top: top + offset + (index ? 2 : 0), behavior: reduced ? 'instant' : 'smooth' });
+    const frame = index === 0 ? 0 : chapterStarts[index] + 8;
+    const offset = progressAtFrame(frame) * distance;
+    window.scrollTo({ top: top + offset, behavior: reduced ? 'instant' : 'smooth' });
   }
 
-  return <main ref={root} className="scroll-world" data-marker={active} data-flight-renderer={useFrames ? 'frames' : useVideo ? 'video' : undefined} data-scroll-mode="free" data-in-app-webview={isInAppWebView() || undefined}>
+  return <main ref={root} className="scroll-world" data-marker={active} data-flight-renderer={playFlight ? 'frames' : undefined} data-scroll-mode="free" data-in-app-webview={isInAppWebView() || undefined}>
     <span className="world-contact-anchor" id="contact" style={{ '--contact-position': progressAtFrame(chapterStarts.at(-1)) }} />
     <div className="scroll-world__sticky">
       <div className="scroll-world__stage" aria-hidden="true">
         <div className="scroll-world__scene">
-          <img src={staticWorld ? `${flightPath}${chapters[active].media}.webp` : flightPoster} alt="" fetchpriority="high" />
-          {useFrames && <canvas ref={canvas} />}
-          {useVideo && <video ref={video} muted playsInline preload="auto" disablePictureInPicture />}
+          <img src={!hasView && active ? `${flightPath}${chapters[active].media}.webp` : flightPoster} alt="" fetchpriority="high" />
+          {playFlight && <canvas ref={canvas} />}
         </div>
       </div>
       <div className="world-wash" aria-hidden="true" />
@@ -325,6 +257,7 @@ export default function ScrollWorld() {
       <nav className="world-route" aria-label="World chapters">
         {chapters.map((chapter, index) => <button
           key={chapter.id}
+          data-chapter={chapter.id}
           type="button"
           className={active === index ? 'is-active' : ''}
           aria-current={active === index ? 'step' : undefined}

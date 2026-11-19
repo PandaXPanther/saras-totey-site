@@ -8,9 +8,10 @@ const AUDIO_GRAPH_KEY = '__sarasAmbientAudioGraph';
 const getAudio = () => {
   if (typeof window === 'undefined') return null;
   if (!window[AUDIO_KEY]) {
-    const element = new Audio(AMBIENT_AUDIO_SRC);
+    const element = new Audio();
+    element.preload = 'none';
+    element.src = AMBIENT_AUDIO_SRC;
     element.loop = true;
-    element.preload = 'metadata';
     element.volume = AMBIENT_VOLUME;
     window[AUDIO_KEY] = element;
   }
@@ -70,8 +71,8 @@ export default function AudioControl() {
 
     try {
       const graph = getAudioGraph();
-      if (graph?.context.state === 'suspended') await graph.context.resume();
-      await element.play();
+      const resume = graph?.context.state === 'suspended' ? graph.context.resume() : undefined;
+      await Promise.all([element.play(), resume]);
       setMuted(false);
     } catch {
       element.pause();

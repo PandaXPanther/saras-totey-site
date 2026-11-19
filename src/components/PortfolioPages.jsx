@@ -1,6 +1,7 @@
 import React from 'react';
 import catalog from '../data/roblox-games.json';
 import { creators } from '../data/robloxCreators.js';
+import ChessRatings from './ChessRatings.jsx';
 
 const econTools = [
   ['AP FRQ Grader', 'Practice with official AP Macro and Micro rubrics.', '/frq-grader'],
@@ -14,14 +15,9 @@ const agencyWork = [
   { title: 'Shital Tayde', type: 'Artist portfolio', href: 'https://shital-tayde-art.pages.dev', image: 'shital' },
 ];
 
-const sideProjects = [
+const miscProjects = [
   { name: 'Kodama', type: 'Discord bot', url: 'https://askkodama.com/', description: 'A historian for Discord servers. Kodama searches old conversations and answers questions using the server’s own context.', image: 'kodama' },
   { name: 'Extemp National Points Race', type: 'Speech & debate', url: 'https://national-points-race.pages.dev/', description: 'National extemp standings with tournament results, past seasons, and the scoring rules behind every ranking.', image: 'extemp' },
-  { name: 'Chess', type: 'Chess.com · skibidisarz', url: 'https://www.chess.com/member/skibidisarz', description: 'My games and results on Chess.com.' },
-  { name: 'Thryve HS Esports', type: 'Nonprofit', url: 'https://thryvehsesports.com/', description: 'Free Brawl Stars and Clash Royale tournaments for high school students.' },
-  { name: 'Dividend Collective', type: 'Research & digital strategy', url: 'https://thedividendcollective.com/saras-totey', description: 'I work on macro research, portfolio analytics, and the technology behind The Dispatch.' },
-  { name: 'PropGuard', type: 'Open-source software', url: 'https://github.com/PandaXPanther/propguard', description: 'An open-source monitor for prop-firm rules with Discord alerts.' },
-  { name: 'Robo Rush', type: 'Browser game', url: 'https://pandaxpanther.itch.io/', description: 'A four-player pass-and-play minigame rush.' },
 ];
 
 function ExternalLink({ children, href, className }) {
@@ -167,16 +163,15 @@ export function Roblox() {
 }
 
 export function Misc() {
-  const featured = sideProjects.filter(({ image }) => image);
-  const directory = sideProjects.filter(({ image }) => !image);
   return (
     <>
       <header className="folio-wrap page-heading portfolio-hero misc-heading">
         <h1>Other projects.</h1>
-        <p>A Discord historian, a national extemp scoreboard, and the other things I work on.</p>
+        <p>A Discord historian, a national extemp scoreboard, and my Chess.com ratings.</p>
+        <a className="misc-heading__chess folio-link" href="#chess">Jump to chess ratings <span aria-hidden="true">↓</span></a>
       </header>
       <section className="folio-wrap misc-library" aria-label="Featured projects">
-        {featured.map(({ name, type, description, image, url }) => (
+        {miscProjects.map(({ name, type, description, image, url }) => (
           <article key={name}>
             <ExternalLink href={url} className="misc-feature">
               <img src={`/projects/${image}.webp`} alt="" width="800" height="504" loading="lazy" decoding="async" />
@@ -185,15 +180,7 @@ export function Misc() {
           </article>
         ))}
       </section>
-      <section className="folio-wrap misc-directory">
-        <h2>More work and interests</h2>
-        {directory.map(({ name, type, description, url }) => (
-          <article className="misc-row" key={name}>
-            <div><h3><ExternalLink href={url}>{name}</ExternalLink></h3><span>{type}</span></div>
-            <p>{description}</p>
-          </article>
-        ))}
-      </section>
+      <ChessRatings />
     </>
   );
 }
