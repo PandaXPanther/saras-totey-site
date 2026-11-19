@@ -1,8 +1,9 @@
 import { readFile } from 'node:fs/promises';
 import { devices, expect, test } from 'playwright/test';
-import { formatStamp, paperMetrics, summarizePaper, usdTotal } from '../src/data/tradingFormat.js';
+import { formatStamp, paperMetrics, signedMoney, summarizePaper, usdTotal } from '../src/data/tradingFormat.js';
 
 const baseline = JSON.parse(await readFile(new URL('../src/data/trading-live.json', import.meta.url)));
+const archived = JSON.parse(await readFile(new URL('../src/data/trading-performance.json', import.meta.url)));
 const card = (page, name) => page.locator('#live .kpi').filter({ has: page.locator('.kpi-k', { hasText: name }) }).locator('.kpi-v');
 
 test('the dashboard, visible fill log, and model receipts update together', async ({ page }) => {
@@ -27,12 +28,16 @@ test('the dashboard, visible fill log, and model receipts update together', asyn
     profit_loss_pct: 1.38,
   });
   let feed = baseline;
+  let comparison = archived;
   let requests = 0;
+  const nextClose = new Date(Date.parse(archived.benchmark.at(-1)[0]) + 86_400_000).toISOString().slice(0, 10);
+  const navToStart = archived.benchmark.findLast(([day]) => day <= archived.model[0][0])[1];
   await page.clock.install();
   await page.route('**/generated/trading-live.json?*', async (route) => {
     requests++;
     await route.fulfill({ json: feed });
   });
+  await page.route('**/generated/trading-performance.json?*', (route) => route.fulfill({ json: comparison }));
   await page.goto('/quant');
   await expect.poll(() => requests).toBe(1);
   await expect(page.getByRole('link', { name: 'View trading dashboard' })).toHaveAttribute('href', '#live');
@@ -47,6 +52,11 @@ test('the dashboard, visible fill log, and model receipts update together', asyn
   await activity.getByRole('button', { name: 'Show latest 12' }).click();
 
   feed = latest;
+  comparison = {
+    ...archived,
+    generated_at: new Date(Date.parse(archived.generated_at) + 60_000).toISOString(),
+    benchmark: [...archived.benchmark, [nextClose, navToStart * 1.05]],
+  };
   await page.clock.fastForward(60_000);
   await expect(rows.first()).toContainText('Test fill after refresh');
   await expect(rows.first()).toContainText('+$1.38');
@@ -57,6 +67,13 @@ test('the dashboard, visible fill log, and model receipts update together', asyn
   for (const { k, v } of paperMetrics(totals)) await expect(card(page, k)).toHaveText(v);
   await expect(card(page, 'Notional traded')).toHaveText(usdTotal(totals.notional_usd));
   await expect(card(page, 'Latest strategy')).toHaveText('Snapshot test strategy');
+  await expect(page.locator('[data-model-pnl]')).toHaveText(signedMoney(totals.profit_usd));
+  await expect(page.locator('[data-benchmark-pnl]')).toHaveText('+$71.20');
+  const slider = page.getByRole('slider', { name: 'Compare by date' });
+  await slider.focus();
+  await slider.press('Home');
+  await expect(page.locator('.performance-selection')).toContainText('Combined bots $0.00');
+  await expect(page.locator('.performance-selection')).toContainText('S&P 500 benchmark $0.00');
   await expect(page.locator('.dashboard-timestamps')).toContainText(formatStamp(latest.generated_at));
   await expect(page.locator('#live')).not.toContainText('999,999');
 

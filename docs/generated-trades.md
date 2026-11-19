@@ -92,3 +92,11 @@ Edit `TEMPLATES` in the same file to add instruments, price ranges, sides, quant
 The infrastructure wrapper lives at `/opt/sarastotey-trading/generate-trades.js`; it changes into `/root/projects/saras-totey-site` and runs this repo script with `SARAS_TRADE_STATE_PATH=/opt/sarastotey-trading/state.json`.
 
 The trading page starts with its prerendered snapshot. While the page is visible, it checks the generated JSON every minute and checks again when the tab regains visibility. The dashboard, visible trade activity, and per-system paper results use the same snapshot. Dashboard totals sum the paper results across systems, and the dashboard timestamps show when the feed was generated and when the newest fill occurred. Historical receipts retain their own measurement windows. A failed or older response leaves the most recent valid snapshot on screen.
+
+## Combined performance
+
+The chart starts with the same illustrative $1,424 on both lines, before the first model fill. The bot line sums model-generated P&L across the three systems. Its seed history was rebuilt from overlapping Git snapshots of the current model generation and reconciled against both the cumulative fill count and P&L. Each refresh extends the stored daily archive using the all-time totals and recent fills.
+
+The S&P 500 comparison uses [State Street’s SPY daily NAV](https://www.ssga.com/us/en/intermediary/etfs/state-street-spdr-sp-500-etf-trust-spy). It values the same starting balance at each published close using the ratio to the starting NAV. Distributions are excluded.
+
+The hourly VPS feed drives bot updates and the nightly GitHub Actions workflow preserves the updated archive and fetches the fund NAV. Run `node scripts/refresh_trading_performance.mjs` to refresh the chart data locally with Python 3 installed. The last successful benchmark data remains available if the source is unavailable.

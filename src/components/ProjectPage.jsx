@@ -35,12 +35,12 @@ function BackToProjects() {
 }
 
 function QuantPage({ canReturnToWorld }) {
-  const { dashboard, signals } = useTradingFeeds();
+  const { dashboard, signals, performance } = useTradingFeeds();
   const paperTotals = summarizePaper(dashboard.systems);
   return <main className="project-page project-page--quant">
     {canReturnToWorld && <BackToProjects />}
     <Hero />
-    <Live dashboard={dashboard} paperTotals={paperTotals} signals={signals} />
+    <Live dashboard={dashboard} paperTotals={paperTotals} signals={signals} performance={performance} />
     <Thesis />
     {SYSTEMS.map((system) => <System key={system.slug} system={system} dashboard={dashboard} liveSignals={signals.cards} />)}
     <Backtest dashboard={dashboard} paperTotals={paperTotals} />

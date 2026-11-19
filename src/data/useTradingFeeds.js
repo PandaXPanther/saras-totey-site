@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { LIVE, SYSTEMS } from './content.js';
 import snapshot from './trading-live.json';
+import initialPerformance from './trading-performance.json';
+import { validPerformance } from './tradingPerformance.js';
 
 const refreshIntervalMs = 60_000;
 const initialSignals = { generated_at: LIVE.last_updated_iso, cards: LIVE.cards };
@@ -17,7 +19,9 @@ function validPaperStats(stats) {
 }
 
 function validDashboard(data) {
-  return SYSTEMS.every(({ slug }) => validPaperStats(data?.systems?.[slug]?.generated))
+  const startingBalance = data?.baseline?.systems?.countersnipe?.portfolio_value_usd;
+  return Number.isFinite(startingBalance) && startingBalance > 0
+    && SYSTEMS.every(({ slug }) => validPaperStats(data?.systems?.[slug]?.generated))
     && Array.isArray(data.trades)
     && data.trades.every((trade) => Number.isFinite(Date.parse(trade?.timestamp))
       && tradeLabels.every((key) => typeof trade[key] === 'string')
@@ -41,6 +45,7 @@ async function refresh(path, validate, setter, signal) {
 export function useTradingFeeds() {
   const [dashboard, setDashboard] = useState(snapshot);
   const [signals, setSignals] = useState(initialSignals);
+  const [performance, setPerformance] = useState(initialPerformance);
 
   useEffect(() => {
     let request;
@@ -49,6 +54,7 @@ export function useTradingFeeds() {
       request?.abort();
       request = new AbortController();
       refresh('trading-live', validDashboard, setDashboard, request.signal);
+      refresh('trading-performance', validPerformance, setPerformance, request.signal);
       refresh('live-signals', (data) => validCards(data.cards), setSignals, request.signal);
     };
     update();
@@ -61,5 +67,5 @@ export function useTradingFeeds() {
     };
   }, []);
 
-  return { dashboard, signals };
+  return { dashboard, signals, performance };
 }

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Aurora from '../components/Aurora.jsx';
+import TradingPerformance from './TradingPerformance.jsx';
 import { formatFillTime, formatStamp, paperMetrics, signedMoney, usdPrice, usdTotal } from '../data/tradingFormat.js';
 
 const recentLimit = 12;
@@ -59,7 +60,7 @@ function TradeActivity({ fills }) {
   );
 }
 
-export default function Live({ dashboard, paperTotals, signals }) {
+export default function Live({ dashboard, paperTotals, signals, performance }) {
   const fills = [...dashboard.trades].sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp));
   const latest = fills[0];
   const cards = [
@@ -82,6 +83,8 @@ export default function Live({ dashboard, paperTotals, signals }) {
           </dl>
         </div>
         <Cards cards={cards} className="dashboard-metrics" />
+        <p className="trading-dashboard-links"><a href="#performance">Compare P&amp;L</a><a href="#trade-activity">Filled trades</a></p>
+        <TradingPerformance dashboard={dashboard} paperTotals={paperTotals} performance={performance} />
         <TradeActivity fills={fills} />
         <section className="dashboard-signals" aria-labelledby="dashboard-signals-heading">
           <h3 id="dashboard-signals-heading" className="dashboard-subtitle">Repository and API signals</h3>
