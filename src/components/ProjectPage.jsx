@@ -52,7 +52,7 @@ export default function ProjectPage({ slug, canReturnToWorld = false }) {
     <main className={`project-page ${Page ? `project-page--${slug}` : 'project-page--missing'}`}>
       {canReturnToWorld && <BackToProjects />}
       {Page ? <Page /> : <header className="folio-wrap page-heading">
-        <h1 className="folio-serif">Page not found.</h1>
+        <h1>Page not found.</h1>
         <a className="folio-button" href="/">Return home</a>
       </header>}
       <SiteFooter />

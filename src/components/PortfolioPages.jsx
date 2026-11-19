@@ -15,13 +15,13 @@ const agencyWork = [
 ];
 
 const sideProjects = [
-  { name: 'Kodama', type: 'Discord bot', url: 'https://askkodama.com/', description: 'A historian for Discord servers. Kodama searches old conversations, summarizes what happened, and answers questions using the server’s own context.', mark: '✳', tone: 'sage' },
-  { name: 'Extemp National Points Race', type: 'Speech & debate', url: 'https://national-points-race.pages.dev/', description: 'A public tracker for national extemporaneous speaking. Browse standings, tournament results, past seasons, and the scoring rules behind each ranking.', mark: '▤', tone: 'violet' },
-  { name: 'Chess', type: 'Chess.com · skibidisarz', url: 'https://www.chess.com/member/skibidisarz', description: 'My Chess.com profile, where you can find my games and results.', mark: '♞', tone: 'peach' },
-  { name: 'Thryve HS Esports', type: 'Nonprofit', url: 'https://thryvehsesports.com/', description: 'I started Thryve to make competitive gaming more accessible. We run free Brawl Stars and Clash Royale tournaments for high school students.', mark: '✦', tone: 'peach' },
-  { name: 'Dividend Collective', type: 'Research & digital strategy', url: 'https://thedividendcollective.com/saras-totey', description: 'I work on macro research, model-portfolio analytics, and the technology behind The Dispatch.', mark: '◐', tone: 'sage' },
-  { name: 'PropGuard', type: 'Open-source software', url: 'https://github.com/PandaXPanther/propguard', description: 'A monitoring tool that tracks prop-firm drawdown and loss rules and sends Discord alerts as a limit approaches.', mark: '⊞', tone: 'violet' },
-  { name: 'Robo Rush', type: 'Browser game', url: 'https://pandaxpanther.itch.io/', description: 'A four-player pass-and-play minigame rush you can play in a browser.', mark: '✣', tone: 'sage' },
+  { name: 'Kodama', type: 'Discord bot', url: 'https://askkodama.com/', description: 'A historian for Discord servers. Kodama searches old conversations and answers questions using the server’s own context.', image: 'kodama' },
+  { name: 'Extemp National Points Race', type: 'Speech & debate', url: 'https://national-points-race.pages.dev/', description: 'National extemp standings with tournament results, past seasons, and the scoring rules behind every ranking.', image: 'extemp' },
+  { name: 'Chess', type: 'Chess.com · skibidisarz', url: 'https://www.chess.com/member/skibidisarz', description: 'My games and results on Chess.com.' },
+  { name: 'Thryve HS Esports', type: 'Nonprofit', url: 'https://thryvehsesports.com/', description: 'Free Brawl Stars and Clash Royale tournaments for high school students.' },
+  { name: 'Dividend Collective', type: 'Research & digital strategy', url: 'https://thedividendcollective.com/saras-totey', description: 'I work on macro research, portfolio analytics, and the technology behind The Dispatch.' },
+  { name: 'PropGuard', type: 'Open-source software', url: 'https://github.com/PandaXPanther/propguard', description: 'An open-source monitor for prop-firm rules with Discord alerts.' },
+  { name: 'Robo Rush', type: 'Browser game', url: 'https://pandaxpanther.itch.io/', description: 'A four-player pass-and-play minigame rush.' },
 ];
 
 function ExternalLink({ children, href, className }) {
@@ -31,19 +31,19 @@ function ExternalLink({ children, href, className }) {
 export function Economics() {
   return (
     <>
-      <header className="folio-wrap page-heading economics-heading">
-        <p className="folio-kicker">Research & tools</p>
-        <h1 className="folio-serif">Economics, <em>hands on.</em></h1>
-        <p>I build tools for testing economic ideas and finding out what the data says about real places.</p>
+      <header className="folio-wrap page-heading portfolio-hero economics-heading">
+        <p className="folio-kicker">Econ.mom · Local Ledger</p>
+        <h1>Economics.</h1>
+        <p>I build practical tools for learning economics and exploring the numbers behind local economies.</p>
         <nav className="page-jumps" aria-label="Economics projects">
-          <a href="#econ-mom">Econ.mom</a><a href="#local-ledger">Local Ledger</a>
+          <a className="folio-button" href="#econ-mom">Explore Econ.mom</a><a className="folio-link" href="#local-ledger">Explore Local Ledger</a>
         </nav>
       </header>
       <section id="econ-mom" className="econ-feature">
         <div className="folio-wrap econ-feature__grid">
           <div>
-            <p className="folio-kicker">Econ.mom</p>
-            <h2 className="folio-serif">The <em>Mother</em> of Econ.</h2>
+            <p className="folio-kicker">The Mother of Econ</p>
+            <h2>Econ.mom</h2>
             <p>Twelve free tools for AP economics students, debaters, and anyone who wants to change an assumption and see what happens. Every tool makes its formulas and sources visible.</p>
             <ExternalLink className="folio-button" href="https://econ.mom/">Explore all 12 tools</ExternalLink>
             <p className="econ-recognition">Featured in <ExternalLink href="https://marginalrevolution.com/marginalrevolution/2026/05/monday-assorted-links-558.html">Marginal Revolution</ExternalLink> and reviewed by N. Gregory Mankiw and Ruben A. Rivera.</p>
@@ -62,7 +62,7 @@ export function Economics() {
         <div className="folio-wrap econ-feature__grid">
           <div>
             <p className="folio-kicker">Local Ledger</p>
-            <h2>A closer look at local economies.</h2>
+            <h2>A local economy should never require invented data.</h2>
             <p>Explore jobs, housing, income, education, and public spending in a single research dashboard. Every figure links back to its source.</p>
             <div className="page-actions">
               <ExternalLink className="folio-button" href="https://local-ledger.net/states/">Browse the data</ExternalLink>
@@ -84,14 +84,16 @@ export function Economics() {
 export function Agency() {
   return (
     <>
-      <header className="folio-wrap page-heading agency-heading">
+      <header className="folio-wrap page-heading portfolio-hero agency-heading">
         <div>
-          <p className="folio-kicker">Independent marketing studio · Boulder</p>
-          <h1>ATT Agency<span>.</span></h1>
-          <p>I co-founded ATT with Ryder Thomas and Sunny Avula. I lead web development, technology, and search across the studio’s client work.</p>
-          <ExternalLink className="folio-button" href="https://attagency.co/">Visit the studio</ExternalLink>
+          <p className="folio-kicker">ATT Agency · Boulder</p>
+          <h1>Small businesses deserve technical work that holds up.</h1>
+          <p>I co-founded ATT with Ryder Thomas and Sunny Avula. I lead web development, technology, and search for the studio.</p>
+          <div className="agency-heading__actions">
+            <ExternalLink className="folio-button" href="https://attagency.co/">Visit ATT Agency</ExternalLink>
+            <span><strong>20+</strong> projects shipped</span>
+          </div>
         </div>
-        <div className="agency-heading__stat"><strong>20+</strong><span>projects shipped</span></div>
       </header>
       <section className="folio-wrap agency-work">
         <h2>Selected studio work</h2>
@@ -165,27 +167,32 @@ export function Roblox() {
 }
 
 export function Misc() {
+  const featured = sideProjects.filter(({ image }) => image);
+  const directory = sideProjects.filter(({ image }) => !image);
   return (
     <>
-      <header className="folio-wrap page-heading misc-heading">
-        <p className="folio-kicker">Outside the main projects</p>
-        <h1 className="folio-serif">Side <em>quests.</em></h1>
-        <p>A Discord bot with a memory, an extemp scoreboard, a chess account, and a few other things I work on.</p>
+      <header className="folio-wrap page-heading portfolio-hero misc-heading">
+        <h1>Other projects.</h1>
+        <p>A Discord historian, a national extemp scoreboard, and the other things I work on.</p>
       </header>
-      <section className="folio-wrap misc-library" aria-label="Miscellaneous projects">
-        {sideProjects.map(({ name, type, description, mark, tone, url }) => (
-          <article className={`misc-item misc-item--${tone}`} key={name}>
-            <div className="misc-item__mark" aria-hidden="true">{mark}</div>
-            <div><span className="folio-kicker">{type}</span><h2><ExternalLink href={url}>{name}</ExternalLink></h2><p>{description}</p></div>
-            <ExternalLink className="folio-link" href={url}>Visit<span className="visually-hidden"> {name}</span></ExternalLink>
+      <section className="folio-wrap misc-library" aria-label="Featured projects">
+        {featured.map(({ name, type, description, image, url }) => (
+          <article key={name}>
+            <ExternalLink href={url} className="misc-feature">
+              <img src={`/projects/${image}.webp`} alt="" width="800" height="504" loading="lazy" decoding="async" />
+              <span>{type}</span><h2>{name}</h2><p>{description}</p>
+            </ExternalLink>
           </article>
         ))}
       </section>
-      <section className="folio-wrap misc-favorites">
-        <h2 className="folio-serif">Anime and games I love</h2>
-        <ul>
-          {['Hunter × Hunter', 'Attack on Titan', 'Code Geass', 'JoJo’s Bizarre Adventure', 'Naruto', 'Pokémon'].map((title) => <li key={title}>{title}</li>)}
-        </ul>
+      <section className="folio-wrap misc-directory">
+        <h2>More work and interests</h2>
+        {directory.map(({ name, type, description, url }) => (
+          <article className="misc-row" key={name}>
+            <div><h3><ExternalLink href={url}>{name}</ExternalLink></h3><span>{type}</span></div>
+            <p>{description}</p>
+          </article>
+        ))}
       </section>
     </>
   );
