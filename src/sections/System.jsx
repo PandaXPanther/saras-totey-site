@@ -12,7 +12,7 @@ const ACCENTS = {
 
 const STATUS_TAG = {
   countersnipe: { tone: 'live', label: 'live money · real capital' },
-  'prediction-bot': { tone: 'paper', label: 'paper mode · Chicago VPS' },
+  'prediction-bot': { tone: 'paper', label: 'test mode · Chicago VPS' },
   'copy-trader': { tone: 'research', label: 'research only · read-only' },
 };
 
@@ -49,7 +49,7 @@ function originalKpis(system, dashboard, liveSignals) {
     const trades = Number(baseline.total_trades);
     if (Number.isFinite(Number(baseline.win_rate_pct))) cards[0].v = `${Number(baseline.win_rate_pct).toFixed(1)}%`;
     cards[1].v = money(baseline.profit_usd, true) ?? cards[1].v;
-    if (Number.isFinite(trades)) cards[1].foot = `Over ${trades} settled paper trades`;
+    if (Number.isFinite(trades)) cards[1].foot = `Over ${trades} settled test fills`;
   }
 
   if (system.slug === 'copy-trader') {
@@ -126,7 +126,7 @@ export default function System({ system, dashboard, liveSignals }) {
         </Reveal>
         <Reveal>
           <div className="paper-summary">
-            <h3>Generated paper trades</h3>
+            <h3>Model results</h3>
             <dl className="paper-metrics">
               {paperMetrics(generated).map(({ k, v }) => (
                 <div key={k}><dt>{k}</dt><dd>{v}</dd></div>

@@ -136,15 +136,43 @@ section[id] { scroll-margin-top: 8px; }
 .paper-metrics dt { color: var(--text-dim); font-size: 14px; }
 .paper-metrics dd { margin: 4px 0 0; color: var(--text); font: 600 clamp(19px, 3vw, 29px) / 1.1 var(--font-mono); }
 .trade-log-head p { margin: 6px 0 0; }
-.trade-log > .trade-table-wrap .trade-table { min-width: 535px; }
+#backtest .trade-table { min-width: 535px; }
 .trade-log .trade-table tbody th { color: var(--text); background: transparent; font-size: 12px; letter-spacing: 0; text-transform: none; }
 .trade-table-wrap:focus-visible { outline-offset: -3px; }
-.paper-fills { border-top: 1px solid var(--line); }
-.paper-fills summary { padding: 14px 20px; cursor: pointer; }
+.trading-dashboard { position: relative; overflow: hidden; }
+.dashboard-heading { display: flex; justify-content: space-between; align-items: end; flex-wrap: wrap; gap: 10px 24px; }
 .dashboard-intro { margin: 12px 0; }
+.dashboard-timestamps { margin: 0 0 12px; }
+.dashboard-timestamps div { display: flex; flex-wrap: wrap; gap: 0 9px; }
+.dashboard-timestamps dt { color: var(--text-faint); min-width: 16ch; }
+.dashboard-timestamps dd { margin: 0; color: var(--text-dim); }
+.dashboard-metrics { margin-top: 16px; }
 .dashboard-subtitle { margin-bottom: 7px; }
-#live a { text-decoration: underline; text-underline-offset: 3px; }
-#paper-receipts { scroll-margin-top: 12px; }
+.dashboard-signals, .trade-log--activity { margin-top: 32px; padding: 0; }
+.dashboard-signals { border-top: 0; }
+.trade-activity-table { min-width: 940px; table-layout: fixed; }
+.trade-activity-table :is(td, th) { padding-inline: 10px; }
+.trade-activity-table th:nth-child(1) { width: 78px; }
+.trade-activity-table th:nth-child(2) { width: 137px; }
+.trade-activity-table :is(th:nth-child(3), th:nth-child(4), th:nth-child(6)) { width: 76px; }
+.trade-activity-table :is(th:nth-child(7), th:nth-child(8)) { width: 100px; }
+.trade-activity-table :is(td:nth-child(3), td:nth-child(4), td:nth-child(7), td:nth-child(8)) { white-space: nowrap; }
+.trade-activity-table th[scope="row"] { overflow-wrap: anywhere; }
+.trade-log-actions { padding: 8px 16px; border-top: 1px solid var(--line); }
+.trade-log-actions button { color: var(--text); background: transparent; border: 0; padding: 8px 3px; min-height: 44px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+#backtest .trade-log-head a { text-decoration: underline; text-underline-offset: 3px; }
+#live, #trade-activity, #paper-receipts { scroll-margin-top: 12px; }
+
+@media (max-width: 720px) {
+  .dashboard-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dashboard-metrics .kpi { padding: 12px; min-width: 0; }
+  .dashboard-metrics .kpi-v { font-size: clamp(18px, 5vw, 26px); overflow-wrap: anywhere; }
+  .trade-log--activity .trade-log-head { padding: 14px 16px; gap: 4px; }
+  .trade-activity-table :is(td, th) { padding-inline: 6px; }
+  .trade-activity-table th:nth-child(1) { width: 70px; }
+  .trade-activity-table th:nth-child(2) { width: 133px; }
+  .trade-activity-table th:nth-child(3) { width: 72px; }
+}
 
 @media (max-width: 850px) {
 

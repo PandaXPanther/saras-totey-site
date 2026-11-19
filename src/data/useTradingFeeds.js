@@ -4,18 +4,25 @@ import snapshot from './trading-live.json';
 
 const refreshIntervalMs = 60_000;
 const initialSignals = { generated_at: LIVE.last_updated_iso, cards: LIVE.cards };
-const systemFields = ['total_trades', 'wins', 'profit_usd', 'return_pct_sum'];
 const validCards = (cards) => Array.isArray(cards) && cards.length > 0
   && cards.every((card) => typeof card?.k === 'string' && typeof card.v === 'string');
+const tradeLabels = ['id', 'system', 'asset_type', 'instrument', 'side', 'strategy'];
+const tradeNumbers = ['entry_price', 'exit_price', 'profit_loss_usd', 'profit_loss_pct'];
+
+function validPaperStats(stats) {
+  return Number.isSafeInteger(stats?.total_trades) && stats.total_trades >= 0
+    && Number.isSafeInteger(stats.wins) && stats.wins >= 0 && stats.wins <= stats.total_trades
+    && Number.isFinite(stats.profit_usd) && Number.isFinite(stats.return_pct_sum)
+    && Number.isFinite(stats.notional_usd) && stats.notional_usd >= 0;
+}
 
 function validDashboard(data) {
-  return validCards(data?.cards)
-    && Number.isFinite(data.totals?.generated_trades)
-    && Number.isFinite(data.totals?.generated_profit_usd)
-    && SYSTEMS.every(({ slug }) => systemFields.every((field) => Number.isFinite(data.systems?.[slug]?.generated?.[field])))
+  return SYSTEMS.every(({ slug }) => validPaperStats(data?.systems?.[slug]?.generated))
     && Array.isArray(data.trades)
-    && data.trades.every((trade) => trade?.id && Number.isFinite(Date.parse(trade.timestamp))
-      && Number.isFinite(trade.profit_loss_usd) && Number.isFinite(trade.profit_loss_pct));
+    && data.trades.every((trade) => Number.isFinite(Date.parse(trade?.timestamp))
+      && tradeLabels.every((key) => typeof trade[key] === 'string')
+      && tradeNumbers.every((key) => Number.isFinite(trade[key])))
+    && new Set(data.trades.map(({ id }) => id)).size === data.trades.length;
 }
 
 async function refresh(path, validate, setter, signal) {

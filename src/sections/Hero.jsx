@@ -110,7 +110,7 @@ export default function Hero() {
         </motion.div>
       </div>
 
-      <div className="scroll-cue">scroll to enter the ledger</div>
+      <a className="scroll-cue" href="#live">View trading dashboard ↓</a>
     </section>
   );
 }

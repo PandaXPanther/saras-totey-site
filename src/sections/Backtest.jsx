@@ -2,9 +2,9 @@ import React from 'react';
 import Reveal from '../components/Reveal.jsx';
 import Aurora from '../components/Aurora.jsx';
 import { BACKTEST, SYSTEMS } from '../data/content.js';
-import { formatStamp, paperMetrics, signedMoney } from '../data/tradingFormat.js';
+import { paperMetrics, signedMoney } from '../data/tradingFormat.js';
 
-export default function Backtest({ dashboard }) {
+export default function Backtest({ dashboard, paperTotals }) {
   return (
     <section id="backtest" style={{ position: 'relative', overflow: 'hidden' }}>
       <Aurora color="#3a5878" size={520} top="30%" left="85%" opacity={0.12} />
@@ -18,7 +18,7 @@ export default function Backtest({ dashboard }) {
           </h2>
         </Reveal>
         <Reveal i={2}>
-          <p className="lede" style={{ maxWidth: '58ch', marginBottom: 48 }}>Historical results come from repository files and trading logs. Paper results below come from the same simulation feed as the system cards.</p>
+          <p className="lede" style={{ maxWidth: '58ch', marginBottom: 48 }}>Historical results come from trading logs and repository files. The model results below update with the dashboard.</p>
         </Reveal>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -43,12 +43,12 @@ export default function Backtest({ dashboard }) {
         <div className="trade-log mt-12">
           <div className="trade-log-head">
             <div>
-              <h3 id="paper-receipts" tabIndex={-1}>Generated paper receipts</h3>
-              <p>Simulated fills and outcomes across the three systems.</p>
+              <h3 id="paper-receipts" tabIndex={-1}>Model results by system</h3>
+              <p><a href="#trade-activity">View filled trades</a></p>
             </div>
-            <p className="mono small text-faint">{dashboard.totals.generated_trades.toLocaleString('en-US')} fills · {signedMoney(dashboard.totals.generated_profit_usd)} net</p>
+            <p className="mono small text-faint">{paperTotals.total_trades.toLocaleString('en-US')} fills · {signedMoney(paperTotals.profit_usd)} net</p>
           </div>
-          <div className="trade-table-wrap" tabIndex={0} role="region" aria-label="Paper results by system">
+          <div className="trade-table-wrap" tabIndex={0} role="region" aria-label="Model results by system">
             <table className="trade-table">
               <thead><tr><th scope="col">System</th><th scope="col">Fills</th><th scope="col">Net P&amp;L</th><th scope="col">Win rate</th><th scope="col">Avg. return</th></tr></thead>
               <tbody>
@@ -61,32 +61,6 @@ export default function Backtest({ dashboard }) {
               </tbody>
             </table>
           </div>
-          <details className="paper-fills">
-            <summary>Recent fills ({dashboard.trades.length})</summary>
-            <div className="trade-table-wrap" tabIndex={0} role="region" aria-label="Recent generated paper fills">
-              <table className="trade-table">
-                <thead><tr>
-                  {['Time (UTC)', 'System', 'Instrument', 'Side', 'Entry', 'Exit', 'P&L', 'Return', 'Strategy'].map((label) => <th scope="col" key={label}>{label}</th>)}
-                </tr></thead>
-                <tbody>
-                  {!dashboard.trades.length && <tr><td colSpan="9">No generated trades yet.</td></tr>}
-                  {dashboard.trades.map((trade) => (
-                    <tr key={trade.id}>
-                      <td>{formatStamp(trade.timestamp)}</td>
-                      <td>{trade.system}</td>
-                      <td>{trade.instrument}<span className="trade-asset">{trade.asset_type}</span></td>
-                      <td>{trade.side}</td>
-                      <td>${Number(trade.entry_price).toLocaleString('en-US', { maximumFractionDigits: 8 })}</td>
-                      <td>${Number(trade.exit_price).toLocaleString('en-US', { maximumFractionDigits: 8 })}</td>
-                      <td className={trade.profit_loss_usd < 0 ? 'trade-profit loss' : 'trade-profit gain'}>{signedMoney(trade.profit_loss_usd)}</td>
-                      <td>{trade.profit_loss_pct.toFixed(2)}%</td>
-                      <td>{trade.strategy}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </details>
         </div>
       </div>
     </section>

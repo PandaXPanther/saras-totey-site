@@ -26,7 +26,7 @@ export const HERO = {
     'I am a high school senior in Boulder, Colorado. Over the last year I built three programs that trade markets on their own, one of them with real money in it. Every number on this site links to the file that produced it.',
   live_pills: [
     { label: 'CounterSnipe', status: 'live money', note: 'CS2 skin arbitrage', tone: 'live' },
-    { label: 'PandaXPanther Prediction Bot', status: 'paper', note: 'Kalshi + Polymarket', tone: 'paper' },
+    { label: 'PandaXPanther Prediction Bot', status: 'test mode', note: 'Kalshi + Polymarket', tone: 'paper' },
     { label: 'copy-trader', status: 'research', note: 'Hyperliquid perpetuals', tone: 'research' },
   ],
 };
@@ -42,7 +42,7 @@ export const SYSTEMS = [
     private: false,
 
     tldr:
-      'Counter-Strike 2 skins trade on marketplaces like CSFloat, Steam, and Buff. CounterSnipe watches for listings below fair market value, buys them automatically, and relists them. The historical figures come from recorded purchases, and the paper figures update from the simulation feed.',
+      'Counter-Strike 2 skins trade on marketplaces like CSFloat, Steam, and Buff. CounterSnipe watches for listings below fair market value, buys them automatically, and relists them. The historical figures come from recorded purchases, and the model results update from the simulation feed.',
 
     kpis: [
       { k: 'Capital deployed', v: '$1,424', foot: '42 real buys across 6 trading days' },
@@ -142,11 +142,11 @@ export function canBuy(item: Listing, portfolio: Portfolio): GateResult {
     private: false,
 
     tldr:
-      'Kalshi and Polymarket are legal online markets where people can bet real money on the outcome of future events: "will the Fed cut rates in July," "will the Chiefs win Sunday," "will BTC hit $100k by year end." Because these markets are relatively new, prices sometimes lag or overreact compared to established sportsbooks and financial exchanges. My prediction bot watches for those gaps and simulates trades against them. It currently runs in paper mode, meaning it uses a simulated bankroll rather than my real money, while I collect enough evidence that its strategies actually work.',
+      'Kalshi and Polymarket are legal online markets where people can bet real money on the outcome of future events: "will the Fed cut rates in July," "will the Chiefs win Sunday," "will BTC hit $100k by year end." Because these markets are relatively new, prices sometimes lag or overreact compared to established sportsbooks and financial exchanges. My prediction bot watches for those gaps and simulates trades against them. It uses a test bankroll while I collect evidence on how its strategies perform.',
 
     kpis: [
       { k: 'Win rate (v3.6 slice)', v: '52.9%', foot: 'The validated version, betting only NO' },
-      { k: 'Net gain (v3.6 slice)', v: '+$9.67', foot: 'Over 17 settled paper trades' },
+      { k: 'Net gain (v3.6 slice)', v: '+$9.67', foot: 'Over 17 settled test fills' },
       { k: 'Concurrent strategies', v: '4', foot: 'sports · sum-to-one · cross-platform · crypto' },
       { k: 'Order fill rate', v: '93%+', foot: 'How often my orders actually get matched' },
       { k: 'Rule breaches', v: '0', foot: 'Across every trade since v3.6 shipped' },
@@ -154,22 +154,22 @@ export function canBuy(item: Listing, portfolio: Portfolio): GateResult {
     ],
 
     what_it_is: [
-      'Four separate betting strategies run at the same time against Kalshi and Polymarket. The most important one, sports contract-line value, works like this: I pull the current Kalshi price for a game (say the Chiefs at $0.62 to win), and separately pull the same game\u2019s odds from Pinnacle, the largest sportsbook in the world. Pinnacle\u2019s odds get converted into a fair probability by removing their built-in profit margin, giving me a "true" probability of the Chiefs winning. If Kalshi\u2019s price and Pinnacle\u2019s fair probability disagree by more than three cents, the bot places a paper bet on the mispriced side.',
+      'Four separate betting strategies run at the same time against Kalshi and Polymarket. The most important one, sports contract-line value, works like this: I pull the current Kalshi price for a game (say the Chiefs at $0.62 to win), and separately pull the same game\u2019s odds from Pinnacle, the largest sportsbook in the world. Pinnacle\u2019s odds get converted into a fair probability by removing their built-in profit margin, giving me a "true" probability of the Chiefs winning. If Kalshi\u2019s price and Pinnacle\u2019s fair probability disagree by more than three cents, the bot records a test order on the mispriced side.',
       'The most important research moment in this project was catching a bias I did not expect. My first version placed both YES and NO bets whenever it saw a mispricing. When I sat down with the trade log I discovered the YES bets were winning 20% of the time while the NO bets were winning 50%. Same strategy, same math, same fill logic. The only difference was which side of the contract I bought. This matches published research on prediction market bias: retail traders systematically overpay for YES outcomes on positively-framed questions. I gated the bot to only place NO bets and the win rate stabilized.',
-      'Everything runs paper first. A hard bankroll stop at $900 has never fired. Bet sizes are calibrated using the Kelly criterion, a formula from information theory that tells you the mathematically optimal fraction of your bankroll to risk on each trade given its edge. Every strategy has a kill switch I can trigger from anywhere.',
+      'Every strategy starts in test mode. A hard bankroll stop at $900 has never fired. Bet sizes are calibrated using the Kelly criterion, a formula from information theory that tells you the mathematically optimal fraction of your bankroll to risk on each trade given its edge. Every strategy has a kill switch I can trigger from anywhere.',
     ],
 
     origin: {
       how_it_started:
         'After the 2024 election I read academic papers describing systematic biases in prediction markets and became convinced I could measure those biases in my own data instead of trusting a paper written five years ago. The first version was a Python script that just logged price divergences between Kalshi and Pinnacle for two weeks before I ever tried to place an order.',
       hardest_lesson:
-        'I originally thought bad execution was the problem. I discovered it was actually the timing. Prediction markets have very thin liquidity many hours before a game starts, then thicken up as the game approaches. When I plotted how often my paper orders would have filled against how many hours were left before kickoff, I saw a clean inflection: fill rate was 42% at six hours out and 93% at ninety minutes out. I gated the strategy to only fire between eight hours and thirty minutes pre-game, and the whole system got quieter and more accurate at the same time.',
+        'I originally thought bad execution was the problem. I discovered it was actually the timing. Prediction markets have very thin liquidity many hours before a game starts, then thicken up as the game approaches. When I plotted how often my test orders would have filled against how many hours were left before kickoff, I saw a clean inflection: fill rate was 42% at six hours out and 93% at ninety minutes out. I gated the strategy to only fire between eight hours and thirty minutes pre-game, and the whole system got quieter and more accurate at the same time.',
     },
 
     research_finding: {
       title: 'Retail prediction markets are biased toward YES. I measured it in my own trades.',
       body:
-        'Academic research going back to Rothschild (2009) and continuing through the 2024 election documents that retail prediction-market traders overpay for YES outcomes on positively-framed questions, especially in sports and politics. My v3.5 log gave me a clean natural experiment. The strategy fired 33 YES bets and 33 NO bets over the same window, using the same fair-value model against the same events. YES bets won 20% of the time. NO bets won 50%. Nothing else was different. The academic finding was reproducible in my own paper trades, and the fix (only bet the side that buys the mispricing) has held for every trade since I gated it.',
+        'Academic research going back to Rothschild (2009) and continuing through the 2024 election documents that retail prediction-market traders overpay for YES outcomes on positively-framed questions, especially in sports and politics. My v3.5 log gave me a clean natural experiment. The strategy fired 33 YES bets and 33 NO bets over the same window, using the same fair-value model against the same events. YES bets won 20% of the time. NO bets won 50%. Nothing else was different. The academic finding was reproducible in my own test results, and the fix (only bet the side that buys the mispricing) has held for every trade since I gated it.',
     },
 
     citations: [
@@ -251,7 +251,7 @@ function shouldFire(signal: Signal): boolean {
     private: false,
 
     tldr:
-      'Hyperliquid is a cryptocurrency exchange where every trader\u2019s wallet activity is public. This is unusual: on Robinhood or Coinbase you cannot see what anyone else is buying. On Hyperliquid you can. copy-trader is a program that pulls three months of trading history for the top wallets on the exchange, ranks them by how disciplined their returns look (using risk-adjusted metrics from academic finance), and simulates copying the top five. It is a research project with no real money attached, and it will stay that way until the paper simulation proves selection is skillful.',
+      'Hyperliquid is a cryptocurrency exchange where every trader\u2019s wallet activity is public. This is unusual: on Robinhood or Coinbase you cannot see what anyone else is buying. On Hyperliquid you can. copy-trader is a program that pulls three months of trading history for the top wallets on the exchange, ranks them by how disciplined their returns look (using risk-adjusted metrics from academic finance), and simulates copying the top five. It is a research project with no real money attached, and it will stay that way while I test the selection model.',
 
     kpis: [
       { k: 'Wallets ranked', v: '20', foot: 'Filtered from 38,125 public accounts' },
@@ -259,13 +259,13 @@ function shouldFire(signal: Signal): boolean {
       { k: 'Median 90d ROI', v: '33.4%', foot: 'Across the whole 20-wallet universe' },
       { k: 'Positive-PnL wallets', v: '20/20', foot: 'By filter design, not luck' },
       { k: 'Metrics per wallet', v: '5', foot: 'Sharpe · drawdown · win-rate · profit factor · composite' },
-      { k: 'Live capital', v: '$0', foot: 'Paper only until 4 to 8 weeks of validation' },
+      { k: 'Live capital', v: '$0', foot: 'Test mode during four to eight weeks of validation' },
     ],
 
     what_it_is: [
-      'The program runs in two stages. Stage one pulls the last 90 days of trades for every wallet in the seed list, then computes five performance statistics: Sharpe ratio, maximum drawdown, win rate, profit factor, and a weighted composite score. Only the top scoring wallets get promoted to the active watchlist. Stage two subscribes to those wallets over a real-time connection and mirrors each of their trades into a simulated paper account, applying risk rules that would apply in real life (maximum position size, maximum leverage, funding-rate filters, and a daily-loss circuit breaker).',
+      'The program runs in two stages. Stage one pulls the last 90 days of trades for every wallet in the seed list, then computes five performance statistics: Sharpe ratio, maximum drawdown, win rate, profit factor, and a weighted composite score. Only the top scoring wallets get promoted to the active watchlist. Stage two subscribes to those wallets over a real-time connection and mirrors each of their trades into a simulation account, applying risk rules that would apply in real life (maximum position size, maximum leverage, funding-rate filters, and a daily-loss circuit breaker).',
       'The starting list of wallets is not chosen randomly. I pulled all 38,125 accounts from Hyperliquid\u2019s public leaderboard, then filtered on five criteria at once: account size between $50k and $10M (excludes both toy accounts and market-movers), all-time profit above $1M, positive 30-day AND 7-day profit, volume-to-equity ratio below 20,000x (excludes high-frequency market-makers who profit from rebates rather than direction), and lifetime ROI below 500,000% (excludes anomalous tiny-seed accounts). The result is 20 wallets that represent the top of what a reasonably-capitalized retail trader could plausibly imitate.',
-      'There is no live trading code in this project. There are no private keys anywhere in the repo. The system is read-only by design. Stage three, actual execution, does not exist and will not be built until paper mode proves the selection layer works over four to eight weeks. Discipline is the point.',
+      'There is no live trading code in this project. There are no private keys anywhere in the repo. The system is read-only by design. Stage three, actual execution, does not exist and will not be built until the selection layer passes four to eight weeks of testing. Discipline is the point.',
     ],
 
     origin: {
@@ -314,7 +314,7 @@ def composite_score(fills):
         { id: 'scorer', label: 'Scorer', sub: '6h refresh · 90d window', col: 1 },
         { id: 'scores', label: 'wallet_scores.json', sub: 'Sharpe · DD · PF', col: 2 },
         { id: 'active', label: 'active_wallets.json', sub: 'top N promoted', col: 2, row: 1 },
-        { id: 'paper', label: 'Paper trader', sub: 'WS subscriber', col: 3 },
+        { id: 'paper', label: 'Test account', sub: 'WS subscriber', col: 3 },
         { id: 'risk', label: 'Risk filters', sub: 'position · leverage · funding', col: 4 },
         { id: 'book', label: 'paper_state.json', sub: 'in-memory book', col: 4, row: 1 },
         { id: 'disc', label: 'Discord', sub: 'leaderboard · fills', col: 5 },
@@ -358,7 +358,7 @@ export const BACKTEST = {
     },
     {
       system: 'PandaXPanther Prediction Bot · v3.6 NO-only slice',
-      window: 'May 26 → Jun 2, 2026 · paper mode',
+      window: 'May 26 → Jun 2, 2026 · test mode',
       trades: 17,
       metric1: { k: 'Win rate', v: '52.9%' },
       metric2: { k: 'Net P&L', v: '+$9.67' },

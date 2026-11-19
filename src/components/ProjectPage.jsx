@@ -1,6 +1,7 @@
 import React from 'react';
 import { IDENTITY, SYSTEMS } from '../data/content.js';
 import { useTradingFeeds } from '../data/useTradingFeeds.js';
+import { summarizePaper } from '../data/tradingFormat.js';
 import { Economics, Agency, Roblox, Misc } from './PortfolioPages.jsx';
 import System from '../sections/System.jsx';
 import Backtest from '../sections/Backtest.jsx';
@@ -35,12 +36,14 @@ function BackToProjects() {
 
 function QuantPage({ canReturnToWorld }) {
   const { dashboard, signals } = useTradingFeeds();
+  const paperTotals = summarizePaper(dashboard.systems);
   return <main className="project-page project-page--quant">
     {canReturnToWorld && <BackToProjects />}
-    <Hero /><Thesis />
+    <Hero />
+    <Live dashboard={dashboard} paperTotals={paperTotals} signals={signals} />
+    <Thesis />
     {SYSTEMS.map((system) => <System key={system.slug} system={system} dashboard={dashboard} liveSignals={signals.cards} />)}
-    <Backtest dashboard={dashboard} />
-    <Live dashboard={dashboard} signals={signals} />
+    <Backtest dashboard={dashboard} paperTotals={paperTotals} />
     <Roadmap /><Footer />
   </main>;
 }
