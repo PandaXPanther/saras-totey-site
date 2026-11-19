@@ -11,7 +11,7 @@ const econTools = [
 
 const agencyWork = [
   { title: 'BAIR', type: 'Musician portfolio', href: 'https://bairmusic.net', image: 'bair' },
-  { title: 'Kodama', type: 'Product launch', href: 'https://askkodama.com', image: 'kodama' },
+  { title: 'Thriftly', type: 'Paid social campaign', href: 'https://attagency.co/#work', image: 'thriftly' },
   { title: 'Shital Tayde', type: 'Artist portfolio', href: 'https://shital-tayde-art.pages.dev', image: 'shital' },
 ];
 
