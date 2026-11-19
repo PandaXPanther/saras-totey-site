@@ -57,7 +57,7 @@ function robloxImage(url) {
   return typeof url === 'string' && /^https:\/\/[^/]+\.rbxcdn\.com\//i.test(url);
 }
 
-export async function fetchRobloxCatalog(previous = { games: [] }, request = robloxJson) {
+export async function fetchRobloxCatalog(request = robloxJson) {
   const communities = await ownedCommunities(request);
   const sources = [
     ...creators.map(({ id, handle }) => ({ name: handle, path: `users/${id}/games` })),
@@ -83,24 +83,22 @@ export async function fetchRobloxCatalog(previous = { games: [] }, request = rob
   }
 
   const gameIds = [...games.keys()];
-  const previousImages = new Map(previous.games.map(({ id, image }) => [id, image]));
   for (let i = 0; i < gameIds.length; i += 20) {
     const ids = gameIds.slice(i, i + 20);
     const url = new URL('https://thumbnails.roblox.com/v1/games/multiget/thumbnails');
     url.search = new URLSearchParams({
-      universeIds: ids.join(','), countPerUniverse: 1, defaults: true,
+      universeIds: ids.join(','), countPerUniverse: 3, defaults: false,
       size: '768x432', format: 'Webp', isCircular: false,
     });
-    let thumbnails = [];
-    try {
-      thumbnails = rowsOf(await request(url));
-    } catch {
-      console.warn('Roblox thumbnails unavailable. Keeping previously fetched images.');
-    }
-    const images = new Map(thumbnails.map(({ universeId, thumbnails: results }) => [
-      universeId, results?.find(({ state, imageUrl }) => state === 'Completed' && robloxImage(imageUrl))?.imageUrl,
+    const rows = rowsOf(await request(url));
+    const images = new Map(rows.map(({ universeId, thumbnails }) => [
+      universeId, thumbnails?.find(({ state, imageUrl }) => state === 'Completed' && robloxImage(imageUrl))?.imageUrl,
     ]));
-    for (const id of ids) games.get(id).image = images.get(id) || previousImages.get(id) || null;
+    for (const id of ids) {
+      const image = images.get(id);
+      if (image) games.get(id).image = image;
+      else games.delete(id);
+    }
   }
   return { communities, games: [...games.values()].sort((a, b) => Date.parse(b.updated) - Date.parse(a.updated) || a.id - b.id) };
 }
@@ -108,11 +106,11 @@ export async function fetchRobloxCatalog(previous = { games: [] }, request = rob
 if (process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url) {
   const previous = await readFile(catalogPath, 'utf8')
     .then(JSON.parse, (error) => { if (error.code !== 'ENOENT') throw error; });
-  const catalog = await fetchRobloxCatalog(previous);
+  const catalog = await fetchRobloxCatalog();
   const next = JSON.stringify(catalog, null, 2) + '\n';
   if (next !== JSON.stringify(previous, null, 2) + '\n') {
     await writeFile(temporaryPath, next);
     await rename(temporaryPath, catalogPath);
   }
-  console.log(`Roblox catalog: ${catalog.games.length} public experiences from 2 creators and ${catalog.communities.length} owned communities.`);
+  console.log(`Roblox catalog: ${catalog.games.length} public experiences with covers from ${creators.length} creators and ${catalog.communities.length} owned communities.`);
 }

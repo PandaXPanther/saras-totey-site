@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import catalog from '../data/roblox-games.json';
 import { creators } from '../data/robloxCreators.js';
 import ChessRatings from './ChessRatings.jsx';
@@ -117,6 +117,9 @@ export function Agency() {
 }
 
 export function Roblox() {
+  const [failedCovers, setFailedCovers] = useState([]);
+  const games = catalog.games.filter(({ id, image }) => image && !failedCovers.includes(id));
+
   return (
     <>
       <header className="folio-wrap page-heading roblox-heading">
@@ -136,13 +139,13 @@ export function Roblox() {
         </div>
       </header>
       <section id="games" className="folio-wrap roblox-library">
-        <div className="library-heading"><h2>Public games</h2><span>{catalog.games.length} experiences · updated daily from Roblox</span></div>
-        {catalog.games.length === 0 && <p>No public releases are listed yet.</p>}
-        <div className="game-grid">{catalog.games.map((game) => (
+        <div className="library-heading"><h2>Public games</h2><span>{games.length} experiences · updated daily from Roblox</span></div>
+        {games.length === 0 && <p>No public games with covers to show yet.</p>}
+        <div className="game-grid">{games.map((game) => (
           <article key={game.id}>
             <ExternalLink className="game-card" href={`https://www.roblox.com/games/${game.placeId}`}>
               <div className="game-card__art">
-                {game.image && <img src={game.image} alt="" width="768" height="432" loading="lazy" decoding="async" onError={(event) => { event.currentTarget.hidden = true; }} />}
+                <img src={game.image} alt="" width="768" height="432" loading="lazy" decoding="async" onError={() => setFailedCovers((ids) => [...ids, game.id])} />
               </div>
               <div className="game-card__copy">
                 <span>{game.creator}{Number.isFinite(game.visits) && ` · ${game.visits.toLocaleString('en-US')} visits`}</span>
