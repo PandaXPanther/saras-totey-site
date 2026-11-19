@@ -1,228 +1,137 @@
-import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { IDENTITY } from '../data/content.js';
+import catalog from '../data/roblox-games.json';
 
-const getAge = (now = new Date()) => {
-  const birthdayThisYear = new Date(now.getFullYear(), 5, 25);
-  return now.getFullYear() - 2009 - (now < birthdayThisYear ? 1 : 0);
-};
-
-const chapters = [
-  { id: 'intro', media: 'intro', label: 'Home', eyebrow: 'Boulder, Colorado', title: 'Saras Totey.', body: `I’m a ${getAge()}-year-old full-stack developer who grew up in Boulder. I build trading bots, research markets, and make other cool projects.`, note: 'Pronounced “sahr-iss.” Age updates automatically every June 25.', side: 'left' },
-  { id: 'trading', media: 'countersnipe', label: 'Trading systems', eyebrow: 'Markets, then code', title: 'I like finding the moment a market disagrees with itself.', body: 'That puzzle is why I build trading bots. What began with Roblox items became live CS2 arbitrage, prediction-market research, and systems where the logs and mistakes are as interesting as the wins.', href: '/quant', side: 'left' },
-  { id: 'econ-mom', media: 'prediction', label: 'Econ.mom', eyebrow: 'Twelve tools, every source shown', title: 'I wanted economics to feel touchable.', body: 'I built Econ.mom because changing an assumption and seeing the result makes a model click faster than memorizing one. Its free tools keep every formula and dataset visible.', href: '/econ-mom', side: 'left' },
-  { id: 'local-ledger', media: 'ventures', label: 'Local Ledger', eyebrow: 'A public-data observatory', title: 'I wanted to see a place as a living system.', body: 'That curiosity became Local Ledger: jobs, income, housing, schools, and public spending on one research desk, plus a simulator for asking what might change next.', href: '/local-ledger', side: 'right' },
-  { id: 'att', media: 'att', label: 'ATT Agency', eyebrow: 'attagency.co', title: 'Want a site that looks like this? I co-founded the studio that builds them.', body: 'At ATT Agency, I help turn a business into a brand, website, campaign, and measurement system without passing the work between disconnected vendors.', href: '/att-agency', side: 'right' },
-  { id: 'contact', media: 'contact', label: 'Contact', eyebrow: 'Boulder to anywhere', title: 'Contact me.', body: 'Discord: PandaXPanther · sarastotey@icloud.com · 720-415-9085', side: 'center', cta: true },
+const highlights = [
+  { href: '/quant', type: 'trading', title: 'Trading Systems', description: 'I write bots to test where markets disagree with themselves, then publish the results.', image: '/world/flight/countersnipe.webp', action: 'View trading systems' },
+  { href: '/economics', type: 'econ', title: 'Economics', description: 'Econ.mom makes ideas testable. Local Ledger shows how they play out in real places.', image: '/world/flight/ventures.webp', action: 'Explore economics' },
+  { href: '/att-agency', type: 'agency', title: 'ATT Agency', description: 'The studio I co-founded builds websites, campaigns, and the systems that measure them.', action: 'See the agency work' },
+  { href: '/roblox', type: 'roblox', title: 'Roblox Development', description: 'I program the games. Ryder designs what you see, from worlds and models to UI.', image: catalog.games.find(({ image }) => image)?.image, action: 'Find a game' },
+  { href: '/misc', type: 'misc', title: 'Miscellaneous', description: 'A Discord historian, an extemp standings tracker, chess, and whatever else I’m working on.', action: 'Browse side projects' },
 ];
 
-const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
-const flightDurations = [6.041667, 6.041667, 6.041667, 4.041667, 6.041667, 6.041667];
-const flightDuration = flightDurations.reduce((sum, duration) => sum + duration, 0);
-const scrollDuration = 9.4;
-const TEXT_MASK_FRACTION = 0.035;
-const useBrowserLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect;
-const isInAppWebView = () => typeof navigator !== 'undefined'
-  && /Instagram|FBAN|FBAV|Discord|;\s*wv\)|\bwv\b|WebView/i.test(navigator.userAgent);
+const landmarks = [
+  { id: 'hunter', title: 'Hunter × Hunter', landmark: 'The trailhead', symbol: '×', description: 'The little sign is my nod to the Hunter Exam and the urge to find out what’s over the next ridge.' },
+  { id: 'wall', title: 'Attack on Titan', landmark: 'The stone wall', symbol: '▥', description: 'The old rampart wraps the island like a miniature Wall Maria.' },
+  { id: 'geass', title: 'Code Geass', landmark: 'The terrace', symbol: '♞', description: 'A chess piece on the terrace for Lelouch and his habit of thinking a few moves ahead.' },
+  { id: 'diamond', title: 'JoJo’s Bizarre Adventure', landmark: 'The pavilion', symbol: '◇', description: 'A diamond at the pavilion for Crazy Diamond and Crazy Diamondo, one of the Roblox communities Ryder and I build in.' },
+  { id: 'spiral', title: 'Naruto', landmark: 'The spiral stone', symbol: '◎', description: 'The spiral set into the path is a little Uzumaki reference.' },
+  { id: 'pokemon', title: 'Pokémon', landmark: 'The trail charm', symbol: '◉', description: 'There’s a red-and-white charm at the bottom of the steps. It felt right to leave one by the tall grass.' },
+];
 
-export default function ScrollWorld() {
-  const root = useRef(null);
-  const videoRef = useRef(null);
-  const viewportHeightRef = useRef(0);
-  const initialViewportHeightRef = useRef(0);
-  const viewportGrowthRef = useRef(0);
-  const pendingVideoProgressRef = useRef(0);
-  const activeRef = useRef(0);
-  const [active, setActive] = useState(0);
-  const [visibleChapter, setVisibleChapter] = useState(0);
-  const [hasScrolled, setHasScrolled] = useState(false);
-  const [reduceMotion, setReduceMotion] = useState(false);
-  const chain = useMemo(() => chapters.map((chapter, index) => ({
-    id: chapter.media,
-    chapter: index,
-    scroll: (flightDurations[index] / flightDuration) * scrollDuration,
-  })), []);
-  const total = chain.reduce((sum, segment) => sum + segment.scroll, 0);
+function Island({ track }) {
+  const canvas = useRef(null);
+  const markers = useRef({});
+  const [active, setActive] = useState(null);
+  const [status, setStatus] = useState('loading');
 
-  useBrowserLayoutEffect(() => {
-    const node = root.current;
-    if (!node || !isInAppWebView()) return undefined;
-    let orientationTimer = 0;
-    let measureFrame = 0;
-    const measure = () => {
-      // Instagram, Facebook, and Discord WebViews resize the layout viewport as
-      // their own chrome moves. Recompute the world spacer as well as the sticky
-      // viewport so the document cannot run out of scroll distance after chrome
-      // collapses and exposes a taller visual viewport.
-      const viewportHeight = Math.round(window.visualViewport?.height || window.innerHeight);
-      if (!initialViewportHeightRef.current) initialViewportHeightRef.current = viewportHeight;
-      viewportHeightRef.current = viewportHeight;
-      viewportGrowthRef.current = Math.max(0, viewportHeight - initialViewportHeightRef.current);
-      node.style.setProperty('--world-height', `${(total + 1) * viewportHeight}px`);
-      node.style.setProperty('--world-viewport-height', `${viewportHeight}px`);
-      dispatchEvent(new Event('worldviewportchange'));
+  useEffect(() => {
+    let cancelled = false;
+    let dispose;
+    const unavailable = (event) => {
+      event.preventDefault();
+      setStatus('unavailable');
     };
-    const scheduleMeasure = () => {
-      cancelAnimationFrame(measureFrame);
-      measureFrame = requestAnimationFrame(measure);
-    };
-    const handleOrientationChange = () => {
-      clearTimeout(orientationTimer);
-      orientationTimer = setTimeout(scheduleMeasure, 250);
-    };
-    measure();
-    addEventListener('resize', scheduleMeasure, { passive: true });
-    addEventListener('orientationchange', handleOrientationChange, { passive: true });
-    window.visualViewport?.addEventListener('resize', scheduleMeasure, { passive: true });
+    const restored = () => setStatus('ready');
+    const node = canvas.current;
+    node.addEventListener('webglcontextlost', unavailable);
+    node.addEventListener('webglcontextrestored', restored);
+    import('../world/islandExperience.js').then(({ mountIsland }) => {
+      if (cancelled) return;
+      dispose = mountIsland(node, track.current, markers.current);
+      setStatus('ready');
+    }).catch(() => { if (!cancelled) setStatus('unavailable'); });
     return () => {
-      clearTimeout(orientationTimer);
-      cancelAnimationFrame(measureFrame);
-      removeEventListener('resize', scheduleMeasure);
-      removeEventListener('orientationchange', handleOrientationChange);
-      window.visualViewport?.removeEventListener('resize', scheduleMeasure);
+      cancelled = true;
+      node.removeEventListener('webglcontextlost', unavailable);
+      node.removeEventListener('webglcontextrestored', restored);
+      dispose?.();
     };
-  }, [total]);
-
-  useEffect(() => {
-    const query = matchMedia('(prefers-reduced-motion: reduce)');
-    const sync = () => setReduceMotion(query.matches);
-    sync();
-    query.addEventListener('change', sync);
-    return () => query.removeEventListener('change', sync);
-  }, []);
-
-  useBrowserLayoutEffect(() => {
-    history.scrollRestoration = 'manual';
-    const restore = () => {
-      let snapshot = history.state?.worldSnapshot;
-      if (!snapshot) {
-        try { snapshot = JSON.parse(sessionStorage.getItem('saras-world-snapshot')); } catch { snapshot = null; }
-      }
-      if (!snapshot || (!Number.isFinite(snapshot.position) && !Number.isFinite(snapshot.scrollY))) return;
-      const node = root.current;
-      if (!node) return;
-      const viewportHeight = viewportHeightRef.current || innerHeight;
-      const max = Math.max(1, node.offsetHeight - viewportHeight);
-      const scrollTarget = Number.isFinite(snapshot.position) ? node.offsetTop + clamp(snapshot.position) * max : snapshot.scrollY;
-      window.scrollTo(0, scrollTarget);
-      const video = videoRef.current;
-      if (!video) return;
-      const seek = () => { video.currentTime = clamp((scrollTarget - node.offsetTop) / max) * Math.max(0, video.duration - 0.04); };
-      if (video.readyState >= 1 && video.duration) seek();
-      else video.addEventListener('loadedmetadata', seek, { once: true });
-    };
-    restore();
-    addEventListener('pageshow', restore);
-    return () => removeEventListener('pageshow', restore);
-  }, []);
-
-  const rememberPosition = () => {
-    const node = root.current;
-    if (!node) return;
-    const viewportHeight = viewportHeightRef.current || innerHeight;
-    const max = Math.max(1, node.offsetHeight - viewportHeight);
-    const position = clamp((scrollY - node.offsetTop) / max);
-    const snapshot = { scrollY, videoTime: videoRef.current?.currentTime ?? position * flightDuration, position };
-    sessionStorage.setItem('saras-world-snapshot', JSON.stringify(snapshot));
-    sessionStorage.setItem('saras-world-position', String(position));
-    history.replaceState({ ...history.state, worldSnapshot: snapshot }, '');
-  };
-
-  const jumpTo = (chapterIndex) => {
-    const before = chain.slice(0, chapterIndex).reduce((sum, segment) => sum + segment.scroll, 0);
-    const viewportHeight = viewportHeightRef.current || innerHeight;
-    window.scrollTo({ top: root.current.offsetTop + before * viewportHeight + 2, behavior: reduceMotion ? 'auto' : 'smooth' });
-  };
-
-  useEffect(() => {
-    const node = root.current;
-    if (!node) return undefined;
-    const starts = chain.map((_, index) => chain.slice(0, index).reduce((sum, segment) => sum + segment.scroll, 0));
-    let ticking = false;
-    let seekFrame = 0;
-    let settleTimer = 0;
-    let videoPrimed = false;
-    const syncVideo = () => {
-      const video = videoRef.current;
-      if (!video || video.readyState < 1 || !Number.isFinite(video.duration) || video.duration <= 0 || video.seeking) return;
-      const target = pendingVideoProgressRef.current * Math.max(0, video.duration - 0.04);
-      if (Math.abs(video.currentTime - target) <= 0.025) return;
-      try { video.currentTime = target; } catch { /* Media readiness events retry the latest target. */ }
-    };
-    const queueVideoSync = () => {
-      cancelAnimationFrame(seekFrame);
-      seekFrame = requestAnimationFrame(syncVideo);
-    };
-    const primeVideoDecoder = () => {
-      const video = videoRef.current;
-      if (!video || videoPrimed) return;
-      const playback = video.play();
-      if (!playback) return;
-      playback.then(() => {
-        video.pause();
-        videoPrimed = true;
-        queueVideoSync();
-      }).catch(() => { /* A first touch retries when mobile autoplay is unavailable. */ });
-    };
-    const update = () => {
-      const viewportHeight = viewportHeightRef.current || innerHeight;
-      const y = clamp(scrollY - node.offsetTop, 0, node.offsetHeight - viewportHeight);
-      // Collapsing in-app browser chrome grows the visual viewport on the first
-      // light scroll. Keep bottom/center anchored UI visually stable at first,
-      // then release the compensation over a deliberate half-viewport scroll.
-      const compensationDistance = Math.max(1, initialViewportHeightRef.current * 0.5);
-      const viewportCompensation = viewportGrowthRef.current * (1 - clamp(y / compensationDistance));
-      node.style.setProperty('--world-viewport-compensation', `${viewportCompensation}px`);
-      node.style.setProperty('--world-viewport-half-compensation', `${viewportCompensation * 0.5}px`);
-      let currentIndex = chain.length - 1;
-      chain.forEach((segment, index) => {
-        const start = starts[index] * viewportHeight;
-        const end = (starts[index] + segment.scroll) * viewportHeight;
-        if (y >= start && y <= end) currentIndex = index;
-      });
-      const local = clamp((y - starts[currentIndex] * viewportHeight) / (chain[currentIndex].scroll * viewportHeight));
-      pendingVideoProgressRef.current = clamp(y / Math.max(1, node.offsetHeight - viewportHeight));
-      queueVideoSync();
-      const inBoundaryMask = currentIndex < chain.length - 1 && local > 1 - TEXT_MASK_FRACTION;
-      const nextVisible = inBoundaryMask ? null : currentIndex;
-      if (currentIndex !== activeRef.current) { activeRef.current = currentIndex; setActive(currentIndex); }
-      setVisibleChapter((previous) => previous === nextVisible ? previous : nextVisible);
-      ticking = false;
-    };
-    const requestUpdate = () => {
-      if (!ticking) { ticking = true; requestAnimationFrame(update); }
-      clearTimeout(settleTimer);
-      settleTimer = setTimeout(() => { update(); queueVideoSync(); }, 120);
-    };
-    const dismissHint = () => setHasScrolled(true);
-    const video = videoRef.current;
-    update();
-    addEventListener('scroll', requestUpdate, { passive: true });
-    addEventListener('touchmove', requestUpdate, { passive: true });
-    addEventListener('touchstart', primeVideoDecoder, { passive: true, once: true });
-    addEventListener('scrollend', requestUpdate, { passive: true });
-    addEventListener('scroll', dismissHint, { passive: true, once: true });
-    addEventListener('pagehide', rememberPosition);
-    addEventListener('resize', requestUpdate, { passive: true });
-    addEventListener('worldviewportchange', requestUpdate);
-    const mediaReady = () => { primeVideoDecoder(); requestUpdate(); queueVideoSync(); };
-    video?.addEventListener('loadedmetadata', mediaReady);
-    video?.addEventListener('loadeddata', mediaReady);
-    video?.addEventListener('canplay', mediaReady);
-    video?.addEventListener('seeked', mediaReady);
-    return () => { cancelAnimationFrame(seekFrame); clearTimeout(settleTimer); rememberPosition(); removeEventListener('scroll', requestUpdate); removeEventListener('touchmove', requestUpdate); removeEventListener('touchstart', primeVideoDecoder); removeEventListener('scrollend', requestUpdate); removeEventListener('scroll', dismissHint); removeEventListener('pagehide', rememberPosition); removeEventListener('resize', requestUpdate); removeEventListener('worldviewportchange', requestUpdate); video?.removeEventListener('loadedmetadata', mediaReady); video?.removeEventListener('loadeddata', mediaReady); video?.removeEventListener('canplay', mediaReady); video?.removeEventListener('seeked', mediaReady); };
-  }, [chain]);
+  }, [track]);
 
   return (
-    <main ref={root} className="scroll-world" data-marker={active} data-scroll-mode="free" data-in-app-webview={isInAppWebView() ? 'true' : undefined} style={{ '--world-height': `${total * 100 + 100}vh` }}>
-      <div className="scroll-world__sticky">
-        <div className="scroll-world__stage" aria-hidden="true">
-          <div className="scroll-world__scene"><img src={reduceMotion ? `/world/flight/${chapters[active].media}.webp` : '/world/flight/intro-4k.webp'} alt="" />{!reduceMotion && <video ref={videoRef} muted playsInline autoPlay preload="auto" disablePictureInPicture><source src="/world/flight/continuous-flight-mobile.mp4" media="(max-width: 768px)" type="video/mp4" /><source src="/world/flight/continuous-flight.mp4" type="video/mp4" /></video>}</div>
+    <figure className="island" data-scene={status}>
+      <div className="island__canvas">
+        <canvas ref={canvas} aria-label="A 3D sandstone island with Boulder’s Flatirons, an Indian shrine, a Japanese pavilion, cherry trees, and a waterfall" role="img" />
+        {status !== 'ready' && <p className="island__status" role="status">{status === 'loading' ? 'Loading the 3D island…' : '3D graphics are unavailable on this device.'}</p>}
+        <div className="island__markers">
+        {landmarks.map(({ id, title, landmark, symbol }, index) => (
+          <button
+            key={title}
+            ref={(node) => { markers.current[id] = node; }}
+            type="button"
+            className="island__marker"
+            aria-label={`${landmark} · ${title}`}
+            aria-pressed={active === index}
+            aria-controls="island-caption"
+            onClick={() => setActive(active === index ? null : index)}
+          >{symbol}</button>
+        ))}
         </div>
-        <div className="world-wash" aria-hidden="true" />
-        {chapters.map((chapter, index) => <article key={chapter.id} className={`world-copy world-copy--${chapter.side} world-copy--${chapter.id} ${visibleChapter === index ? 'is-active' : ''}`}><span className="world-copy__count">{String(index + 1).padStart(2, '0')} / {chapters.length}</span><span className="world-copy__eyebrow">{chapter.eyebrow}</span><h1>{chapter.title}</h1><p>{chapter.body}</p>{chapter.note && <small className="world-copy__note">{chapter.note}</small>}{chapter.href && <a className="glass-button" href={chapter.href} data-world-cta="true" onClick={rememberPosition}>Take me there</a>}{chapter.cta && <div className="world-copy__contact"><a href="mailto:sarastotey@icloud.com">Email</a><a href={IDENTITY.linkedin} target="_blank" rel="noreferrer">LinkedIn</a><a href={`https://github.com/${IDENTITY.github_user}`} target="_blank" rel="noreferrer">GitHub</a><a href={IDENTITY.instagram} target="_blank" rel="noreferrer">Instagram</a></div>}</article>)}
-        <div className={`world-controls ${hasScrolled ? 'is-dismissed' : ''}`}><button type="button" onClick={() => jumpTo(Math.max(0, active - 1))} aria-label="Back to previous section">↑</button><span>scroll to explore <i aria-hidden="true">⌄</i></span></div>
-        <nav className="world-route" aria-label="World chapters">{chapters.map((chapter, index) => <button key={chapter.id} className={active === index ? 'is-active' : ''} onClick={() => jumpTo(index)} aria-label={`Go to ${chapter.label}`}><i aria-hidden="true" /></button>)}</nav>
       </div>
+      <figcaption id="island-caption" className="island__caption" aria-live="polite" aria-atomic="true">
+        {active === null ? (
+          <><strong>Explore the island</strong><span>Scroll to move around the island, or select a marker to find a reference.</span></>
+        ) : (
+          <><strong>{landmarks[active].title}</strong><span>{landmarks[active].description}</span></>
+        )}
+      </figcaption>
+    </figure>
+  );
+}
+
+export default function ScrollWorld() {
+  const track = useRef(null);
+  return (
+    <main className="portfolio-home">
+      <div ref={track} className="home-stage">
+      <div className="folio-wrap home-hero">
+        <div className="home-hero__copy">
+          <p className="folio-kicker">Boulder, Colorado</p>
+          <h1>Saras <br /><em>Totey.</em></h1>
+          <p className="home-hero__lede">I’m a full-stack developer. I build trading systems, make economics tools, and program games with friends.</p>
+          <div className="home-hero__actions">
+            <a className="folio-button" href="#work">Explore my work</a>
+            <div className="home-profile">
+              <img src="/saras-headshot.jpg" width="200" height="200" alt="Saras Totey" />
+              <span>Pronounced <strong>“sahr-iss.”</strong></span>
+            </div>
+          </div>
+        </div>
+        <Island track={track} />
+      </div>
+      </div>
+      <section id="work" className="home-work">
+        <div className="folio-wrap">
+          <h2 className="folio-serif">Selected work</h2>
+          <div className="work-grid">
+            {highlights.map(({ href, type, title, description, image, action }) => (
+              <article key={href} className={`work-card work-card--${type}`}>
+                <div className="work-card__copy">
+                  <h3><a href={href} data-work-link="true">{title}</a></h3>
+                  <p>{description}</p>
+                  <a className="folio-link" href={href} data-work-link="true">{action}</a>
+                </div>
+                {image && <img src={image} alt="" loading="lazy" decoding="async" width="768" height="432" />}
+                {type === 'agency' && <b className="work-card__monogram" aria-hidden="true">AT<sup>2</sup></b>}
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+      <footer id="contact" className="home-contact">
+        <div className="folio-wrap">
+          <h2 className="folio-serif">Get in touch</h2>
+          <a className="home-contact__email" href="mailto:sarastotey@icloud.com">sarastotey@icloud.com</a>
+          <nav aria-label="Contact and social links">
+            <a href={IDENTITY.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
+            <a href={`https://github.com/${IDENTITY.github_user}`} target="_blank" rel="noreferrer">GitHub</a>
+            <a href={IDENTITY.instagram} target="_blank" rel="noreferrer">Instagram</a>
+            <span>Discord · PandaXPanther</span>
+            <a href="tel:+17204159085">720-415-9085</a>
+          </nav>
+        </div>
+      </footer>
     </main>
   );
 }

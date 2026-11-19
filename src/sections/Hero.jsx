@@ -5,11 +5,17 @@ import { readAmbientFrequencyData } from '../components/AudioControl.jsx';
 
 const OrderbookField = lazy(() => import('../components/OrderbookField.jsx'));
 
+class OrderbookBoundary extends React.Component {
+  state = { unavailable: false };
+  static getDerivedStateFromError() { return { unavailable: true }; }
+  render() { return this.state.unavailable ? null : this.props.children; }
+}
+
 function OriginalOrderbookBackground() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   if (!mounted) return null;
-  return <Suspense fallback={null}><OrderbookField /></Suspense>;
+  return <OrderbookBoundary><Suspense fallback={null}><OrderbookField /></Suspense></OrderbookBoundary>;
 }
 
 const WAVE_BAR_COUNT = 32;

@@ -42,7 +42,7 @@ export const SYSTEMS = [
     private: false,
 
     tldr:
-      'Counter-Strike 2 is a video game. Its cosmetic weapon skins trade on real online marketplaces (CSFloat, Steam, Buff) with tens of millions of dollars in daily volume. Prices are set by humans typing numbers, and humans make mistakes. CounterSnipe is a program I wrote that watches those marketplaces around the clock, spots when someone has listed a skin below its fair market value, buys it automatically, and re-lists it at the correct price. It currently runs with $1,424 of my real money and averages a 14.1% return per completed trade.',
+      'Counter-Strike 2 skins trade on marketplaces like CSFloat, Steam, and Buff. CounterSnipe watches for listings below fair market value, buys them automatically, and relists them. The historical figures come from recorded purchases, and the paper figures update from the simulation feed.',
 
     kpis: [
       { k: 'Capital deployed', v: '$1,424', foot: '42 real buys across 6 trading days' },

@@ -1,8 +1,8 @@
 # Generated Trade Telemetry
 
-The site now has an hourly generated paper-trade feed. It is intentionally static infrastructure:
+The site has a daily-paced generated paper-trade feed served as static JSON:
 
-- `scripts/generate_trades.mjs` creates 3-8 realistic paper trades for the current UTC hour.
+- `scripts/generate_trades.mjs` schedules 2–5 simulated trades per UTC day and appends those due when the hourly job runs.
 - `/opt/sarastotey-trading/state.json` stores durable state and survives VPS restarts.
 - `public/generated/trading-live.json` is the frontend-facing JSON copied into `dist/`.
 - `src/data/trading-live.json` is the build-time copy used for prerendered receipts before the browser fetch completes.
@@ -11,9 +11,7 @@ The site now has an hourly generated paper-trade feed. It is intentionally stati
 
 ## Architecture
 
-This uses Option A: cron plus static JSON.
-
-The site is a Vite/React static site behind Cloudflare. A long-running API would add process monitoring, TLS/routing, and cache invalidation without much benefit for one hourly append-only feed. Pushing static JSON through the existing GitHub/Cloudflare Pages deployment path keeps the runtime surface small and makes the generated history auditable in git.
+The Vite site serves the snapshots through Cloudflare Pages. The generator pushes its updated JSON to GitHub so the published snapshots follow the same deployment path as the site.
 
 ## Baseline Values
 
@@ -83,8 +81,8 @@ Current cron entry:
 
 Edit `CONFIG` in `scripts/generate_trades.mjs`:
 
-- `targetNetProfitUsd`: expected positive drift range per generated hour.
-- `tradesPerHour`: min/max generated fills per hourly batch.
+- `targetNetProfitUsd`: target simulated profit range per day.
+- `tradesPerDay`: minimum and maximum simulated fills per day.
 - `systemWinRates`: per-system generated win-rate targets. Prediction markets are intentionally marginal at 53%.
 - `maxRecentTrades`: retained durable history.
 - `maxPublicTrades`: rows exposed to the frontend receipts table.
@@ -93,4 +91,4 @@ Edit `TEMPLATES` in the same file to add instruments, price ranges, sides, quant
 
 The infrastructure wrapper lives at `/opt/sarastotey-trading/generate-trades.js`; it changes into `/root/projects/saras-totey-site` and runs this repo script with `SARAS_TRADE_STATE_PATH=/opt/sarastotey-trading/state.json`.
 
-The UI fetches this feed once in `QuantPage` and passes the same dashboard object to both the aggregate live section and every system card. Baseline receipts and generated paper telemetry remain separate fields and labels; generated drift is never presented as verified live performance.
+The trading page starts with its prerendered snapshot. While the page is visible, it checks the generated JSON every minute and checks again when the tab regains visibility. The dashboard, each system’s paper metrics, and the paper receipts table use the same snapshot. A failed or older response leaves the most recent valid snapshot on screen.
