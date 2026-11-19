@@ -181,6 +181,12 @@ export function Misc() {
           </article>
         ))}
       </section>
+      <section className="folio-wrap misc-favorites">
+        <h2 className="folio-serif">Anime and games I love</h2>
+        <ul>
+          {['Hunter × Hunter', 'Attack on Titan', 'Code Geass', 'JoJo’s Bizarre Adventure', 'Naruto', 'Pokémon'].map((title) => <li key={title}>{title}</li>)}
+        </ul>
+      </section>
     </>
   );
 }

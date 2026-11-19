@@ -30,3 +30,14 @@ ffmpeg -y -v error -f concat -safe 0 -i "$LIST" \
 rm -f "${PASSLOG}"*
 
 echo "Encoded hard-cut H.264 chain to $OUT"
+
+ffmpeg -y -v error -i "$OUT" -frames:v 1 -c:v libwebp -quality 93 \
+  -compression_level 6 "$ROOT/public/world/flight/continuous-flight-poster.webp"
+
+# Preserves the site's 60% horizontal crop while spending pixels on the
+# visible portrait instead of the sides hidden by object-fit on phones.
+ffmpeg -y -v error -i "$OUT" \
+  -vf "crop=900:1440:996:0,scale=800:1280:flags=lanczos" \
+  -an -c:v libx264 -preset fast -b:v 3500k -maxrate 5600k -bufsize 7000k \
+  -pix_fmt yuv420p -profile:v high -level:v 4.0 -g 6 -keyint_min 6 \
+  -sc_threshold 0 -bf 0 -movflags +faststart "$ROOT/public/world/flight/continuous-flight-portrait.mp4"

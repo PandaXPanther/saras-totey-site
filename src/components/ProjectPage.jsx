@@ -30,7 +30,7 @@ function SiteFooter() {
 }
 
 function BackToProjects() {
-  return <div className="folio-wrap project-return"><a href="/" data-back-to-projects="true">Back to selected work</a></div>;
+  return <div className="folio-wrap project-return"><a href="/" data-back-to-projects="true">Take me back</a></div>;
 }
 
 function QuantPage({ canReturnToWorld }) {
