@@ -100,9 +100,7 @@ function FavoritePlayer({ tracks, nativeTheme, audio }) {
           onReady({ target }) {
             if (disposed) return;
             target.setVolume(36);
-            if (visible.current && !document.hidden) target.loadPlaylist(queue, 0, 0);
-            else target.cuePlaylist(queue, 0, 0);
-            target.setLoop(true);
+            if (visible.current && !document.hidden) target.playVideo();
           },
           onStateChange({ data, target }) {
             if (disposed) return;
