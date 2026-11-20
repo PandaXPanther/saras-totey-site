@@ -88,6 +88,7 @@ function WorldChapter({ chapter, index, active }) {
 export default function ScrollWorld() {
   const root = useRef(null);
   const canvas = useRef(null);
+  const chapterJump = useRef(0);
   const dimensions = useRef({ top: 0, distance: 1, height: 0, width: 0 });
   const [active, setActive] = useState(0);
   const activeRef = useRef(0);
@@ -96,6 +97,12 @@ export default function ScrollWorld() {
   const [variant, setVariant] = useState('wide');
   const [hasView, setHasView] = useState(false);
   const playFlight = reduced === false;
+
+  function stopChapterJump() {
+    if (!chapterJump.current) return;
+    cancelAnimationFrame(chapterJump.current);
+    chapterJump.current = 0;
+  }
 
   useBrowserLayoutEffect(() => {
     const motion = matchMedia('(prefers-reduced-motion: reduce)');
@@ -212,9 +219,16 @@ export default function ScrollWorld() {
       if (!resize) resize = requestAnimationFrame(measure);
     }
 
+    function keyScroll(event) {
+      if (['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '].includes(event.key)) stopChapterJump();
+    }
+
     measure();
     if (hintHidden) setHasScrolled(true);
     window.addEventListener('scroll', scroll, { passive: true });
+    window.addEventListener('wheel', stopChapterJump, { passive: true });
+    window.addEventListener('touchstart', stopChapterJump, { passive: true });
+    window.addEventListener('keydown', keyScroll);
     window.addEventListener('resize', queueMeasure, { passive: true });
     viewport?.addEventListener('resize', queueMeasure, { passive: true });
     return () => {
@@ -222,7 +236,11 @@ export default function ScrollWorld() {
       cancelAnimationFrame(resize);
       frames?.dispose();
       clearTimeout(settleTimer);
+      stopChapterJump();
       window.removeEventListener('scroll', scroll);
+      window.removeEventListener('wheel', stopChapterJump);
+      window.removeEventListener('touchstart', stopChapterJump);
+      window.removeEventListener('keydown', keyScroll);
       window.removeEventListener('resize', queueMeasure);
       viewport?.removeEventListener('resize', queueMeasure);
     };
@@ -232,7 +250,24 @@ export default function ScrollWorld() {
     const { top, distance } = dimensions.current;
     const frame = index === 0 ? 0 : chapterStarts[index] + 8;
     const offset = progressAtFrame(frame) * distance;
-    window.scrollTo({ top: top + offset, behavior: reduced ? 'instant' : 'smooth' });
+    stopChapterJump();
+    const from = window.scrollY;
+    const to = top + offset;
+    if (reduced || Math.abs(to - from) < 1) {
+      window.scrollTo({ top: to, behavior: 'instant' });
+      return;
+    }
+
+    // Keep chapter navigation interruptible without intercepting wheel or touch scrolling.
+    const started = performance.now();
+    const duration = Math.min(620, 300 + Math.abs(to - from) * .11);
+    function move(now) {
+      const progress = clamp((now - started) / duration);
+      const eased = progress * progress * (3 - 2 * progress);
+      window.scrollTo({ top: from + (to - from) * eased, behavior: 'instant' });
+      chapterJump.current = progress < 1 ? requestAnimationFrame(move) : 0;
+    }
+    chapterJump.current = requestAnimationFrame(move);
   }
 
   return <main ref={root} className="scroll-world" data-marker={active} data-flight-renderer={playFlight ? 'frames' : undefined} data-scroll-mode="free" data-in-app-webview={isInAppWebView() || undefined}>
