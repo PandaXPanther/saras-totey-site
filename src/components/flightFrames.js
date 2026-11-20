@@ -2,12 +2,14 @@ const lastFrame = 821;
 const framesPerPack = 24;
 const overviewStep = 12;
 const motionStep = 2;
-const motionColumns = 4;
-const tilesPerSheet = framesPerPack / motionStep;
+const motionColumns = 3;
+const motionRows = 2;
+const tilesPerSheet = motionColumns * motionRows;
+const framesPerSheet = tilesPerSheet * motionStep;
 const overviewColumns = 10;
 const formats = {
-  wide: { overview: [192, 108], motion: [768, 432], canvas: [1920, 1080] },
-  portrait: { overview: [125, 200], motion: [480, 768], canvas: [600, 960] },
+  wide: { overview: [192, 108], motion: [1280, 720], canvas: [1920, 1080] },
+  portrait: { overview: [125, 200], motion: [800, 1280], canvas: [900, 1440] },
 };
 
 export function visibleFlightFrame(frame) {
@@ -73,12 +75,12 @@ export function createFlightFrames(canvas, variant, onDraw, onUnavailable) {
   const [width, height] = canvasSize;
   canvas.width = width;
   canvas.height = height;
-  const path = `/world/flight/motion-v1/${variant}/`;
+  const path = `/world/flight/motion-v2/${variant}/`;
   const sheets = new Map();
   const requests = new Map();
   const failedAt = new Map();
   const overviewRequest = new AbortController();
-  const lastSheet = Math.floor(lastFrame / framesPerPack);
+  const lastSheet = motionGroup(lastFrame);
   const enableDetail = variant === 'wide' && !matchMedia('(pointer: coarse)').matches && !navigator.connection?.saveData;
   let overview;
   let overviewPending = true;
@@ -222,7 +224,7 @@ export function createFlightFrames(canvas, variant, onDraw, onUnavailable) {
       }
       // Start with broad coverage. An early swipe can also request its immediate view.
       if (!overviewPending || frame > 0) queueSheet(group);
-      if (!overviewPending && (sheets.has(group) || frame % framesPerPack >= 8)) queueSheet(ahead);
+      if (!overviewPending && (sheets.has(group) || frame % framesPerSheet >= 4)) queueSheet(ahead);
       if (enableDetail && resting && frame && !detailTimer && detailAttempt !== frame) {
         detailTimer = setTimeout(() => refine(frame), 480);
       }

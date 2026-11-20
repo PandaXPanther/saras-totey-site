@@ -6,17 +6,17 @@ import subprocess
 FLIGHT = Path(__file__).resolve().parents[1] / "public/world/flight"
 SOURCE = FLIGHT / "continuous-flight.mp4"
 
-# Each sheet stays within 4096 pixels per side for mobile webviews.
+# Six tiles keep each decoded sheet small enough for mobile webviews.
 VARIANTS = {
-    "wide": ("", (192, 108), (768, 432)),
-    "portrait": ("crop=900:1440:996:0,", (125, 200), (480, 768)),
+    "wide": ("", (192, 108), (1280, 720)),
+    "portrait": ("crop=900:1440:996:0,", (125, 200), (800, 1280)),
 }
 
 
-def encode(ffmpeg, destination, crop, size, step, grid, quality):
+def encode(ffmpeg, destination, crop, size, step, grid, quality, sharpen=""):
     width, height = size
     selection = f"select='not(mod(n,{step}))+eq(n,821)'"
-    filters = f"{selection},{crop}scale={width}:{height}:flags=lanczos,tile={grid}"
+    filters = f"{selection},{crop}scale={width}:{height}:flags=lanczos,{sharpen}tile={grid}"
     subprocess.run([
         ffmpeg, "-v", "error", "-y", "-threads", "4", "-filter_threads", "3",
         "-i", str(SOURCE), "-an", "-vf", filters, "-fps_mode", "vfr",
@@ -30,7 +30,7 @@ if __name__ == "__main__":
     parser.add_argument("--ffmpeg", default="ffmpeg")
     args = parser.parse_args()
     for name, (crop, overview, motion) in VARIANTS.items():
-        directory = FLIGHT / "motion-v1" / name
+        directory = FLIGHT / "motion-v2" / name
         directory.mkdir(parents=True, exist_ok=True)
         encode(args.ffmpeg, directory / "overview.webp", crop, overview, 12, "10x7", 59)
-        encode(args.ffmpeg, directory / "%02d.webp", crop, motion, 2, "4x3", 68)
+        encode(args.ffmpeg, directory / "%02d.webp", crop, motion, 2, "3x2", 74, "unsharp=5:5:0.30:5:5:0,")

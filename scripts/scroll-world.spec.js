@@ -35,7 +35,7 @@ test('the camera paints multiple intermediate frames between wheel movements', a
 
 test('a missing motion sheet cannot freeze the island or hold the chapter links', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.route('**/world/flight/motion-v1/wide/*.webp', async (route) => {
+  await page.route('**/world/flight/motion-v2/wide/*.webp', async (route) => {
     if (route.request().url().endsWith('/overview.webp')) await route.continue();
     else await route.abort();
   });
@@ -66,7 +66,7 @@ test('portrait touch scroll and browser chrome resize preserve the flight', asyn
     await expect(world(page)).toHaveAttribute('data-in-app-webview', 'true');
     await expect.poll(() => renderedFrame(page)).toBe(0);
     const canvasSize = await world(page).locator('canvas').evaluate(({ width, height }) => [width, height]);
-    expect(canvasSize).toEqual([600, 960]);
+    expect(canvasSize).toEqual([900, 1440]);
     const session = await context.newCDPSession(page);
     await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: 156, y: 601 }] });
     for (let step = 1; step <= 8; step++) {
@@ -101,23 +101,16 @@ test('the flight does not stop on the foreground beam', async ({ page }) => {
   await expect.poll(() => renderedFrame(page)).toBe(348);
 });
 
-test('the two new world stops expose their pages and the flight carries every reference', async ({ page }) => {
+test('the homepage stops link to their projects without reference badges', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
   await expect(world(page).locator('canvas, video')).toHaveCount(0);
-  const references = [
-    ['Home', 'Hunter License', 'Hunter × Hunter'],
-    ['Trading systems', 'Black Knights', 'Code Geass'],
-    ['Econ.mom', 'Crazy Diamond', 'JoJo’s Bizarre Adventure'],
-    ['Local Ledger', 'Wall Maria', 'Attack on Titan'],
-    ['ATT Agency', 'Hidden Leaf', 'Naruto'],
-    ['Roblox games', 'Tall grass', 'Pokémon'],
-  ];
-  for (const [stop, label, title] of references) {
-    await chapter(page, stop).click();
-    await page.locator('.world-reference summary').filter({ hasText: label }).click();
-    await expect(world(page).locator('.world-reference[open]')).toContainText(title);
-  }
+  await expect(world(page).locator('details')).toHaveCount(0);
+  await chapter(page, 'Econ.mom').click();
+  await expect(activeCopy(page).getByRole('link', { name: 'Take me there' })).toHaveAttribute('href', '/economics#econ-mom');
+  await chapter(page, 'Local Ledger').click();
+  await expect(activeCopy(page).getByRole('link', { name: 'Take me there' })).toHaveAttribute('href', '/economics#local-ledger');
+  await chapter(page, 'Roblox games').click();
   await expect(activeCopy(page).getByRole('link', { name: 'Take me there' })).toHaveAttribute('href', '/roblox');
   await chapter(page, 'Miscellaneous projects').click();
   await expect(activeCopy(page)).toContainText('The other things I build.');

@@ -38,15 +38,6 @@ function getAge(now = new Date()) {
 
 const portraitFlight = '(max-width: 760px) and (orientation: portrait)';
 
-const references = {
-  intro: { name: 'Hunter License', title: 'Hunter × Hunter', symbol: '×', text: 'A Hunter License for the first step off the map.' },
-  trading: { name: 'Black Knights', title: 'Code Geass', symbol: '♞', text: 'A chess knight for Lelouch. He’s usually a few moves ahead.' },
-  'econ-mom': { name: 'Crazy Diamond', title: 'JoJo’s Bizarre Adventure', symbol: '◇', text: 'Josuke’s Stand also inspired the name of our Roblox group, Crazy Diamondo.' },
-  'local-ledger': { name: 'Wall Maria', title: 'Attack on Titan', symbol: '▥', text: 'A tiny Wall Maria for the lookout above the valley.' },
-  att: { name: 'Hidden Leaf', title: 'Naruto', symbol: '◎', text: 'A spiral for the Hidden Leaf Village, here by the workshop.' },
-  roblox: { name: 'Tall grass', title: 'Pokémon', symbol: '◉', text: 'A red-and-white trail charm for the first route out of town.' },
-};
-
 const chapters = [
   { id: 'intro', media: 'continuous-flight-poster', label: 'Home', eyebrow: 'Boulder, Colorado', title: 'Saras Totey.', body: `I’m a ${getAge()}-year-old full-stack developer who grew up in Boulder. I build trading bots, research markets, and make other cool projects.`, note: 'Pronounced “sahr-iss.” Age updates automatically every June 25.', side: 'left' },
   { id: 'trading', media: 'countersnipe', label: 'Trading systems', eyebrow: 'Markets, then code', title: 'I like finding the moment a market disagrees with itself.', body: 'That puzzle is why I build trading bots. What began with Roblox items became live CS2 arbitrage, prediction-market research, and systems where the logs and mistakes are as interesting as the wins.', href: '/quant', side: 'left' },
@@ -57,14 +48,6 @@ const chapters = [
   { id: 'misc', media: 'misc', label: 'Miscellaneous projects', eyebrow: 'More projects', title: 'The other things I build.', body: 'A Discord historian, a national extemp scoreboard, and my Chess.com ratings.', href: '/misc', side: 'right' },
   { id: 'contact', media: 'contact', label: 'Contact', eyebrow: 'Boulder to anywhere', title: 'Contact me.', body: 'Discord: PandaXPanther · sarastotey@icloud.com · 720-415-9085', side: 'center' },
 ];
-
-function WorldReference({ reference }) {
-  if (!reference) return null;
-  return <details className="world-reference">
-    <summary><span className={`world-reference__mark world-reference__mark--${reference.symbol === '◉' ? 'trail' : 'ink'}`} aria-hidden="true">{reference.symbol}</span>{reference.name}</summary>
-    <div className="world-reference__note"><strong>{reference.title}</strong><p>{reference.text}</p></div>
-  </details>;
-}
 
 function WorldChapter({ chapter, index, active }) {
   const Heading = index === 0 ? 'h1' : 'h2';
@@ -249,7 +232,6 @@ export default function ScrollWorld() {
       </div>
       <div className="world-wash" aria-hidden="true" />
       {chapters.map((chapter, index) => <WorldChapter key={chapter.id} chapter={chapter} index={index} active={active === index} />)}
-      <WorldReference key={chapters[active].id} reference={references[chapters[active].id]} />
       <div className={`world-controls${hasScrolled ? ' is-dismissed' : ''}`}>
         <button type="button" onClick={() => jumpTo(0)} aria-label="Back to the first chapter">↑</button>
         <span>scroll to explore <i aria-hidden="true">⌄</i></span>
