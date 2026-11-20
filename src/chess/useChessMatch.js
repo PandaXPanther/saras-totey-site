@@ -62,6 +62,7 @@ export function useChessMatch(player, control) {
     if (ended.current) return;
     ended.current = true;
     pauseClock();
+    engine.current?.close();
     setOutcome(result);
     appendChat(botName, 'gg');
   }

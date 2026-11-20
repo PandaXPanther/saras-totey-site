@@ -216,8 +216,14 @@
 .saras-chess__accuracy-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; margin: 10px 0; }
 .saras-chess__accuracy-cards > div { display: grid; min-width: 0; gap: 2px; padding: 8px 10px; border: 1px solid #624257; border-radius: 6px; background: #312439; }
 .saras-chess__accuracy-cards span { font-size: .77rem; font-weight: 680; }
-.saras-chess__accuracy-cards strong { color: var(--chess-accent); font: 730 1.52rem/1.1 var(--font-display); font-variant-numeric: tabular-nums; }
-.saras-chess__accuracy-cards small { color: var(--chess-muted); font-size: .66rem; }
+.saras-chess__performance-card dl { display: grid; gap: 5px; margin: 2px 0 0; }
+.saras-chess__performance-card dl > div { display: flex; justify-content: space-between; align-items: baseline; gap: 4px; }
+.saras-chess__performance-card dt { color: var(--chess-muted); font-size: .69rem; }
+.saras-chess__performance-card dd { margin: 0; color: var(--chess-accent); font-size: .84rem; font-weight: 750; font-variant-numeric: tabular-nums; }
+.saras-chess__performance-card dd[aria-label] { font-size: 1.12rem; }
+.saras-chess__estimate-note { margin: 0 0 9px; color: var(--chess-muted); font-size: .74rem; }
+.saras-chess__postgame-performance .saras-chess__accuracy-cards { margin: 0 0 7px; }
+.saras-chess__postgame-performance .saras-chess__estimate-note { margin-bottom: 0; }
 .saras-chess__scores { width: 100%; border-collapse: collapse; font-size: .74rem; font-variant-numeric: tabular-nums; }
 .saras-chess__scores :is(th, td) { text-align: center; padding: 2px 4px; border-bottom: 1px solid #51394d; }
 .saras-chess__scores th { font-weight: 650; }
@@ -242,6 +248,25 @@
 .saras-chess__line { margin-top: 9px; font-size: .77rem; }
 .saras-chess .saras-chess__line button { min-height: 30px; padding: 2px 7px; }
 .saras-chess__visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.saras-chess__result-dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(450px, calc(100% - 26px));
+  max-height: calc(100dvh - 28px);
+  padding: clamp(16px, 4vw, 24px);
+  border: 1px solid #a77591;
+  border-radius: 12px;
+  background: radial-gradient(ellipse at 100% 0%, #523447, transparent 69%), #2c2231;
+  box-shadow: 0 22px 55px #0e081188;
+  color: var(--chess-paper);
+  overscroll-behavior: contain;
+}
+.saras-chess__result-dialog::backdrop { background: #130e196e; }
+.saras-chess__result-dialog h3 { margin: 0 0 10px; color: var(--chess-paper); font: 745 clamp(25px, 7vw, 34px)/1.03 var(--font-display); letter-spacing: -.035em; }
+.saras-chess__result-outcome { margin: 0 0 4px; color: #ffd2b2; font-size: .92rem; font-weight: 720; }
+.saras-chess__result-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 11px; }
+.saras-chess .saras-chess__result-actions button { min-height: 44px; padding-inline: 7px; }
 .saras-chess__promotion { border: 1px solid var(--chess-line); border-radius: 8px; background: var(--chess-panel); color: var(--chess-paper); padding: 16px; }
 .saras-chess__promotion h3 { margin: 0 0 8px; font-size: 1rem; }
 .saras-chess__promotion > div { display: flex; gap: 5px; margin-bottom: 8px; }
@@ -259,4 +284,5 @@
   .saras-chess__player { min-height: 46px; padding: 4px; }
   .saras-chess__avatar { width: 31px; height: 31px; }
   .saras-chess__captures { font-size: 12px; }
+  .saras-chess__performance-card dl > div { align-items: start; flex-direction: column; gap: 1px; }
 }

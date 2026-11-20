@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { createEngine } from '../chess/engine.js';
-import { grades, reviewMove } from '../chess/strategy.js';
+import React, { useState } from 'react';
+import { grades } from '../chess/strategy.js';
 import { botName } from '../chess/banter.js';
-import { opposite } from '../chess/model.js';
+import { ReviewPerformance, ReviewProgress } from './ChessReviewResult.jsx';
 import { EvaluationGraph, evaluationText, evaluationMeaning } from './ChessEvaluation.jsx';
 
 const keyGrades = new Set(['Brilliant', 'Great', 'Mistake', 'Miss', 'Blunder']);
@@ -14,13 +13,8 @@ export function Grade({ grade, iconOnly = false }) {
   </span>;
 }
 
-function AccuracySummary({ outcomes, onGrade }) {
-  return <>
-    <div className="saras-chess__accuracy-cards" role="group" aria-label="Estimated accuracy">
-      {outcomes.map(({ color, label, accuracy }) => (
-        <div key={color}><span>{label}</span><strong>{accuracy}</strong><small>Accuracy estimate</small></div>
-      ))}
-    </div>
+function GradeSummary({ outcomes, onGrade }) {
+  return (
     <table className="saras-chess__scores">
       <thead><tr><th scope="col">Move quality</th>{outcomes.map(({ color, label }) =>
         <th key={color} scope="col">{label}</th>)}</tr></thead>
@@ -37,7 +31,7 @@ function AccuracySummary({ outcomes, onGrade }) {
         </tr>)}
       </tbody>
     </table>
-  </>;
+  );
 }
 
 function MoveFeedback({ choice, move, position, player, practice, onPractice, onLineStep }) {
@@ -78,33 +72,10 @@ function MoveFeedback({ choice, move, position, player, practice, onPractice, on
   );
 }
 
-export default function ChessGameReview({ moves, position, onPosition, player, data, onData, practice, onPractice, onLineStep }) {
-  const [view, setView] = useState('summary');
+export default function ChessGameReview({ moves, position, onPosition, player, review, outcomes, practice, onPractice, onLineStep }) {
+  const [view, setView] = useState('moves');
   const [filter, setFilter] = useState('both');
-  const [failed, setFailed] = useState(false);
-  const [attempt, setAttempt] = useState(0);
-
-  useEffect(() => {
-    let active = true;
-    let engine;
-    async function analyze() {
-      try {
-        engine = createEngine();
-        await engine.ready;
-        for (let index = data.length; index < moves.length; index++) {
-          const rating = await reviewMove(engine, moves[index], moves.slice(0, index).map((move) => move.lan));
-          if (!active) return;
-          onData((rows) => [...rows, rating]);
-        }
-      } catch {
-        if (active) setFailed(true);
-      } finally {
-        engine?.close();
-      }
-    }
-    if (data.length < moves.length) void analyze();
-    return () => { active = false; engine?.close(); };
-  }, [attempt, moves, onData]);
+  const { data } = review;
 
   const assessed = data.map((row, index) => ({ ...row, ply: index + 1, move: moves[index] }));
   const keys = assessed.filter(({ move, grade }) =>
@@ -112,14 +83,7 @@ export default function ChessGameReview({ moves, position, onPosition, player, d
     (filter === 'both' || (filter === 'you') === (move.color === player)));
   const next = keys.find(({ ply }) => ply > position);
   const previous = keys.findLast(({ ply }) => ply < position);
-  const complete = data.length === moves.length;
   const chosen = data[position - 1];
-  const outcomes = [player, opposite(player)].map((color) => {
-    const rows = assessed.filter(({ move }) => move.color === color);
-    const accuracy = rows.length
-      ? (rows.reduce((sum, row) => sum + row.accuracy, 0) / rows.length).toFixed(1) : '—';
-    return { color, label: color === player ? 'You' : botName, rows, accuracy };
-  });
 
   function openMove(ply) {
     onPosition(ply);
@@ -133,16 +97,15 @@ export default function ChessGameReview({ moves, position, onPosition, player, d
         <button type="button" aria-pressed={view === 'summary'} onClick={() => setView('summary')}>Summary</button>
         <button type="button" aria-pressed={view === 'moves'} onClick={() => setView('moves')}>Move analysis</button>
       </div>
-      {!complete && <div className="saras-chess__review-progress">
-        <span role="status">{failed ? 'Analysis paused.' : `Analyzing ${data.length} of ${moves.length} moves…`}</span>
-        {failed ? <button type="button" onClick={() => { setFailed(false); setAttempt(attempt + 1); }}>Resume analysis</button>
-          : <progress aria-label="Review progress" value={data.length} max={moves.length} />}
-      </div>}
+      <ReviewProgress review={review} />
       {data.length > 0 && <EvaluationGraph data={data} moves={moves} position={position} onPosition={onPosition} />}
-      {view === 'summary' && data.length > 0 && <>
-        <button type="button" className="saras-chess__primary saras-chess__begin-review"
-          onClick={() => openMove(keys[0]?.ply ?? 1)}>{keys.length ? 'Review key moves' : 'Review moves'}</button>
-        <AccuracySummary outcomes={outcomes} onGrade={openMove} />
+      {view === 'summary' && <>
+        <ReviewPerformance outcomes={outcomes} complete={review.complete} />
+        {data.length > 0 && <>
+          <button type="button" className="saras-chess__primary saras-chess__begin-review"
+            onClick={() => openMove(keys[0]?.ply ?? 1)}>{keys.length ? 'Review key moves' : 'Review moves'}</button>
+          <GradeSummary outcomes={outcomes} onGrade={openMove} />
+        </>}
       </>}
       {view === 'moves' && <>
         <div className="saras-chess__key-controls" role="group" aria-label="Key moves">

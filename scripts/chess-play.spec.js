@@ -92,7 +92,7 @@ async function scriptedOpponent(page, replies, startingPly) {
         }
       };
     `,
-  }));
+  }), { times: 1 });
 }
 
 const square = (page, name) => page.getByRole('group', { name: 'Chessboard' })
@@ -216,6 +216,9 @@ test('checkmate, material and review all describe the actual position', async ({
   await square(page, 'h5').click();
   await square(page, 'f7').click();
 
+  const dialog = page.getByRole('dialog', { name: 'Game review' });
+  await expect(dialog).toContainText('You won by checkmate');
+  await dialog.getByRole('button', { name: 'View final position' }).click();
   await expect(page.getByRole('status').filter({ hasText: 'You won by checkmate' })).toBeVisible();
   await expect(square(page, 'e8')).toHaveAttribute('data-check', 'mate');
   await expect(square(page, 'e8')).toHaveAccessibleName('e8 black king, checkmated');
@@ -223,12 +226,11 @@ test('checkmate, material and review all describe the actual position', async ({
   await expect(page.getByLabel('Black material advantage +1')).toHaveCount(0);
   await expect(page.getByLabel('Move list').getByRole('button', { name: 'Qxf7#', exact: true })).toBeVisible();
 
-  await page.unroute('**/chess-engine/stockfish-19-lite-single.js');
   await page.getByRole('button', { name: 'Review game' }).click();
-  await expect(page.getByRole('button', { name: 'Summary', exact: true })).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.getByLabel('Game position')).toHaveAttribute('max', '7');
+  await expect(page.getByRole('button', { name: 'Move analysis', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByLabel('Game position')).toHaveValue('1');
+  await page.getByRole('button', { name: 'Latest position' }).click();
   await expect(page.getByLabel('Position evaluation')).toHaveText('Mate');
-  await page.getByRole('button', { name: 'Move analysis', exact: true }).click();
   await expect(page.getByRole('heading', { name: '4. Qxf7#' })).toBeVisible();
   await expect(page.getByText('This move ends the game by checkmate.')).toBeVisible();
   await page.getByRole('button', { name: 'Show best move' }).click();
@@ -242,4 +244,32 @@ test('checkmate, material and review all describe the actual position', async ({
   await page.getByRole('button', { name: 'Previous move' }).click();
   await expect(page.getByLabel(/material advantage/)).toHaveCount(0);
   await expect(square(page, 'e8')).not.toHaveAttribute('data-check', 'mate');
+});
+
+
+test('getting mated opens the review with two estimates and starts on move one', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await scriptedOpponent(page, ['e7e5', 'd8h4'], 1);
+  await startUntimed(page, 'w');
+  await clickMove(page, 'f2', 'f3');
+  await square(page, 'g2').click();
+  await square(page, 'g4').click();
+
+  const popup = page.getByRole('dialog', { name: 'Game review' });
+  await expect(popup).toBeVisible();
+  await expect(popup).toContainText('Totally Real Saras won by checkmate');
+  const bounds = await popup.boundingBox();
+  expect(Math.abs(bounds.y + bounds.height / 2 - 422)).toBeLessThan(24);
+  await expect(popup.getByLabel('Your estimated Elo')).toHaveText(/^~\d[\d,]*$/);
+  await expect(popup.getByLabel('Totally Real Saras estimated Elo')).toHaveText(/^~\d[\d,]*$/);
+
+  await popup.getByRole('button', { name: 'Review first move' }).click();
+  await expect(popup).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Move analysis' })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByRole('heading', { name: '1. f3' })).toBeVisible();
+  await expect(square(page, 'f3')).toHaveAccessibleName('f3 white pawn');
+  await expect(square(page, 'h4')).toHaveAccessibleName('h4 empty');
+  await page.getByRole('button', { name: 'Summary', exact: true }).click();
+  await expect(page.getByLabel('Your estimated Elo')).toHaveText(/^~\d[\d,]*$/);
+  await expect(page.getByLabel('Totally Real Saras estimated Elo')).toHaveText(/^~\d[\d,]*$/);
 });

@@ -140,6 +140,8 @@ export async function reviewMove(engine, move, history) {
   const before = expected(centipawns(best));
   const after = expected(centipawns(played));
   const loss = Math.max(0, before - after);
+  const separation = alternative ? Math.max(0, before - expected(centipawns(alternative))) : 0;
+  const decisionWeight = alternative ? Math.min(1, 0.6 + separation * 2) : 0.2;
   const board = new Chess(move.before);
   const book = Boolean(profile.openingMoves[positionKey(board)]?.[move.lan]);
   const grade = gradeMove({ move, best, played, before, loss, alternative, book });
@@ -161,6 +163,7 @@ export async function reviewMove(engine, move, history) {
 
   return {
     grade, loss, continuation, explanation,
+    ratingWeight: book ? Math.min(0.25, decisionWeight) : decisionWeight,
     bestMove: continuation[0]?.san ?? best.pv[0],
     suggested: continuation[0]?.lan,
     evaluation: scoreFor(played, checkmate),

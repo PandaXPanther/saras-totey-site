@@ -4,9 +4,12 @@ import { botName } from '../chess/banter.js';
 import { MATERIAL_VALUE, materialBalance, opposite, PIECE_NAME, turnName } from '../chess/model.js';
 import { grades } from '../chess/strategy.js';
 import { timeControls, useChessMatch } from '../chess/useChessMatch.js';
+import { useGameReview } from '../chess/useGameReview.js';
+import { reviewOutcomes } from '../chess/gamePerformance.js';
 import { Board, Captures, Piece } from './ChessBoard.jsx';
 import ChessGameReview, { Grade } from './ChessGameReview.jsx';
 import { BoardEvaluation } from './ChessEvaluation.jsx';
+import ChessReviewResult, { ReviewPerformance, ReviewProgress } from './ChessReviewResult.jsx';
 
 function Clock({ time, active }) {
   if (time == null) return null;
@@ -91,11 +94,16 @@ export default function ChessGame({ player, control, onRestart, onClose }) {
   const [confirmResign, setConfirmResign] = useState(false);
   const [promotion, setPromotion] = useState(null);
   const [reviewing, setReviewing] = useState(false);
-  const [analysis, setAnalysis] = useState([]);
+  const [resultDismissed, setResultDismissed] = useState(false);
   const [practice, setPractice] = useState(null);
   const heading = useRef(null);
   const promotionDialog = useRef(null);
   const reviewHeading = useRef(null);
+
+  const reviewState = useGameReview(match.moves, Boolean(match.outcome));
+  const analysis = reviewState.data;
+  const outcomes = useMemo(() => reviewOutcomes(match.moves, analysis, player), [match.moves, analysis, player]);
+  const matePopup = match.outcome?.reason === 'Checkmate' && !resultDismissed;
 
   const index = position ?? match.moves.length;
   const current = match.moves[index - 1];
@@ -172,8 +180,9 @@ export default function ChessGame({ player, control, onRestart, onClose }) {
   }
 
   function openReview() {
+    setResultDismissed(true);
     setReviewing(true);
-    seek(match.moves.length);
+    seek(1);
   }
 
   function downloadPgn() {
@@ -256,8 +265,12 @@ export default function ChessGame({ player, control, onRestart, onClose }) {
             </div>
           </div>}
           {reviewing && <div className="saras-chess__review-panel" ref={reviewHeading} tabIndex={-1}>
-            <ChessGameReview moves={match.moves} position={index} onPosition={seek} player={player} data={analysis} onData={setAnalysis}
+            <ChessGameReview moves={match.moves} position={index} onPosition={seek} player={player} review={reviewState} outcomes={outcomes}
               practice={practice} onPractice={togglePractice} onLineStep={(step) => setPractice({ mode: 'best', step })} />
+          </div>}
+          {!reviewing && match.outcome && match.moves.length > 0 && <div className="saras-chess__postgame-performance">
+            <ReviewProgress review={reviewState} />
+            <ReviewPerformance outcomes={outcomes} complete={reviewState.complete} />
           </div>}
           <div className="saras-chess__record">
             <h3>Moves</h3>
@@ -266,6 +279,8 @@ export default function ChessGame({ player, control, onRestart, onClose }) {
           {!reviewing && <Chat rows={match.chat} send={match.sendChat} />}
         </aside>
       </div>
+      {matePopup && <ChessReviewResult result={status} review={reviewState} outcomes={outcomes}
+        onReview={openReview} onClose={() => setResultDismissed(true)} />}
       {promotion && <dialog ref={promotionDialog} className="saras-chess__promotion" onCancel={() => setPromotion(null)}>
         <h3>Promote pawn</h3>
         <div>{promotion.options.map((move) => <button key={move.promotion} type="button"
