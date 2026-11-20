@@ -17,10 +17,10 @@ export default function PokerChallenge() {
       <div className="saras-poker">
         <header className="saras-poker__header" data-open={open}>
           <div>
-            <p className="folio-kicker">Heads-up Hold’em · Play chips</p>
+            <p className="folio-kicker">Heads-up no-limit Hold’em · 1,000 play chips each</p>
             <h2 id="poker-heading">Play me in poker.</h2>
             {!open && <>
-              <p>Take a seat at my table. We each start with 1,000 play chips in heads-up no-limit Texas Hold’em.</p>
+              <p>I built this poker bot to play bullish, high-conviction Hold’em. It weighs hand equity and how often you’ll fold to compare bets by expected value. When it sees an edge, it’ll overbet the pot or fire a big bluff. It finished ahead on chips against both baseline bots across 520 paired test hands.</p>
               <p className="saras-poker__inspiration">The train doors and 4:11 clock are a nod to Kinji Hakari’s domain in <cite>Jujutsu Kaisen</cite>.</p>
               <button type="button" className="saras-poker__primary" ref={start} onClick={() => setOpen(true)}>Deal me in</button>
             </>}
