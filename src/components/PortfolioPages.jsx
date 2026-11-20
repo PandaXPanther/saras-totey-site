@@ -180,7 +180,7 @@ export function Misc() {
 
   function startBattle() {
     const themes = nextBattleThemes();
-    battleAudio.current = createBattleAudio(themes.native);
+    battleAudio.current = createBattleAudio(themes.native.url);
     setBattleThemes(themes);
     setBattleSound(true);
     setBattleNumber((number) => number + 1);
@@ -189,7 +189,7 @@ export function Misc() {
 
   function restartBattle() {
     const themes = nextBattleThemes();
-    battleAudio.current?.setTheme(themes.native);
+    battleAudio.current?.setTheme(themes.native.url);
     setBattleThemes(themes);
     setBattleNumber((number) => number + 1);
   }
@@ -239,7 +239,7 @@ export function Misc() {
           </div>
           {battleOpen && (
             <Suspense fallback={<p role="status">Starting battle…</p>}>
-              <PokemonBattle key={battleNumber} tracks={battleThemes.favorites} audio={battleAudio.current}
+              <PokemonBattle key={battleNumber} themes={battleThemes} audio={battleAudio.current}
                 sound={battleSound} onSound={(enabled) => {
                   battleAudio.current?.setEnabled(enabled);
                   setBattleSound(enabled);

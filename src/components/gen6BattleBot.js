@@ -34,9 +34,11 @@ function pokemonInfo(pokemon) {
   const [current, maximum] = hp.split('/').map(Number);
   const maxHp = pokemon.stats && maximum ? maximum : typical('hp') + lv + 10;
   const stats = pokemon.stats || Object.fromEntries(['atk', 'def', 'spa', 'spd', 'spe'].map((key) => [key, typical(key) + 5]));
+  const possibleAbilities = Object.values(species.abilities || {});
+  const inferred = possibleAbilities.length === 1 ? gen6.abilities.get(possibleAbilities[0]).id : '';
   return {
     ...pokemon, lv, types: species.types, hp: current / (maximum || 100), maxHp, stats, status,
-    ability: pokemon.ability || pokemon.baseAbility || '', boosts: pokemon.boosts || {},
+    ability: pokemon.ability || pokemon.baseAbility || inferred, boosts: pokemon.boosts || {},
   };
 }
 
@@ -84,6 +86,7 @@ function bestDamage(moves, user, target) {
 export class Gen6BattleBot extends RandomPlayerAI {
   opponent = null;
   ownBoosts = {};
+  revealedAbilities = new Map();
   revealedMoves = new Map();
   playerHazards = {};
   botHazards = {};
@@ -91,23 +94,36 @@ export class Gen6BattleBot extends RandomPlayerAI {
   lastSwitch = -10;
 
   receiveLine(line) {
-    const [, kind, ident = '', value, extra] = line.split('|');
+    const [, kind, ident = '', value, extra, ...annotations] = line.split('|');
     if (kind === 'turn') this.turn = Number(ident);
     if (kind === 'switch' || kind === 'drag') {
-      if (ident.startsWith('p1a:')) this.opponent = { ident, details: value, condition: extra, boosts: {} };
+      if (ident.startsWith('p1a:')) this.opponent = {
+        ident, details: value, condition: extra, boosts: {}, ability: this.revealedAbilities.get(ident),
+      };
       if (ident.startsWith('p2a:')) this.ownBoosts = {};
     }
     if (this.opponent && ident === this.opponent.ident) {
-      if (kind === 'detailschange' || kind === 'replace' || kind === '-formechange') this.opponent.details = value;
+      if (kind === 'detailschange' || kind === 'replace' || kind === '-formechange') {
+        this.opponent.details = value;
+        this.opponent.ability = undefined;
+        this.revealedAbilities.delete(ident);
+      }
       if (kind === '-damage' || kind === '-heal') this.opponent.condition = value;
-      if (kind === '-ability') this.opponent.ability = gen6.abilities.get(value).id;
+      // Reflected moves are logged as the target using the move, with the source ability in a tag.
+      const reflected = kind === 'move' && annotations.includes('[from] ability: Magic Bounce');
+      const revealed = reflected ? 'Magic Bounce' : kind === '-ability' ? value :
+        kind === '-activate' && value?.startsWith('ability: ') ? value.slice('ability: '.length) : null;
+      if (revealed) {
+        this.opponent.ability = gen6.abilities.get(revealed).id;
+        this.revealedAbilities.set(ident, this.opponent.ability);
+      }
       if (kind === '-item') this.opponent.item = gen6.items.get(value).id;
       if (kind === '-enditem') this.opponent.item = '';
       if (kind === '-status' || kind === '-curestatus') {
         const hp = this.opponent.condition.split(' ')[0];
         this.opponent.condition = kind === '-status' ? `${hp} ${value}` : hp;
       }
-      if (kind === 'move') {
+      if (kind === 'move' && !reflected) {
         const known = this.revealedMoves.get(ident) || new Set();
         this.opponent.lastMove = gen6.moves.get(value).id;
         known.add(this.opponent.lastMove);
@@ -204,6 +220,7 @@ export class Gen6BattleBot extends RandomPlayerAI {
     const danger = this.incomingDamage(user);
     const scores = moves.map(({ move: option }) => {
       const move = gen6.moves.get(option.move);
+      if (foe.ability === 'magicbounce' && move.flags.reflectable) return -3;
       const hit = move.accuracy === true ? 1 : move.accuracy / 100;
       if (move.category !== 'Status') {
         const dealt = damage(move, user, foe);

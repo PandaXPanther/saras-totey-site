@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://play.pokemonshowdown.com/style/battle.css">
   <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&amp;display=swap">
   <link rel="stylesheet" href="/battle-arena/eclipse.css?v=2">
-  <link rel="stylesheet" href="/battle-arena/arena.css?v=4">
+  <link rel="stylesheet" href="/battle-arena/arena.css?v=5">
   <script defer src="https://play.pokemonshowdown.com/config/config.js"></script>
   <script defer src="https://play.pokemonshowdown.com/js/lib/jquery-1.11.0.min.js"></script>
   <script defer src="https://play.pokemonshowdown.com/js/lib/html-sanitizer-minified.js"></script>
@@ -23,7 +23,7 @@
   <script defer src="https://play.pokemonshowdown.com/data/teambuilder-tables.js"></script>
   <script defer src="https://play.pokemonshowdown.com/js/battle-tooltips.js"></script>
   <script defer src="https://play.pokemonshowdown.com/js/battle.js"></script>
-  <script defer src="/battle-arena/arena.js?v=4"></script>
+  <script defer src="/battle-arena/arena.js?v=5"></script>
 </head>
 <body>
   <div id="arena" data-theme="arcade" data-bounce="true">
@@ -39,16 +39,27 @@
       </div>
       <div class="shuckle-sparks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
     </div>
-    <section class="battle-feed" aria-labelledby="battle-feed-title">
+    <section class="battle-feed" aria-labelledby="battle-feed-title" data-feed-view="log">
       <header class="battle-feed__heading">
         <h1 id="battle-feed-title">Battle feed</h1>
         <span>vs. Totally Real Saras</span>
       </header>
+      <div class="battle-feed__views" aria-label="Battle feed views" role="group">
+        <button type="button" data-feed-view="log" aria-pressed="true" aria-controls="battle-log">Battle log</button>
+        <button type="button" data-feed-view="chat" aria-pressed="false" aria-controls="battle-chat">Chat</button>
+      </div>
       <div class="battle-feed__callout" aria-live="polite" hidden>
         <img src="/saras-headshot.jpg" alt="" width="27" height="27">
         <div><strong>Totally Real Saras</strong><div data-banter></div></div>
       </div>
-      <div class="battle-log" role="log" aria-label="Battle log" tabindex="0"></div>
+      <div id="battle-log" class="battle-log" role="log" aria-label="Battle log" tabindex="0"></div>
+      <div id="battle-chat" class="battle-chat" hidden>
+        <div class="battle-chat__history" role="log" aria-label="Chat messages" tabindex="0"></div>
+        <div class="battle-chat__compose">
+          <input type="text" maxlength="140" aria-label="Message Totally Real Saras" placeholder="type a message" autocomplete="off">
+          <button type="button">Send</button>
+        </div>
+      </div>
     </section>
   </div>
 </body>

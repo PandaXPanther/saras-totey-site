@@ -6,17 +6,73 @@
   const sparks = arena.querySelector('.shuckle-sparks');
   const chat = arena.querySelector('.battle-feed__callout');
   const message = chat.querySelector('[data-banter]');
+  const feed = arena.querySelector('.battle-feed');
+  const history = arena.querySelector('.battle-chat__history');
+  const input = arena.querySelector('.battle-chat__compose input');
+  const log = arena.querySelector('#battle-log');
+  const chatPanel = arena.querySelector('#battle-chat');
+  const viewButtons = [...arena.querySelectorAll('.battle-feed__views button')];
   let version = 0;
   let openingShuckle = false;
   let playedOpening = false;
   let pendingChat = '';
   let saidHazards = false;
   let lastQuipTurn = -3;
+  let lastReply = -Infinity;
+  let replyNumber = 0;
+
+  function appendChat(author, line, mine = false) {
+    const entry = document.createElement('div');
+    const label = document.createElement('strong');
+    const body = document.createElement('div');
+    entry.className = mine ? 'battle-chat__message battle-chat__message--mine' : 'battle-chat__message';
+    label.textContent = author;
+    body.textContent = line;
+    entry.append(label, body);
+    history.append(entry);
+    if (history.childElementCount > 50) history.firstElementChild.remove();
+    history.scrollTop = history.scrollHeight;
+  }
 
   function say(line) {
     chat.hidden = false;
     message.textContent = line;
+    appendChat('Totally Real Saras', line);
   }
+
+  for (const button of viewButtons) {
+    button.addEventListener('click', () => {
+      const showChat = button.dataset.feedView === 'chat';
+      feed.dataset.feedView = button.dataset.feedView;
+      log.hidden = showChat;
+      chatPanel.hidden = !showChat;
+      for (const option of viewButtons) option.setAttribute('aria-pressed', String(option === button));
+      if (showChat) history.scrollTop = history.scrollHeight;
+      else log.scrollTop = log.scrollHeight;
+    });
+  }
+
+  function sendChat() {
+    const line = input.value.trim();
+    if (!line) return;
+    appendChat('You', line, true);
+    input.value = '';
+    if (performance.now() - lastReply < 1300) return;
+    const replies = ['aight bet', 'we’ll see', 'lmao'];
+    const response = /\b(gg|good game|well played)\b/i.test(line) ? 'gg' :
+      /\b(glhf|good luck)\b/i.test(line) ? 'glhf' :
+      /\b(shuckle|webs|rocks)\b/i.test(line) ? 'shuckle stays' : replies[replyNumber++ % replies.length];
+    lastReply = performance.now();
+    say(response);
+  }
+
+  arena.querySelector('.battle-chat__compose button').addEventListener('click', sendChat);
+  input.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' && !event.isComposing) {
+      event.preventDefault();
+      sendChat();
+    }
+  });
 
   // Kodama's mirror-mode fallback uses short lowercase messages with minimal punctuation.
   function queueBanter(commands, turn) {

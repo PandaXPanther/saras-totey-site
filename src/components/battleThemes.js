@@ -5,8 +5,13 @@ const favorites = [
   ['vjOKKDgKvp4', 'Lugia'],
   ['AVUdyEWH2nE', 'Sword & Shield Gym Leader'],
 ];
-const showdown = ['oras-trainer', 'xy-rival', 'bw-rival', 'hgss-kanto-trainer', 'bw-subway-trainer']
-  .map((name) => [name, `https://play.pokemonshowdown.com/audio/${name}.mp3`]);
+const showdown = [
+  ['oras-trainer', 'Omega Ruby & Alpha Sapphire Trainer'],
+  ['xy-rival', 'X & Y Rival'],
+  ['bw-rival', 'Black & White Rival'],
+  ['hgss-kanto-trainer', 'HeartGold & SoulSilver Kanto Trainer'],
+  ['bw-subway-trainer', 'Black & White Battle Subway'],
+];
 const lastInTab = {};
 
 function freshOrder(tracks, kind) {
@@ -29,5 +34,9 @@ function freshOrder(tracks, kind) {
 }
 
 export function nextBattleThemes() {
-  return { favorites: freshOrder(favorites, 'favorites'), native: freshOrder(showdown, 'showdown')[0][1] };
+  const [file, name] = freshOrder(showdown, 'showdown')[0];
+  return {
+    favorites: freshOrder(favorites, 'favorites'),
+    native: { name, url: `https://play.pokemonshowdown.com/audio/${file}.mp3` },
+  };
 }
