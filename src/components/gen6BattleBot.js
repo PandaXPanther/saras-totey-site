@@ -54,16 +54,26 @@ function stat(pokemon, key) {
   return pokemon.stats[key] * (stage > 0 ? (2 + stage) / 2 : 2 / (2 - stage));
 }
 
-function typeFactor(type, target, move, attackerAbility) {
+export function typeFactor(type, target, move, attackerAbility) {
   const bypassesAbility = ['moldbreaker', 'turboblaze', 'teravolt'].includes(attackerAbility);
   const ability = bypassesAbility ? '' : target.ability;
-  if (type === 'Ground' && (ability === 'levitate' || target.item === 'airballoon') && move !== 'thousandarrows') return 0;
+  if (type === 'Ground' && !target.grounded) {
+    if (move === 'thousandarrows' && target.types.includes('Flying')) return 1;
+    if (move !== 'thousandarrows' && (ability === 'levitate' || target.item === 'airballoon' || target.airborne)) return 0;
+  }
   if (type === 'Water' && ['waterabsorb', 'stormdrain', 'dryskin'].includes(ability)) return 0;
   if (type === 'Electric' && ['voltabsorb', 'motordrive', 'lightningrod'].includes(ability)) return 0;
   if (type === 'Fire' && ability === 'flashfire') return 0;
   if (type === 'Grass' && ability === 'sapsipper') return 0;
-  if (!gen6.getImmunity(type, target.types) && move !== 'thousandarrows') return 0;
-  const effectiveness = gen6.getEffectiveness(type, target.types);
+  if (ability === 'soundproof' && gen6.moves.get(move).flags.sound) return 0;
+  if (ability === 'bulletproof' && gen6.moves.get(move).flags.bullet) return 0;
+  const ignoreType = type === 'Ground' && target.grounded ? 'Flying' :
+    (type === 'Normal' || type === 'Fighting') && attackerAbility === 'scrappy' ? 'Ghost' : '';
+  const types = target.types.filter((defensiveType) => defensiveType !== ignoreType);
+  if (!gen6.getImmunity(type, types)) return 0;
+  let effectiveness = gen6.getEffectiveness(type, types);
+  if (move === 'freezedry' && type === 'Ice' && types.includes('Water')) effectiveness += 2;
+  if (move === 'flyingpress') effectiveness += gen6.getEffectiveness('Flying', types);
   if (ability === 'wonderguard' && effectiveness <= 0) return 0;
   return 2 ** effectiveness;
 }

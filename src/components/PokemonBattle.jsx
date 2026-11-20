@@ -3,6 +3,8 @@ import BattleHint from './BattleHint.jsx';
 import { battleFavorites } from './battleThemes.js';
 import PokemonTeam from './PokemonTeam.jsx';
 
+const effectivenessLabels = { super: 'Super effective', resisted: 'Not very effective', immune: 'Immune' };
+
 export default function PokemonBattle({ audio, sound, onSound, trackName, onRestart, onClose }) {
   const arena = useRef(null);
   const worker = useRef(null);
@@ -171,14 +173,18 @@ export default function PokemonBattle({ audio, sound, onSound, trackName, onRest
                 </button>
               )}
               <div className="pokemon-game__grid pokemon-game__grid--moves">
-                {active.moves.map(({ id, move, pp, maxpp, disabled, description, meta }, index) => (
-                  <BattleHint key={id} name={move} description={description} meta={meta}>
-                    <button type="button" className="pokemon-game__move" disabled={disabled} onClick={() => choose(`move ${index + 1}${mega ? ' mega' : ''}`)}>
-                      <strong>{move}</strong>
-                      {maxpp > 0 && <small>{pp}/{maxpp} PP</small>}
-                    </button>
-                  </BattleHint>
-                ))}
+                {active.moves.map(({ id, move, pp, maxpp, disabled, description, meta, effectiveness, megaEffectiveness }, index) => {
+                  const rating = mega && megaEffectiveness !== undefined ? megaEffectiveness : effectiveness;
+                  return (
+                    <BattleHint key={id} name={move} description={description} meta={meta}>
+                      <button type="button" className="pokemon-game__move" disabled={disabled} onClick={() => choose(`move ${index + 1}${mega ? ' mega' : ''}`)}>
+                        <strong>{move}</strong>
+                        {maxpp > 0 && <small>{pp}/{maxpp} PP</small>}
+                        {!busy && rating && <small className="pokemon-game__effectiveness" data-rating={rating}>{effectivenessLabels[rating]}</small>}
+                      </button>
+                    </BattleHint>
+                  );
+                })}
               </div>
             </fieldset>
           )}

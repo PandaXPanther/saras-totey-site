@@ -460,6 +460,10 @@ section[id] { scroll-margin-top: 8px; }
 .pokemon-game__grid button { display: grid; align-content: center; gap: 2px; min-height: 58px; text-align: left; }
 .pokemon-game__grid--moves button { background: #493047; }
 .pokemon-game__grid small { color: #ead2e2; font-size: 0.8125rem; }
+.pokemon-game__grid .pokemon-game__effectiveness { font-size: .75rem; font-weight: 650; }
+.pokemon-game__effectiveness[data-rating="super"] { color: #a8ecc6; }
+.pokemon-game__effectiveness[data-rating="resisted"] { color: #ffcc95; }
+.pokemon-game__effectiveness[data-rating="immune"] { color: #e5c0ff; }
 .battle-hint { position: relative; min-width: 0; }
 .pokemon-game button.pokemon-game__move { width: 100%; padding-inline-end: 38px; }
 .pokemon-game button.battle-hint__info {
@@ -558,6 +562,14 @@ section[id] { scroll-margin-top: 8px; }
 .pokemon-game__inspector dl { display: flex; flex-wrap: wrap; gap: 9px 14px; margin: 0; }
 .pokemon-game__inspector dt { color: #ead2e2; font-size: .8125rem; }
 .pokemon-game__inspector dd { margin: 0; color: #fff6fa; font-weight: 650; }
+.pokemon-game__types { display: flex; flex-wrap: wrap; gap: 4px; }
+.pokemon-game__types span {
+  padding: 1px 6px;
+  border: 1px solid #dfa9cb57;
+  border-radius: 5px;
+  color: #ffe3f2;
+  font-size: .8125rem;
+}
 .pokemon-game__stats dd { font-variant-numeric: tabular-nums; }
 .pokemon-game__inspector .pokemon-game__moveset { flex-basis: 100%; }
 .pokemon-game__moveset > div { width: 100%; }

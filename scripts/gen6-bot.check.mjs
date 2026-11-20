@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { BattleStreams, Teams } from '@pkmn/sim';
 import { TeamGenerators } from '@pkmn/randoms';
 import { createBotTeam, Gen6BattleBot, lookupGen6Move } from '../src/components/gen6BattleBot.js';
+import { Gen6TypeHints } from '../src/components/gen6TypeHints.js';
 
 Teams.setGeneratorFactory(TeamGenerators);
 
@@ -108,3 +109,42 @@ assert.equal(lookupGen6Move('return102').basePower, 102);
 assert.equal(lookupGen6Move('Frustration 102').name, 'Frustration');
 assert.equal(lookupGen6Move('hiddenpowerice60').type, 'Ice');
 console.log('Tyrantrum verified against Arceus-Flying with and without a Choice lock.');
+
+const hints = new Gen6TypeHints();
+const matchup = BattleStreams.getPlayerStreams(new BattleStreams.BattleStream());
+const excadrill = [{ species: 'Excadrill', level: 80, ability: 'Sand Rush', moves: ['Earthquake', 'Iron Head', 'X-Scissor', 'Swords Dance'] }];
+const foes = [
+  { species: 'Rotom-Wash', level: 80, ability: 'Levitate', moves: ['Will-O-Wisp'] },
+  { species: 'Shuckle', level: 90, ability: 'Sturdy', moves: ['Sticky Web'] },
+];
+await matchup.omniscient.write([
+  '>start {"formatid":"gen6randombattle","seed":[42,888,16,107]}',
+  `>player p1 ${JSON.stringify({ name: 'You', team: Teams.pack(excadrill) })}`,
+  `>player p2 ${JSON.stringify({ name: 'Totally Real Saras', team: Teams.pack(foes) })}`,
+].join('\n'));
+let choices = 0;
+for await (const chunk of matchup.p1) {
+  for (const line of chunk.split('\n')) {
+    if (!line.startsWith('|request|')) {
+      hints.observe(line);
+      continue;
+    }
+    const request = JSON.parse(line.slice('|request|'.length));
+    if (!request.active) continue;
+    const player = request.side.pokemon[0];
+    const ratings = request.active[0].moves.map(({ move }) => hints.effectiveness(move, player));
+    assert.deepEqual(hints.teamTypes(player), ['Ground', 'Steel']);
+    assert.equal(ratings[0], ['super', 'immune', null, 'immune'][choices]);
+    if (choices === 0) assert.equal(ratings[1], 'resisted');
+    assert.equal(ratings[3], null);
+    if (choices === 1) assert.equal(hints.effectiveness('Earthquake', {...player, ability: 'moldbreaker'}), 'super');
+    if (choices === 3) await matchup.omniscient.write('>forcewin p1');
+    else {
+      await matchup.p1.write(choices === 0 ? 'move 1' : 'move 4');
+      await matchup.p2.write(choices === 0 ? 'move 1' : 'switch 2');
+    }
+    choices += 1;
+  }
+}
+assert.equal(choices, 4);
+console.log('Effectiveness verified before a public Levitate reveal, after the reveal, and after switching.');

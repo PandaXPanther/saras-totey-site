@@ -1,11 +1,13 @@
 import { BattleStreams, Teams } from '@pkmn/sim';
 import { TeamGenerators } from '@pkmn/randoms';
+import { Gen6TypeHints } from './gen6TypeHints.js';
 import { createBotTeam, Gen6BattleBot, gen6, lookupGen6Move } from './gen6BattleBot.js';
 
 Teams.setGeneratorFactory(TeamGenerators);
 
 const streams = BattleStreams.getPlayerStreams(new BattleStreams.BattleStream());
 const bot = new Gen6BattleBot(streams.p2, { mega: 1 });
+const typeHints = new Gen6TypeHints();
 
 function reportFailure(error) {
   console.error(error);
@@ -45,18 +47,25 @@ async function readBattle() {
           pokemon.abilityName = ability.name;
           pokemon.abilityDescription = ability.desc || ability.shortDesc;
           pokemon.moveDetails = pokemon.moves.map(describeMove);
+          pokemon.types = typeHints.teamTypes(pokemon);
         }
+        const user = request.side?.pokemon.find((pokemon) => pokemon.active);
         for (const active of request.active || []) {
           for (const option of active.moves) {
             const { description, meta } = describeMove(option.move);
             option.description = description;
             option.meta = meta;
+            option.effectiveness = typeHints.effectiveness(option.move, user);
+            if (typeof active.canMegaEvo === 'string') {
+              option.megaEffectiveness = typeHints.effectiveness(option.move, user, active.canMegaEvo);
+            }
           }
         }
         self.postMessage({ type: 'request', request });
       } else if (line.startsWith('|error|')) {
         self.postMessage({ type: 'invalid-choice', message: line.slice('|error|'.length) });
       } else {
+        typeHints.observe(line);
         commands.push(line);
       }
     }
