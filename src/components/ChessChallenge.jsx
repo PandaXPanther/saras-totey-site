@@ -25,9 +25,12 @@ export default function ChessChallenge() {
       <div>
         <p className="folio-kicker">Custom Saras engine</p>
         <h2 id="saras-chess-heading">Play me in chess.</h2>
-        {!game && <p>Challenge Totally Real Saras, a bot trained off my gameplay. Expect sacrifices and a little trash talk.</p>}
+        {!game && <>
+          <p>Challenge Totally Real Saras, a bot trained off my gameplay. Expect sacrifices and a little trash talk.</p>
+          <p className="saras-chess__inspiration">The black king is a nod to Lelouch and <cite>Code Geass</cite>, my favorite anime.</p>
+        </>}
       </div>
-      {!game && <div className="saras-chess__art" aria-hidden="true"><span>♞</span></div>}
+      {!game && <div className="saras-chess__art" aria-hidden="true"><span>♚</span></div>}
     </header>
     {game ? <Suspense fallback={<p className="saras-chess__loading" role="status">Setting up the board…</p>}>
       <ChessGame key={game.id} player={game.player} control={game.control} onRestart={begin} onClose={close} />
