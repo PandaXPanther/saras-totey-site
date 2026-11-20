@@ -9,8 +9,17 @@ const chapterStarts = [0, 145, 290, 435, 532, 605, 682, 757];
 const scrollScreens = 9.4;
 const beamStart = 336;
 const beamEnd = 348;
-const totalTravel = pacing.at(-1);
-const progressAtFrame = (frame) => pacing[frame] / totalTravel;
+const chapterTravel = [...chapterStarts.map((frame) => pacing[frame]), pacing.at(-1)];
+
+function chapterAt(progress) {
+  return Math.min(chapterStarts.length - 1, Math.floor(progress * chapterStarts.length));
+}
+
+function progressAtFrame(frame) {
+  const chapter = chapterStarts.findLastIndex((start) => frame >= start);
+  const [start, end] = [chapterTravel[chapter], chapterTravel[chapter + 1]];
+  return (chapter + (pacing[frame] - start) / (end - start)) / chapterStarts.length;
+}
 
 const clamp = (value) => Math.min(1, Math.max(0, value));
 const useBrowserLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect;
@@ -18,7 +27,10 @@ const isInAppWebView = () => typeof navigator !== 'undefined'
   && /Instagram|FBAN|FBAV|Discord|;\s*wv\)|\bwv\b|WebView/i.test(navigator.userAgent);
 
 function mediaFrame(progress, settled) {
-  const travel = progress * totalTravel;
+  const chapter = chapterAt(progress);
+  const [start, end] = [chapterTravel[chapter], chapterTravel[chapter + 1]];
+  // Equal scroll distance per chapter, with the original camera pacing inside each one.
+  const travel = start + (end - start) * (progress * chapterStarts.length - chapter);
   let first = 0;
   let last = pacing.length - 1;
   while (first < last) {
@@ -45,7 +57,7 @@ const chapters = [
   { id: 'local-ledger', media: 'ventures', label: 'Local Ledger', eyebrow: 'A public-data observatory', title: 'I wanted to see a place as a living system.', body: 'That curiosity became Local Ledger: jobs, income, housing, schools, and public spending on one research desk, plus a simulator for asking what might change next.', href: '/economics#local-ledger', side: 'right' },
   { id: 'att', media: 'att', label: 'ATT Agency', eyebrow: 'attagency.co', title: 'Want a site that looks like this? I co-founded the studio that builds them.', body: 'At ATT Agency, I help turn a business into a brand, website, campaign, and measurement system without passing the work between disconnected vendors.', href: '/att-agency', side: 'right' },
   { id: 'roblox', media: 'roblox', label: 'Roblox games', eyebrow: 'Roblox game development', title: 'I build games with Ryder.', body: 'I write the gameplay and systems. Ryder designs the worlds, models, and interfaces. You can play our latest releases on Roblox.', href: '/roblox', side: 'left' },
-  { id: 'misc', media: 'misc', label: 'Miscellaneous projects', eyebrow: 'Games I build', title: 'Play against my bots.', body: 'Play chess or battle in Gen 6 Pokémon against bots based on my own games. I’m also building a poker bot.', secondary: 'I also built Kodama, a Discord historian.', href: '/misc', cta: 'See the bots', side: 'right' },
+  { id: 'misc', media: 'misc', label: 'Miscellaneous projects', eyebrow: 'Games I build', title: 'Play against my bots.', body: 'Play chess or battle in Gen 6 Pokémon against bots based on my own games. Take on my heads-up poker bot in Texas Hold’em, too.', secondary: 'I also built Kodama, a Discord historian.', href: '/misc', cta: 'See the bots', side: 'right' },
   { id: 'contact', media: 'contact', label: 'Contact', eyebrow: 'Boulder to anywhere', title: 'Contact me.', body: 'Discord: PandaXPanther · sarastotey@icloud.com · 720-415-9085', side: 'center' },
 ];
 
@@ -152,7 +164,7 @@ export default function ScrollWorld() {
         if (Math.abs(progress - camera) < .0004) camera = progress;
       }
       lastPaint = now;
-      const chapter = chapterStarts.findLastIndex((start) => progress >= progressAtFrame(start));
+      const chapter = chapterAt(progress);
       if (chapter !== activeRef.current) {
         activeRef.current = chapter;
         setActive(chapter);

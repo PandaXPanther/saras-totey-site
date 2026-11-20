@@ -1,5 +1,6 @@
 const lastFrame = 821;
-const framesPerPack = 24;
+const desktopStillStep = 3;
+const nativeDesktopSize = [2560, 1440];
 const overviewStep = 12;
 const motionStep = 2;
 const motionColumns = 4;
@@ -16,16 +17,6 @@ export function visibleFlightFrame(frame) {
   // The lens is completely occluded in the middle of this foreground wipe.
   if (frame >= 340 && frame <= 346) return frame < 343 ? 339 : 347;
   return frame;
-}
-
-function stillFromPack(buffer, index) {
-  const view = new DataView(buffer);
-  const count = view.getUint32(0, true);
-  if (index >= count || count > framesPerPack) throw new Error('Invalid flight frame pack');
-  let offset = (count + 1) * 4;
-  for (let frame = 0; frame < index; frame++) offset += view.getUint32((frame + 1) * 4, true);
-  const size = view.getUint32((index + 1) * 4, true);
-  return new Blob([new Uint8Array(buffer, offset, size)], { type: 'image/webp' });
 }
 
 async function decode(blob) {
@@ -67,24 +58,36 @@ function sheetFrame(target, step) {
   return frame / step;
 }
 
-const motionGroup = (frame) => Math.floor(sheetFrame(frame, motionStep) / motionTiles);
+function sharpDesktopFrame(frame) {
+  if (frame === lastFrame) return lastFrame;
+  const sample = Math.round(frame / desktopStillStep) * desktopStillStep;
+  if (sample >= 340 && sample <= 346) return frame < 343 ? 339 : 348;
+  return sample;
+}
 
 export function createFlightFrames(canvas, variant, onDraw, onUnavailable) {
   const context = canvas.getContext('2d', { alpha: false });
   if (!context) throw new Error('Flight canvas unavailable');
-  const { overview: overviewSize, motion: motionSize, detail: detailSize, canvas: canvasSize } = formats[variant];
+  const { overview: overviewSize, motion: baseMotionSize, detail: detailSize, canvas: canvasSize } = formats[variant];
   const [width, height] = canvasSize;
   canvas.width = width;
   canvas.height = height;
-  const motionPath = `/world/flight/motion-v1/${variant}/`;
+  const desktop = variant === 'wide' && !matchMedia('(pointer: coarse)').matches;
+  const connection = navigator.connection;
+  const enableDetail = !connection?.saveData;
+  const useDesktopMotion = desktop && enableDetail && (!connection?.effectiveType || connection.effectiveType === '4g');
+  const columnsPerSheet = useDesktopMotion ? detailColumns : motionColumns;
+  const tilesPerSheet = useDesktopMotion ? detailTiles : motionTiles;
+  const motionSize = useDesktopMotion ? detailSize : baseMotionSize;
+  const motionGroup = (frame) => Math.floor(sheetFrame(frame, motionStep) / tilesPerSheet);
+  const prefetchRadius = Math.ceil(72 / (motionStep * tilesPerSheet));
+  const motionPath = `/world/flight/motion-${useDesktopMotion ? 'v2' : 'v1'}/${variant}/`;
   const detailPath = `/world/flight/motion-v2/${variant}/`;
   const sheets = new Map();
   const requests = new Map();
   const failedAt = new Map();
   const overviewRequest = new AbortController();
   const lastSheet = motionGroup(lastFrame);
-  const desktop = variant === 'wide' && !matchMedia('(pointer: coarse)').matches;
-  const enableDetail = !navigator.connection?.saveData;
   let overview;
   let still;
   let detailRequest;
@@ -104,11 +107,11 @@ export function createFlightFrames(canvas, variant, onDraw, onUnavailable) {
   function draw() {
     paintRequest = 0;
     const index = sheetFrame(target, motionStep);
-    const group = Math.floor(index / motionTiles);
+    const group = Math.floor(index / tilesPerSheet);
     let source = sheets.get(group);
-    let tile = index % motionTiles;
+    let tile = index % tilesPerSheet;
     let size = motionSize;
-    let columns = motionColumns;
+    let columns = columnsPerSheet;
     let frame = Math.min(lastFrame, index * motionStep);
     let quality = 'motion';
 
@@ -126,7 +129,7 @@ export function createFlightFrames(canvas, variant, onDraw, onUnavailable) {
 
     if (!source) {
       // On a cold connection a distant swipe should still reveal the right chapter.
-      if (!displayed || Math.abs(displayed.frame - target) > framesPerPack) {
+      if (!displayed || Math.abs(displayed.frame - target) > 24) {
         displayed = undefined;
         onUnavailable();
       }
@@ -134,7 +137,13 @@ export function createFlightFrames(canvas, variant, onDraw, onUnavailable) {
     }
     if (displayed?.frame === frame && displayed.quality === quality) return;
     const [w, h] = size;
-    context.drawImage(source, tile % columns * w, Math.floor(tile / columns) * h, w, h, 0, 0, width, height);
+    const [outputWidth, outputHeight] = desktop && quality === 'detail' ? nativeDesktopSize : canvasSize;
+    if (canvas.width !== outputWidth || canvas.height !== outputHeight) {
+      canvas.width = outputWidth;
+      canvas.height = outputHeight;
+    }
+    context.imageSmoothingQuality = desktop ? 'high' : 'medium';
+    context.drawImage(source, tile % columns * w, Math.floor(tile / columns) * h, w, h, 0, 0, outputWidth, outputHeight);
     displayed = { frame, quality };
     onDraw(frame, quality);
   }
@@ -173,7 +182,7 @@ export function createFlightFrames(canvas, variant, onDraw, onUnavailable) {
     const next = motionGroup(destination);
     const stopped = isResting && target !== 0;
     for (const [group, controller] of requests) {
-      const keep = stopped ? group === current : Math.min(Math.abs(group - current), Math.abs(group - next)) <= 3;
+      const keep = stopped ? group === current : Math.min(Math.abs(group - current), Math.abs(group - next)) <= prefetchRadius;
       if (keep) continue;
       requests.delete(group);
       controller.abort();
@@ -198,10 +207,10 @@ export function createFlightFrames(canvas, variant, onDraw, onUnavailable) {
     try {
       let detail;
       if (desktop) {
-        const group = sheetName(Math.floor(frame / framesPerPack));
-        const data = await load(`/world/flight/frames/wide/${group}.bin`, controller, 'low');
-        const image = await decode(stillFromPack(await data.arrayBuffer(), frame % framesPerPack));
-        detail = { image, frame, tile: 0, columns: 1, size: canvasSize };
+        const sample = sharpDesktopFrame(frame);
+        const index = String(Math.ceil(sample / desktopStillStep)).padStart(3, '0');
+        const image = await load(`/world/flight/stills-v4/wide/${index}.webp`, controller, 'high').then(decode);
+        detail = { image, frame: sample, tile: 0, columns: 1, size: nativeDesktopSize };
       } else {
         const sample = sheetFrame(frame, motionStep);
         const group = sheetName(Math.floor(sample / detailTiles));
@@ -240,7 +249,7 @@ export function createFlightFrames(canvas, variant, onDraw, onUnavailable) {
       if (frame !== target) {
         detailRequest?.abort();
         detailAttempt = -1;
-          }
+      }
       target = frame;
       destination = next;
       isResting = resting;

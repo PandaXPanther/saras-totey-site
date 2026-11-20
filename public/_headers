@@ -9,3 +9,6 @@
 
 /world/flight/overview-v3/*
   Cache-Control: public, max-age=31536000, immutable
+
+/world/flight/stills-v4/*
+  Cache-Control: public, max-age=31536000, immutable

@@ -35,8 +35,8 @@ test('the camera paints multiple intermediate frames between wheel movements', a
 
 test('a missing motion sheet cannot freeze the island or hold the chapter links', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.route('**/world/flight/motion-v1/wide/*.webp', (route) => route.abort());
-  await page.route('**/world/flight/frames/wide/*.bin', (route) => route.abort());
+  await page.route('**/world/flight/motion-v*/wide/*.webp', (route) => route.abort());
+  await page.route('**/world/flight/stills-v4/wide/*.webp', (route) => route.abort());
   await page.goto('/');
   await expect(world(page)).toHaveAttribute('data-flight-quality', 'overview');
   await expect.poll(() => renderedFrame(page)).toBe(0);
@@ -95,8 +95,49 @@ test('the flight does not stop on the foreground beam', async ({ page }) => {
   await world(page).evaluate((element, progress) => {
     const distance = parseFloat(element.style.getPropertyValue('--world-scroll-distance'));
     window.scrollTo(0, Math.round(distance * progress));
-  }, pacing[345] / pacing.at(-1));
+  }, (2 + (pacing[345] - pacing[290]) / (pacing[435] - pacing[290])) / 8);
   await expect.poll(() => renderedFrame(page)).toBe(348);
+});
+
+test('every chapter stays active for one eighth of the flight', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  const chapterIds = ['intro', 'trading', 'econ-mom', 'local-ledger', 'att', 'roblox', 'misc', 'contact'];
+  for (const viewport of [{ width: 1753, height: 963 }, { width: 390, height: 650 }]) {
+    await page.setViewportSize(viewport);
+    await expect.poll(() => world(page).evaluate((element) =>
+      parseFloat(element.style.getPropertyValue('--world-scroll-distance'))
+    )).toBeCloseTo(viewport.height * 9.4);
+    for (const [index, id] of chapterIds.entries()) {
+      for (const position of [index / 8 + .001, (index + 1) / 8 - .001]) {
+        await world(page).evaluate((element, fraction) => {
+          const distance = parseFloat(element.style.getPropertyValue('--world-scroll-distance'));
+          window.scrollTo(0, Math.round(distance * fraction));
+        }, position);
+        await expect(activeCopy(page)).toHaveAttribute('data-chapter', id);
+      }
+    }
+  }
+});
+
+test('the economics view settles on the full-size source still', async ({ page }) => {
+  await page.setViewportSize({ width: 1753, height: 963 });
+  await page.goto('/');
+  await expect.poll(() => renderedFrame(page)).toBe(0);
+  const frame = 363;
+  const fetchStill = page.waitForResponse((response) =>
+    response.url().endsWith('/world/flight/stills-v4/wide/121.webp'));
+  await world(page).evaluate((element, progress) => {
+    const distance = parseFloat(element.style.getPropertyValue('--world-scroll-distance'));
+    window.scrollTo(0, Math.round(distance * progress));
+  }, (2 + (pacing[frame] - pacing[290]) / (pacing[435] - pacing[290])) / 8);
+  const still = await fetchStill;
+  expect(still.ok()).toBe(true);
+  await expect(world(page)).toHaveAttribute('data-flight-quality', 'detail');
+  await expect.poll(() => renderedFrame(page)).toBe(frame);
+  await expect(activeCopy(page)).toHaveAttribute('data-chapter', 'econ-mom');
+  const canvasSize = await world(page).locator('canvas').evaluate(({ width, height }) => [width, height]);
+  expect(canvasSize).toEqual([2560, 1440]);
 });
 
 test('the homepage stops link to their projects without reference badges', async ({ page }) => {
@@ -113,12 +154,12 @@ test('the homepage stops link to their projects without reference badges', async
   await chapter(page, 'Miscellaneous projects').click();
   await expect(activeCopy(page)).toContainText('Play against my bots.');
   await expect(activeCopy(page)).toContainText('Play chess or battle in Gen 6 Pokémon');
-  await expect(activeCopy(page)).toContainText('poker bot');
+  await expect(activeCopy(page)).toContainText('Take on my heads-up poker bot in Texas Hold’em');
   await expect(activeCopy(page).locator('.world-copy__secondary')).toContainText('Kodama');
   const origin = await page.evaluate(() => scrollY);
   await activeCopy(page).getByRole('link', { name: 'See the bots' }).click();
   await expect(page).toHaveURL(/\/misc$/);
-  await expect(page.getByRole('main')).not.toContainText('I’m also building a poker bot.');
+  await expect(page.getByRole('main')).not.toContainText('Take on my heads-up poker bot in Texas Hold’em');
   await page.getByRole('link', { name: 'Take me back' }).click();
   await expect.poll(() => page.evaluate(() => scrollY)).toBe(origin);
   await expect(activeCopy(page)).toContainText('Play against my bots.');
