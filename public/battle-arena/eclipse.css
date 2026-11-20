@@ -1,8 +1,8 @@
 .eclipse-landscape,
 #arena[data-theme="arcade"] .backdrop {
   --eclipse-x: 58%;
-  --eclipse-y: 34%;
-  --eclipse-size: min(47%, 196px);
+  --eclipse-y: 40%;
+  --eclipse-size: min(47%, 186px);
   --eclipse-ink: #411225;
   isolation: isolate;
   background:

@@ -385,7 +385,6 @@ section[id] { scroll-margin-top: 8px; }
   .battle-teaser__art { min-height: clamp(185px, 40vw, 248px); --eclipse-size: min(44%, 155px); }
 }
 .pokemon-game {
-  container-type: inline-size;
   padding: clamp(10px, 2vw, 20px);
   border: 1px solid #dfa9cb55;
   border-radius: 10px;

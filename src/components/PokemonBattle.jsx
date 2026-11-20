@@ -123,7 +123,7 @@ export default function PokemonBattle({ audio, sound, onSound, tracks, onRestart
           <label className="pokemon-game__theme">
             Arena
             <select value={theme} onChange={({ target }) => setTheme(target.value)}>
-              <option value="arcade">Crimson Moon</option>
+              <option value="arcade">Infinite Tsukuyomi</option>
               <option value="night">Aurora Night</option>
               <option value="classic">Showdown Classic</option>
             </select>
@@ -143,7 +143,7 @@ export default function PokemonBattle({ audio, sound, onSound, tracks, onRestart
           ref={arena}
           className="pokemon-game__arena"
           title="Pokémon Showdown battlefield and battle log"
-          src="/battle-arena/index.html?v=4"
+          src="/battle-arena/index.html?v=5"
           sandbox="allow-scripts"
           allow="autoplay"
           style={{ height: arenaHeight }}
