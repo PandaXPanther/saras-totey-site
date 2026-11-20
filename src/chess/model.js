@@ -1,5 +1,6 @@
 export const PIECE_NAME = { p: 'pawn', n: 'knight', b: 'bishop', r: 'rook', q: 'queen', k: 'king' };
 export const PIECE_VALUE = { p: 1, n: 3, b: 3.25, r: 5, q: 9, k: 0 };
+export const MATERIAL_VALUE = { ...PIECE_VALUE, b: 3 };
 export const PLAY_ELO = 1750;
 
 export const moveKey = (move) => move.lan;
@@ -55,10 +56,10 @@ export function styleScore(weights, move, previous, ply) {
   return features.reduce((score, feature, index) => score + feature * weights[index], 0);
 }
 
-export function materialBalance(game, color) {
+export function materialBalance(game, color, values = PIECE_VALUE) {
   return game.board().flat().reduce((total, piece) => {
     if (!piece) return total;
-    return total + PIECE_VALUE[piece.type] * (piece.color === color ? 1 : -1);
+    return total + values[piece.type] * (piece.color === color ? 1 : -1);
   }, 0);
 }
 

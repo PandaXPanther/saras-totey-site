@@ -21,7 +21,8 @@ test('play a real engine reply and review the result in place', async ({ page })
   await page.getByRole('button', { name: 'Review game' }).click();
   await expect(page.getByRole('heading', { name: 'Game review' })).toBeVisible();
   await expect(page.getByText('Evaluation by move')).toBeVisible();
-  await expect(page.getByRole('button', { name: /e4.*(Book|Best|Excellent|Good|Inaccuracy|Mistake|Miss|Blunder)/ })).toBeVisible();
+  await page.getByRole('button', { name: 'Move analysis', exact: true }).click();
+  await page.getByLabel('Move list').getByRole('button', { name: /^e4\b/ }).click();
   await page.getByRole('button', { name: 'Show best move' }).click();
   await expect(page.getByRole('button', { name: 'e2 white pawn', exact: true })).toBeVisible();
   await expect(page.locator('[data-suggested="destination"]')).toHaveCount(1);
@@ -203,4 +204,42 @@ test('castling stays unavailable when the king would cross an attacked square', 
   await expect(square(page, 'e1')).toHaveAccessibleName('e1 white king');
   await expect(square(page, 'h1')).toHaveAccessibleName('h1 white rook');
   await expect(page.getByLabel('Move list').getByRole('button')).toHaveCount(8);
+});
+
+test('checkmate, material and review all describe the actual position', async ({ page }) => {
+  await scriptedOpponent(page, ['e7e5', 'b8c6', 'g8f6'], 1);
+  await startUntimed(page, 'w');
+  await expect(page.getByLabel(/material advantage/)).toHaveCount(0);
+  await clickMove(page, 'e2', 'e4');
+  await clickMove(page, 'f1', 'c4');
+  await clickMove(page, 'd1', 'h5');
+  await square(page, 'h5').click();
+  await square(page, 'f7').click();
+
+  await expect(page.getByRole('status').filter({ hasText: 'You won by checkmate' })).toBeVisible();
+  await expect(square(page, 'e8')).toHaveAttribute('data-check', 'mate');
+  await expect(square(page, 'e8')).toHaveAccessibleName('e8 black king, checkmated');
+  await expect(page.getByLabel('White material advantage +1')).toHaveText('+1');
+  await expect(page.getByLabel('Black material advantage +1')).toHaveCount(0);
+  await expect(page.getByLabel('Move list').getByRole('button', { name: 'Qxf7#', exact: true })).toBeVisible();
+
+  await page.unroute('**/chess-engine/stockfish-19-lite-single.js');
+  await page.getByRole('button', { name: 'Review game' }).click();
+  await expect(page.getByRole('button', { name: 'Summary', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByLabel('Game position')).toHaveAttribute('max', '7');
+  await expect(page.getByLabel('Position evaluation')).toHaveText('Mate');
+  await page.getByRole('button', { name: 'Move analysis', exact: true }).click();
+  await expect(page.getByRole('heading', { name: '4. Qxf7#' })).toBeVisible();
+  await expect(page.getByText('This move ends the game by checkmate.')).toBeVisible();
+  await page.getByRole('button', { name: 'Show best move' }).click();
+  await expect(page.getByLabel(/material advantage/)).toHaveCount(0);
+  await expect(page.locator('[data-suggested="destination"]')).toHaveCount(1);
+  await page.getByRole('group', { name: 'Best line' }).getByRole('button', { name: 'Qxf7#', exact: true }).click();
+  await expect(square(page, 'e8')).toHaveAttribute('data-check', 'mate');
+  await expect(page.getByLabel('White material advantage +1')).toBeVisible();
+
+  await page.getByRole('button', { name: 'Show played move' }).click();
+  await page.getByRole('button', { name: 'Previous move' }).click();
+  await expect(page.getByLabel(/material advantage/)).toHaveCount(0);
+  await expect(square(page, 'e8')).not.toHaveAttribute('data-check', 'mate');
 });

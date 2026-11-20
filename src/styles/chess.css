@@ -85,10 +85,38 @@
 .saras-chess__identity { display: grid; flex: 1 1 auto; font-size: .83rem; min-width: 64px; line-height: 1.2; }
 .saras-chess__identity span { color: var(--chess-muted); font-size: .72rem; }
 .saras-chess__captures { display: flex; flex-wrap: wrap; justify-content: end; font-size: 16px; }
+.saras-chess__material { flex: none; padding: 2px 6px; border-radius: 4px; background: #533547; color: #ffe0ab; font-size: .79rem; font-weight: 750; font-variant-numeric: tabular-nums; }
 .saras-chess__clock { flex: none; min-width: 4.4ch; padding: 3px 6px; border-radius: 4px; background: #3d2a3e; text-align: center; font: 750 clamp(18px, 3vw, 26px)/1.25 var(--font-mono, monospace); font-variant-numeric: tabular-nums; }
 .saras-chess__clock[data-active="true"] { color: #281729; background: #f0d5aa; }
 .saras-chess__clock[data-low="true"] { color: #2d1125; background: #f599a8; }
+.saras-chess__board-with-eval[data-review="true"] { display: grid; grid-template-columns: clamp(26px, 3.1vw, 36px) minmax(0, 1fr); gap: 5px; }
+.saras-chess__eval {
+  --eval-top: #503c57;
+  --eval-bottom: #ecd0b7;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: end;
+  border: 1px solid #ab8296;
+  border-radius: 5px;
+  background: linear-gradient(to bottom, var(--eval-top) var(--split), var(--eval-bottom) var(--split));
+  padding: 4px 1px;
+}
+.saras-chess__eval[data-facing="b"] { --eval-top: #ecd0b7; --eval-bottom: #503c57; }
+.saras-chess__eval[data-advantage="top"] { justify-content: start; }
+.saras-chess__eval span {
+  padding: 2px 1px;
+  border-radius: 3px;
+  background: #261b2b;
+  color: #ffe8cd;
+  font: 720 clamp(8px, 1vw, 11px)/1 var(--font-mono, monospace);
+  white-space: nowrap;
+}
+.saras-chess__board-result { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 10px; border: 1px solid #bb7587; border-radius: 5px; background: #5a3044; color: #ffe3d9; }
+.saras-chess__board-result strong { font-size: .95rem; }
+.saras-chess__board-result span { font-size: .8rem; }
 .saras-chess__board {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(8, minmax(0, 1fr));
   grid-template-rows: repeat(8, minmax(0, 1fr));
@@ -121,6 +149,10 @@
 .saras-chess button.saras-chess__square.dark { color: #fae0c5; background: var(--chess-dark); }
 .saras-chess__square[data-last] { box-shadow: inset 0 0 0 60px #ffb65263; }
 .saras-chess__square[data-check] { box-shadow: inset 0 0 0 60px #d83e647a; }
+.saras-chess__square[data-check="mate"] { box-shadow: inset 0 0 0 4px #a52a49, inset 0 0 0 80px #c83d668f; }
+.saras-chess__mate-mark, .saras-chess__board-grade { position: absolute; top: 4%; right: 4%; min-width: 1.3em; padding: 2px 3px; border-radius: 3px; text-align: center; background: #332039; font: 750 clamp(10px, 2.2cqw, 15px)/1.1 var(--font-mono, monospace); pointer-events: none; }
+.saras-chess__mate-mark { color: #ffdfeb; background: #8e2342; }
+.saras-chess__best-arrow { position: absolute; height: clamp(8px, 2.1cqw, 15px); transform: translateY(-50%) rotate(var(--direction)); transform-origin: left center; z-index: 2; pointer-events: none; background: #6338baae; clip-path: polygon(0 32%, calc(100% - .65rem) 32%, calc(100% - .65rem) 0, 100% 50%, calc(100% - .65rem) 100%, calc(100% - .65rem) 68%, 0 68%); }
 .saras-chess__square[data-suggested="destination"]::after { position: absolute; inset: 9%; content: ""; border: 2px dashed #6547ce; border-radius: 7px; pointer-events: none; }
 .saras-chess__square[data-suggested="origin"] { box-shadow: inset 0 0 0 60px #8d85f270; }
 .saras-chess .saras-chess__square[aria-pressed="true"], .saras-chess .saras-chess__square:focus-visible { outline: 3px solid #f5ab53; outline-offset: -3px; z-index: 1; }
@@ -141,6 +173,8 @@
 .saras-chess__side h3 { color: var(--chess-paper); font: 700 .94rem/1.3 var(--font-display); margin: 0 0 6px; }
 .saras-chess__status { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 7px; }
 .saras-chess__status p { color: var(--chess-accent); font-weight: 720; margin: 0; font-size: .85rem; }
+.saras-chess__status[data-mate] { border-color: #be8193; background: #452b40; }
+.saras-chess__status[data-mate] p { font-size: 1rem; color: #ffd9d7; }
 .saras-chess__status > div { display: flex; gap: 5px; flex-wrap: wrap; }
 .saras-chess__status > div:empty { display: none; }
 .saras-chess__moves { position: relative; max-height: 164px; overflow-y: auto; scrollbar-color: #76586e transparent; }
@@ -157,32 +191,57 @@
 .saras-chess__chat form { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 5px; }
 .saras-chess__chat input::placeholder { color: var(--chess-muted); }
 
-.saras-chess__grade { white-space: nowrap; font-size: .69rem; color: #e3cddd; }
+.saras-chess__grade { display: inline-flex; gap: 4px; align-items: center; white-space: nowrap; font-size: .69rem; color: #e3cddd; }
+.saras-chess__grade.saras-chess__board-grade { display: block; font-size: clamp(10px, 2.2cqw, 15px); }
 .saras-chess__grade[data-grade="Brilliant"] { color: #7ee9d5; }
 .saras-chess__grade[data-grade="Great"] { color: #a7cbff; }
 .saras-chess__grade:is([data-grade="Best"], [data-grade="Excellent"]) { color: #b7e6b0; }
 .saras-chess__grade[data-grade="Inaccuracy"] { color: #ffe3a3; }
 .saras-chess__grade:is([data-grade="Mistake"], [data-grade="Miss"]) { color: #f6ba8f; }
 .saras-chess__grade[data-grade="Blunder"] { color: #ff9aab; }
-.saras-chess__review-progress { display: grid; gap: 4px; font-size: .78rem; color: var(--chess-muted); margin-bottom: 8px; }
+.saras-chess__review h3 { font-size: 1.22rem; margin-bottom: 8px; }
+.saras-chess__review-switch { display: flex; gap: 5px; padding: 4px; background: #211823; border-radius: 7px; margin-bottom: 10px; }
+.saras-chess .saras-chess__review-switch button { flex: 1; border-color: transparent; background: transparent; font-weight: 650; }
+.saras-chess .saras-chess__review-switch button[aria-pressed="true"] { color: #ffe0bd; background: #4d3349; border-color: #725268; }
+.saras-chess__review-progress { display: grid; gap: 4px; color: var(--chess-muted); font-size: .78rem; margin-bottom: 8px; }
 .saras-chess__review-progress progress { width: 100%; accent-color: var(--chess-accent); }
-.saras-chess__graph { margin: 8px 0 10px; }
-.saras-chess__graph > div:first-child { display: flex; justify-content: space-between; align-items: baseline; gap: 5px; font-size: .73rem; color: var(--chess-muted); }
-.saras-chess__eval-bars { display: flex; min-height: 64px; overflow-x: auto; border-radius: 4px; background: linear-gradient(#372839 50%, #8a677f 50%, #8a677f calc(50% + 1px), #372839 calc(50% + 1px)); }
-.saras-chess .saras-chess__eval-bars button { flex: 1 0 4px; min-width: 0; padding: 0; background: transparent; border: 0; border-radius: 0; position: relative; }
-.saras-chess .saras-chess__eval-bars button:focus-visible { outline-offset: -2px; }
-.saras-chess .saras-chess__eval-bars button[aria-pressed="true"] { box-shadow: inset 0 -2px var(--chess-accent); background: #e9a9ca25; }
-.saras-chess__eval-bars span { position: absolute; left: 0; right: 0; top: 50%; height: max(1px, var(--advantage)); background: #c98cae; }
-.saras-chess__eval-bars span[data-white="true"] { top: auto; bottom: 50%; background: #f5ce9e; }
-.saras-chess__scores { width: 100%; border-collapse: collapse; margin: 0 0 7px; font-size: .73rem; }
-.saras-chess__scores :is(th, td) { text-align: center; padding: 5px 2px; border-bottom: 1px solid #604754; }
+.saras-chess__graph { margin: 0 0 10px; }
+.saras-chess__graph figcaption, .saras-chess__graph-controls { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.saras-chess__graph figcaption { color: var(--chess-muted); font-size: .76rem; margin-bottom: 4px; }
+.saras-chess__graph canvas { display: block; width: 100%; height: 91px; background: #231a28; border: 1px solid #624257; border-radius: 5px; cursor: crosshair; }
+.saras-chess__graph-controls { color: var(--chess-muted); font-size: .72rem; font-variant-numeric: tabular-nums; }
+.saras-chess .saras-chess__graph-controls input { flex: 1; min-width: 0; min-height: 25px; padding: 0; border: 0; background: transparent; accent-color: var(--chess-accent); }
+.saras-chess__graph-controls span { flex: none; }
+.saras-chess__begin-review { width: 100%; }
+.saras-chess__accuracy-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; margin: 10px 0; }
+.saras-chess__accuracy-cards > div { display: grid; min-width: 0; gap: 2px; padding: 8px 10px; border: 1px solid #624257; border-radius: 6px; background: #312439; }
+.saras-chess__accuracy-cards span { font-size: .77rem; font-weight: 680; }
+.saras-chess__accuracy-cards strong { color: var(--chess-accent); font: 730 1.52rem/1.1 var(--font-display); font-variant-numeric: tabular-nums; }
+.saras-chess__accuracy-cards small { color: var(--chess-muted); font-size: .66rem; }
+.saras-chess__scores { width: 100%; border-collapse: collapse; font-size: .74rem; font-variant-numeric: tabular-nums; }
+.saras-chess__scores :is(th, td) { text-align: center; padding: 2px 4px; border-bottom: 1px solid #51394d; }
+.saras-chess__scores th { font-weight: 650; }
 .saras-chess__scores th:first-child { text-align: left; }
-.saras-chess__accuracy { color: var(--chess-accent); font-weight: 740; }
-.saras-chess__coach { margin-top: 8px; border-left: 2px solid #c08fa9; background: #38283a; border-radius: 0 4px 4px 0; padding: 8px 9px; }
-.saras-chess__coach > div { display: flex; align-items: center; gap: 6px; }
-.saras-chess__review-actions { flex-wrap: wrap; margin-top: 7px; }
-.saras-chess__coach > div > span:last-child { margin-inline-start: auto; color: var(--chess-accent); font-size: .76rem; }
-.saras-chess__coach p { color: var(--chess-muted); font-size: .78rem; margin: 5px 0 0; }
+.saras-chess__scores td > span { color: var(--chess-muted); opacity: .75; }
+.saras-chess .saras-chess__scores button { min-height: 26px; min-width: 31px; padding: 1px 5px; font-size: .73rem; }
+.saras-chess__key-controls { display: flex; flex-wrap: wrap; align-items: end; gap: 5px; }
+.saras-chess__key-controls label { display: grid; gap: 3px; color: var(--chess-muted); font-size: .73rem; }
+.saras-chess .saras-chess__key-controls :is(button, select) { min-height: 34px; padding: 4px 8px; }
+.saras-chess__coach { margin-top: 9px; padding: 9px; background: #38283c; border: 1px solid #6a4b62; border-top-color: #b381a5; border-radius: 6px; }
+.saras-chess__coach-heading { display: flex; align-items: center; gap: 8px; }
+.saras-chess__coach-heading h4 { font: 740 1.06rem/1.15 var(--font-display); margin: 0; }
+.saras-chess__coach-heading .saras-chess__grade { padding: 3px 6px; background: #211824; border-radius: 4px; }
+.saras-chess__coach p, .saras-chess__review-empty { color: var(--chess-muted); font-size: .8rem; margin: 6px 0 0; }
+.saras-chess__compare { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; margin-top: 8px; }
+.saras-chess__compare > div { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 1px 4px; padding: 5px 7px; background: #261b2b; border-radius: 5px; }
+.saras-chess__compare small { grid-column: 1 / -1; font-size: .67rem; color: var(--chess-muted); }
+.saras-chess__compare strong { font-size: .85rem; }
+.saras-chess__compare span { color: var(--chess-accent); font-size: .7rem; font-variant-numeric: tabular-nums; }
+.saras-chess__review-actions, .saras-chess__line > div { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
+.saras-chess .saras-chess__review-actions button[aria-pressed="true"], .saras-chess .saras-chess__line button[aria-pressed="true"] { color: #2a172a; background: #e9becb; border-color: #e9becb; }
+.saras-chess__line { margin-top: 9px; font-size: .77rem; }
+.saras-chess .saras-chess__line button { min-height: 30px; padding: 2px 7px; }
+.saras-chess__visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .saras-chess__promotion { border: 1px solid var(--chess-line); border-radius: 8px; background: var(--chess-panel); color: var(--chess-paper); padding: 16px; }
 .saras-chess__promotion h3 { margin: 0 0 8px; font-size: 1rem; }
 .saras-chess__promotion > div { display: flex; gap: 5px; margin-bottom: 8px; }

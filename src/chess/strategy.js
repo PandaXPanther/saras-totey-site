@@ -107,6 +107,7 @@ const explanations = {
 };
 
 function gradeMove({ move, best, played, before, loss, alternative, book }) {
+  if (move.san.endsWith('#')) return 'Best';
   if (viableSacrifice(move.before, played, best)) return 'Brilliant';
   if (book && loss <= 0.04) return 'Book';
   if (move.lan === best.pv[0] || loss < 0.002) {
@@ -142,12 +143,30 @@ export async function reviewMove(engine, move, history) {
   const board = new Chess(move.before);
   const book = Boolean(profile.openingMoves[positionKey(board)]?.[move.lan]);
   const grade = gradeMove({ move, best, played, before, loss, alternative, book });
-  const bestLine = best.pv.slice(0, 7).map((uci) => fromUci(board, uci)?.san).filter(Boolean);
+  const continuation = [];
+  for (const uci of best.pv.slice(0, 8)) {
+    const next = fromUci(board, uci);
+    if (!next) break;
+    continuation.push(next);
+  }
+  const whiteScore = (score) => move.color === 'w' ? score : -score;
+  const checkmate = move.san.endsWith('#');
+  const scoreFor = (line, mates) => mates
+    ? { kind: 'checkmate', score: whiteScore(1) }
+    : { kind: line.kind, score: whiteScore(line.kind === 'mate' && line.score > 0 ? Math.max(1, line.score - 1) : line.score) };
+  const missedMate = best.kind === 'mate' && best.score > 0 && (played.kind !== 'mate' || played.score <= 0);
+  const explanation = checkmate ? 'This move ends the game by checkmate.'
+    : missedMate ? 'There was a forced mate here. Follow the best line to see it.'
+      : explanations[grade];
 
   return {
-    grade, loss, bestMove: bestLine[0], bestLine: bestLine.join(' '), explanation: explanations[grade],
-    suggested: best.pv[0], evaluation: { kind: played.kind, score: played.score * (move.color === 'w' ? 1 : -1) },
-    whiteChance: move.color === 'w' ? after : 1 - after,
+    grade, loss, continuation, explanation,
+    bestMove: continuation[0]?.san ?? best.pv[0],
+    suggested: continuation[0]?.lan,
+    evaluation: scoreFor(played, checkmate),
+    bestEvaluation: scoreFor(best, continuation[0]?.san.endsWith('#')),
+    bestWhiteChance: move.color === 'w' ? before : 1 - before,
+    whiteChance: checkmate ? Number(move.color === 'w') : (move.color === 'w' ? after : 1 - after),
     accuracy: Math.max(0, 103.5 * Math.exp(-4.4 * loss) - 3.5),
   };
 }

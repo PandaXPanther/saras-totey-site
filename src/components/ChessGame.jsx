@@ -1,10 +1,12 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Chess } from 'chess.js';
 import { botName } from '../chess/banter.js';
-import { fromUci, opposite, PIECE_NAME, turnName } from '../chess/model.js';
+import { MATERIAL_VALUE, materialBalance, opposite, PIECE_NAME, turnName } from '../chess/model.js';
+import { grades } from '../chess/strategy.js';
 import { timeControls, useChessMatch } from '../chess/useChessMatch.js';
 import { Board, Captures, Piece } from './ChessBoard.jsx';
 import ChessGameReview, { Grade } from './ChessGameReview.jsx';
+import { BoardEvaluation } from './ChessEvaluation.jsx';
 
 function Clock({ time, active }) {
   if (time == null) return null;
@@ -14,7 +16,7 @@ function Clock({ time, active }) {
   </span>;
 }
 
-function Player({ color, player, moves, clocks, active }) {
+function Player({ color, player, moves, clocks, active, material }) {
   const isPlayer = color === player;
   return <div className="saras-chess__player" data-active={active}>
     {isPlayer ? <span className="saras-chess__avatar saras-chess__avatar--you"><Piece color={color} type="k" /></span>
@@ -24,6 +26,8 @@ function Player({ color, player, moves, clocks, active }) {
       <span>{turnName(color)}{!isPlayer && ' · ~1750'}</span>
     </div>
     <Captures moves={moves} color={color} />
+    {material > 0 && <span className="saras-chess__material"
+      aria-label={`${color === 'w' ? 'White' : 'Black'} material advantage +${material}`}>+{material}</span>}
     <Clock time={clocks?.[color]} active={active} />
   </div>;
 }
@@ -49,7 +53,7 @@ function MoveList({ moves, data, position, setPosition }) {
         const selected = position === row + 1;
         return (
           <button key={row} ref={selected ? active : null} type="button" aria-pressed={selected} onClick={() => setPosition(row + 1)}>
-            {san} {data[row] && <Grade grade={data[row].grade} />}
+            {san} {data[row] && <Grade grade={data[row].grade} iconOnly />}
           </button>
         );
       })}
@@ -96,18 +100,33 @@ export default function ChessGame({ player, control, onRestart, onClose }) {
   const index = position ?? match.moves.length;
   const current = match.moves[index - 1];
   const review = analysis[index - 1];
-  const fen = practice ? current?.before : current?.after;
-  const board = useMemo(() => {
-    const game = new Chess(fen);
-    if (practice?.move) fromUci(game, practice.move.lan);
-    return game;
-  }, [fen, practice?.move]);
+  const line = practice?.mode === 'best' ? review?.continuation.slice(0, practice.step) ?? [] : [];
+  const alternate = practice?.move ?? line.at(-1);
+  const shownMove = practice ? alternate : current;
+  const fen = practice ? (alternate?.after ?? current?.before) : current?.after;
+  const board = useMemo(() => new Chess(fen), [fen]);
+  const whiteMaterial = useMemo(() => materialBalance(board, 'w', MATERIAL_VALUE), [board]);
+  const visibleMoves = practice
+    ? [...match.moves.slice(0, index - 1), ...line, ...(practice.move ? [practice.move] : [])]
+    : match.moves.slice(0, index);
+  const mate = shownMove?.san.endsWith('#');
+  const resultTitle = match.outcome?.winner === player ? 'You won'
+    : match.outcome?.winner ? botName + ' won' : 'Draw';
+  const checkmateResult = mate && !reviewing && match.outcome?.reason === 'Checkmate';
+  const shownReview = practice ? analysis[index - 2] : review;
+  const bestPosition = alternate && alternate.lan === review?.suggested && line.length <= 1;
+  const evaluation = mate ? { kind: 'checkmate', score: shownMove.color === 'w' ? 1 : -1 }
+    : bestPosition ? review.bestEvaluation
+      : (!alternate && shownReview?.evaluation) || (!shownMove && index <= 1 ? { kind: 'cp', score: 0 } : undefined);
+  const whiteChance = mate ? Number(shownMove.color === 'w') : bestPosition ? review.bestWhiteChance
+    : (!alternate ? shownReview?.whiteChance : undefined) ?? 0.5;
   const liveTurn = match.ready && !match.outcome && !match.error && position === null && match.turn === player;
   const canPlay = !promotion && (liveTurn || (practice?.mode === 'retry' && !practice.move));
   const targets = canPlay && selected ? board.moves({ square: selected, verbose: true }).map((move) => move.to) : [];
-  const suggestion = practice?.mode === 'best' ? review?.suggested : undefined;
+  const suggestion = practice?.mode === 'best' && !practice.step ? review?.suggested : undefined;
+  const boardGrade = reviewing && !practice && review ? { name: review.grade, symbol: grades[review.grade] } : undefined;
   const status = match.outcome
-    ? `${match.outcome.winner === player ? 'You won' : match.outcome.winner ? 'Totally Real Saras won' : 'Draw'} · ${match.outcome.reason}`
+    ? resultTitle + (match.outcome.reason === 'Checkmate' ? ' by checkmate' : ' · ' + match.outcome.reason)
     : match.error ? 'Engine unavailable. Start a new game to retry.'
       : !match.ready ? 'Loading the engine…'
         : match.turn === player ? 'Your move' : 'Saras is thinking…';
@@ -130,7 +149,7 @@ export default function ChessGame({ player, control, onRestart, onClose }) {
 
   function togglePractice(mode) {
     setSelected(null);
-    setPractice(practice?.mode === mode ? null : { mode });
+    setPractice(practice?.mode === mode ? null : { mode, step: 0 });
   }
 
   function tryMove(from, to) {
@@ -154,7 +173,7 @@ export default function ChessGame({ player, control, onRestart, onClose }) {
 
   function openReview() {
     setReviewing(true);
-    seek(1);
+    seek(match.moves.length);
   }
 
   function downloadPgn() {
@@ -174,10 +193,21 @@ export default function ChessGame({ player, control, onRestart, onClose }) {
   }
 
   return (
-    <div className="saras-chess__studio">
+    <div className="saras-chess__studio" onKeyDown={(event) => {
+      if (!reviewing || event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
+        event.target.closest('input, select, textarea, dialog')) return;
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      event.preventDefault();
+      const next = index + (event.key === 'ArrowLeft' ? -1 : 1);
+      if (next >= 0 && next <= match.moves.length) seek(next);
+    }}>
       <div className="saras-chess__topbar">
         <div tabIndex={-1} ref={heading}><strong>{timeControls[control].name}</strong><span>Play as {turnName(player)}</span></div>
         <div>
+          {reviewing && <>
+            <button type="button" onClick={() => { seek(match.moves.length); setReviewing(false); }}>Back to game</button>
+            <button type="button" onClick={downloadPgn}>Save PGN</button>
+          </>}
           <button type="button" onClick={() => setFacing(opposite(facing))}>Flip board</button>
           <button type="button" onClick={onRestart}>New game</button>
           <button type="button" onClick={onClose}>Close game</button>
@@ -187,10 +217,19 @@ export default function ChessGame({ player, control, onRestart, onClose }) {
         <div className="saras-chess__stage">
           {[opposite(facing), facing].map((color, playerIndex) => (
             <React.Fragment key={playerIndex}>
-              {playerIndex === 1 && <Board game={board} facing={facing} selected={selected}
-                last={practice ? practice.move : current} legal={targets} suggested={suggestion}
-                onSelect={canPlay ? chooseSquare : undefined} onDrop={canPlay ? tryMove : undefined} />}
-              <Player color={color} player={player} moves={match.moves.slice(0, index)} clocks={match.clocks}
+              {playerIndex === 1 && <>
+                <div className="saras-chess__board-with-eval" data-review={reviewing}>
+                  {reviewing && <BoardEvaluation evaluation={evaluation} whiteChance={whiteChance} facing={facing} />}
+                  <Board game={board} facing={facing} selected={selected}
+                    last={shownMove} legal={targets} suggested={suggestion} grade={boardGrade}
+                    onSelect={canPlay ? chooseSquare : undefined} onDrop={canPlay ? tryMove : undefined} />
+                </div>
+                {checkmateResult && <div className="saras-chess__board-result" aria-hidden="true">
+                  <strong>Checkmate</strong><span>{resultTitle}</span>
+                </div>}
+              </>}
+              <Player color={color} player={player} moves={visibleMoves} clocks={reviewing ? null : match.clocks}
+                material={color === 'w' ? whiteMaterial : -whiteMaterial}
                 active={!match.outcome && !match.error && match.ready && match.turn === color} />
             </React.Fragment>
           ))}
@@ -203,11 +242,11 @@ export default function ChessGame({ player, control, onRestart, onClose }) {
           </div>
         </div>
         <aside className="saras-chess__side">
-          <div className="saras-chess__status">
+          {!reviewing && <div className="saras-chess__status" data-mate={checkmateResult || undefined}>
             <p role="status">{status}</p>
             <div>
               {match.outcome && match.moves.length > 0 && <>
-                {!reviewing && <button type="button" className="saras-chess__primary" onClick={openReview}>Review game</button>}
+                <button type="button" className="saras-chess__primary" onClick={openReview}>Review game</button>
                 <button type="button" onClick={downloadPgn}>Save PGN</button>
               </>}
               {match.ready && !match.outcome && !match.error && (confirmResign ? <>
@@ -215,16 +254,16 @@ export default function ChessGame({ player, control, onRestart, onClose }) {
                 <button type="button" onClick={() => setConfirmResign(false)}>Cancel</button>
               </> : <button type="button" onClick={() => setConfirmResign(true)}>Resign</button>)}
             </div>
-          </div>
-          {reviewing && <div ref={reviewHeading} tabIndex={-1}>
+          </div>}
+          {reviewing && <div className="saras-chess__review-panel" ref={reviewHeading} tabIndex={-1}>
             <ChessGameReview moves={match.moves} position={index} onPosition={seek} player={player} data={analysis} onData={setAnalysis}
-              practice={practice} onPractice={togglePractice} />
+              practice={practice} onPractice={togglePractice} onLineStep={(step) => setPractice({ mode: 'best', step })} />
           </div>}
           <div className="saras-chess__record">
             <h3>Moves</h3>
             <MoveList moves={match.moves} data={analysis} position={index} setPosition={seek} />
           </div>
-          <Chat rows={match.chat} send={match.sendChat} />
+          {!reviewing && <Chat rows={match.chat} send={match.sendChat} />}
         </aside>
       </div>
       {promotion && <dialog ref={promotionDialog} className="saras-chess__promotion" onCancel={() => setPromotion(null)}>

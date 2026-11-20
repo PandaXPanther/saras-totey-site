@@ -10,12 +10,26 @@ export function Piece({ type, color }) {
   return <span aria-hidden="true" className={`saras-chess__piece saras-chess__piece--${color}`}>{glyphs[type]}</span>;
 }
 
-export function Board({ game, facing, onSelect, onDrop, selected, legal = [], last, suggested }) {
+function arrowStyle(uci, facing) {
+  const file = (index) => files.indexOf(uci[index]);
+  const rank = (index) => 8 - Number(uci[index]);
+  const x = (column) => facing === 'w' ? column : 7 - column;
+  const y = (row) => facing === 'w' ? row : 7 - row;
+  const fromX = x(file(0));
+  const fromY = y(rank(1));
+  const deltaX = x(file(2)) - fromX;
+  const deltaY = y(rank(3)) - fromY;
+  return { left: (fromX + 0.5) * 12.5 + '%', top: (fromY + 0.5) * 12.5 + '%',
+    width: Math.hypot(deltaX, deltaY) * 12.5 + '%', '--direction': Math.atan2(deltaY, deltaX) + 'rad' };
+}
+
+export function Board({ game, facing, onSelect, onDrop, selected, legal = [], last, suggested, grade }) {
   const pointer = useRef(null);
   const ignoreClick = useRef(false);
   const [dragging, setDragging] = useState(null);
   const [focused, setFocused] = useState('e2');
   const checked = game.isCheck();
+  const mate = checked && game.isCheckmate();
   let rows = game.board();
   if (facing === 'b') rows = [...rows].reverse().map((row) => [...row].reverse());
 
@@ -70,13 +84,15 @@ export function Board({ game, facing, onSelect, onDrop, selected, legal = [], la
         const name = facing === 'w' ? files[file] + (8 - rank) : files[7 - file] + (rank + 1);
         const target = (dragging?.targets ?? legal).includes(name);
         const recent = last?.from === name || last?.to === name;
-        const checkedKing = checked && piece?.type === 'k' && piece.color === game.turn();
+        const checkedKing = checked && piece?.type === 'k' && piece.color === game.turn()
+          ? (mate ? 'mate' : 'check') : undefined;
+        const checkLabel = checkedKing ? (mate ? ', checkmated' : ', in check') : '';
         const marker = suggested?.slice(2, 4) === name ? 'destination'
           : suggested?.slice(0, 2) === name ? 'origin' : undefined;
         return (
           <button key={name} type="button"
             className={`saras-chess__square ${(rank + file) % 2 ? 'dark' : 'light'}`}
-            aria-label={`${name} ${piece ? turnName(piece.color) + ' ' + PIECE_NAME[piece.type] : 'empty'}`}
+            aria-label={`${name} ${piece ? turnName(piece.color) + ' ' + PIECE_NAME[piece.type] : 'empty'}${checkLabel}`}
             aria-pressed={onSelect ? selected === name : undefined}
             tabIndex={focused === name ? 0 : -1}
             onFocus={() => setFocused(name)}
@@ -94,7 +110,7 @@ export function Board({ game, facing, onSelect, onDrop, selected, legal = [], la
             data-movable={onDrop && piece?.color === game.turn() ? '' : undefined}
             data-dragging={dragging?.name === name || undefined}
             data-last={recent || undefined}
-            data-check={checkedKing || undefined}
+            data-check={checkedKing}
             data-suggested={marker}
             onClick={(event) => {
               if (ignoreClick.current && event.detail > 0) return;
@@ -103,10 +119,14 @@ export function Board({ game, facing, onSelect, onDrop, selected, legal = [], la
             {file === 0 && <span aria-hidden="true" className="saras-chess__rank">{name[1]}</span>}
             {rank === 7 && <span aria-hidden="true" className="saras-chess__file">{name[0]}</span>}
             {piece && <Piece color={piece.color} type={piece.type} />}
+            {checkedKing === 'mate' && <span className="saras-chess__mate-mark" aria-hidden="true">#</span>}
+            {grade && last?.to === name && <span className="saras-chess__grade saras-chess__board-grade" data-grade={grade.name}
+              title={grade.name} aria-hidden="true">{grade.symbol}</span>}
             {target && <span aria-hidden="true" className={`saras-chess__target${piece ? ' saras-chess__target--capture' : ''}`} />}
           </button>
         );
       }))}
+      {suggested && <span className="saras-chess__best-arrow" aria-hidden="true" style={arrowStyle(suggested, facing)} />}
       {dragging && createPortal(
         <div data-dragged-piece="" aria-hidden="true" className="saras-chess__drag-piece"
           style={{ left: dragging.x, top: dragging.y, fontSize: dragging.size }}>
