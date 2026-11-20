@@ -331,13 +331,24 @@ section[id] { scroll-margin-top: 8px; }
   margin: 0 0 20px;
   color: var(--portfolio-muted);
 }
-.misc-battle .folio-button { color: #291b27; font-family: inherit; cursor: pointer; }
+.misc-battle .folio-button { color: #291b27; }
 .misc-battle .folio-button:hover { background: #f6c6df; }
-.misc-battle p.misc-battle__instructions { margin: 22px 0 12px; }
+.misc-battle__replay-toggle {
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--portfolio-link);
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+}
+.misc-battle p.misc-battle__instructions { margin: 12px 0 0; }
 .misc-battle iframe {
   display: block;
   width: 100%;
   height: clamp(550px, 75svh, 790px);
+  margin-top: 20px;
   border: 0;
   border-radius: 8px;
   background: #f6f6f6;

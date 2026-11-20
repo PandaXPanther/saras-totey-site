@@ -16,6 +16,7 @@ const agencyWork = [
 ];
 
 const showdownUrl = 'https://play.pokemonshowdown.com/';
+const showdownReplayUrl = 'https://replay.pokemonshowdown.com/gen6randombattle-2716688165';
 
 const miscProjects = [
   { name: 'Kodama', type: 'Discord bot', url: 'https://askkodama.com/', description: 'A historian for Discord servers. Kodama searches old conversations and answers questions using the server’s own context.', image: 'kodama' },
@@ -168,7 +169,7 @@ export function Roblox() {
 }
 
 export function Misc() {
-  const [battleOpen, setBattleOpen] = useState(false);
+  const [replayOpen, setReplayOpen] = useState(false);
 
   return (
     <>
@@ -192,17 +193,15 @@ export function Misc() {
           <h2 id="pokemon-battle-heading">Battle Me in Pokémon</h2>
           <p>I built this battle simulator into my site using Pokémon Showdown. Challenge a bot trained on my own battle data to play like me in Gen 6 Random Battle. Gen 6 was my first generation, and it’s still my favorite. You get a fresh team every match. Have fun!</p>
           <div className="page-actions">
-            <button type="button" className="folio-button" aria-expanded={battleOpen} aria-controls="showdown-client" onClick={() => setBattleOpen(!battleOpen)}>
-              {battleOpen ? 'Close simulator' : 'Play Gen 6 Random Battle'}
+            <ExternalLink className="folio-button" href={showdownUrl}>Play Gen 6 Random Battle</ExternalLink>
+            <button type="button" className="folio-link misc-battle__replay-toggle" aria-expanded={replayOpen} aria-controls="showdown-replay" onClick={() => setReplayOpen((open) => !open)}>
+              {replayOpen ? 'Close replay' : 'Watch a Gen 6 replay'}
             </button>
-            <ExternalLink className="folio-link" href={showdownUrl}>Open Pokémon Showdown in a new tab</ExternalLink>
           </div>
-          <div id="showdown-client" hidden={!battleOpen}>
-            {battleOpen && (
-              <>
-                <p className="misc-battle__instructions">Choose <strong>[Gen 6] Random Battle</strong> from the format menu in Pokémon Showdown.</p>
-                <iframe title="Pokémon Showdown battle simulator" src={showdownUrl} allow="autoplay" referrerPolicy="no-referrer" />
-              </>
+          <p className="misc-battle__instructions">Choose <strong>[Gen 6] Random Battle</strong> from Showdown’s format menu.</p>
+          <div id="showdown-replay" hidden={!replayOpen}>
+            {replayOpen && (
+              <iframe title="Gen 6 Random Battle replay on Pokémon Showdown" src={showdownReplayUrl} allow="autoplay" referrerPolicy="no-referrer" />
             )}
           </div>
         </div>
