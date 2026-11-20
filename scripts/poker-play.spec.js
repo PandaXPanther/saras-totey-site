@@ -1,0 +1,42 @@
+import { expect, test } from 'playwright/test';
+
+test('the poker table deals a hand privately, pays a fold and rotates the dealer', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  await page.goto('/misc#poker');
+  const section = page.getByRole('region', { name: 'Play me in poker.' });
+  await expect(section).toContainText('Kinji Hakari');
+  await section.getByRole('button', { name: 'Deal me in' }).click();
+  const table = section.getByRole('group', { name: 'Poker table' });
+  await expect(table).toBeVisible();
+  await expect(table.getByLabel('Your cards').getByRole('img')).toHaveCount(2);
+  await expect(table.getByLabel('Saras’s cards').getByRole('img', { name: 'Face-down card' })).toHaveCount(2);
+  await expect(table.getByLabel('Dealer button').first()).toBeVisible();
+  await expect(section.getByRole('button', { name: 'Call 5', exact: true })).toBeVisible();
+  await section.getByRole('button', { name: 'Fold', exact: true }).click();
+  await expect(section.getByText('Saras takes the pot', { exact: true })).toBeVisible();
+  await expect(table.getByLabel('Your stack')).toHaveText('995');
+  await expect(table.getByLabel('Saras’s stack')).toHaveText('1,005');
+  await expect(table.getByLabel('Saras’s cards').getByRole('img', { name: 'Face-down card' })).toHaveCount(2);
+  await section.getByRole('button', { name: 'Next hand' }).click();
+  await expect(table.getByLabel('Saras’s seat').getByLabel('Dealer button')).toBeVisible();
+  await expect(section.getByLabel('Betting log')).toContainText(/Saras (calls|raises|folds)/);
+  await section.getByRole('button', { name: 'Close table' }).click();
+  await expect(section.getByRole('button', { name: 'Deal me in' })).toBeFocused();
+  await expect(page).toHaveURL(/\/misc#poker$/);
+  expect(errors).toEqual([]);
+});
+
+test('phone layout can go all-in and finish a hand', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/misc#poker');
+  const section = page.getByRole('region', { name: 'Play me in poker.' });
+  await section.getByRole('button', { name: 'Deal me in' }).click();
+  await section.getByRole('button', { name: 'Max', exact: true }).click();
+  await expect(section.getByLabel('Total bet this round')).toHaveValue('1000');
+  await section.getByRole('button', { name: 'All-in 1,000', exact: true }).click();
+  await expect(section.getByRole('button', { name: /Next hand|Play again/ })).toBeVisible();
+  const table = await section.getByRole('group', { name: 'Poker table' }).boundingBox();
+  expect(table.x + table.width).toBeLessThanOrEqual(390);
+  await expect(page.getByRole('region', { name: 'Chess ratings' })).toHaveCount(1);
+});

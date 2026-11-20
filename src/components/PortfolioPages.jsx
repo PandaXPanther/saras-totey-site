@@ -2,6 +2,7 @@ import React, { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import catalog from '../data/roblox-games.json';
 import { creators } from '../data/robloxCreators.js';
 import ChessRatings from './ChessRatings.jsx';
+import PokerChallenge from './PokerChallenge.jsx';
 import { createBattleAudio } from './battleAudio.js';
 import { nextBattleTheme } from './battleThemes.js';
 
@@ -204,8 +205,11 @@ export function Misc() {
     <>
       <header className="folio-wrap page-heading portfolio-hero misc-heading">
         <h1>Other projects.</h1>
-        <p>Pokémon battles, a Discord historian, a national extemp scoreboard, and a chess bot trained on my games.</p>
-        <a className="misc-heading__chess folio-link" href="#chess">Jump to chess <span aria-hidden="true">↓</span></a>
+        <p>Challenge my Pokémon, chess, and poker bots, or explore a few of my other projects.</p>
+        <nav className="misc-games-nav" aria-label="Jump to a game">
+          <a className="misc-heading__chess folio-link" href="#chess">Jump to chess <span aria-hidden="true">↓</span></a>
+          <a className="misc-heading__chess folio-link" href="#poker">Jump to poker <span aria-hidden="true">↓</span></a>
+        </nav>
       </header>
       <section className="folio-wrap misc-library" aria-label="Featured projects">
         {miscProjects.map(({ name, type, description, image, url }) => (
@@ -250,6 +254,7 @@ export function Misc() {
         </div>
       </section>
       <ChessRatings />
+      <PokerChallenge />
     </>
   );
 }
