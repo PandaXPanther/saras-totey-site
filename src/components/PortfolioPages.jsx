@@ -21,9 +21,25 @@ const agencyWork = [
   { title: 'Shital Tayde', type: 'Artist portfolio', href: 'https://shital-tayde-art.pages.dev', image: 'shital' },
 ];
 
-const miscProjects = [
-  { name: 'Kodama', type: 'Discord bot', url: 'https://askkodama.com/', description: 'A historian for Discord servers. Kodama searches old conversations and answers questions using the server’s own context.', image: 'kodama' },
-  { name: 'Extemp National Points Race', type: 'Speech & debate', url: 'https://national-points-race.pages.dev/', description: 'National extemp standings with tournament results, past seasons, and the scoring rules behind every ranking.', image: 'extemp' },
+const otherProjects = [
+  {
+    name: 'Kodama',
+    type: 'Discord history',
+    description: 'Kodama searches past Discord conversations and answers questions using the server’s own messages. Ask about an inside joke, an old decision, or a moment nobody remembers the details of.',
+    image: 'kodama',
+    imageAlt: 'Kodama answering a question about a tournament in a Discord conversation',
+    url: 'https://askkodama.com/',
+    action: 'Explore Kodama',
+  },
+  {
+    name: 'Extemp National Points Race',
+    type: 'Speech & debate',
+    description: 'Follow the national standings for high school extemporaneous speaking. See which tournaments counted, how points are awarded, and who placed in past seasons.',
+    image: 'extemp',
+    imageAlt: 'Extemp National Points Race standings with competitor names, schools, and points',
+    url: 'https://national-points-race.pages.dev/',
+    action: 'View the standings',
+  },
 ];
 
 function ExternalLink({ children, href, className }) {
@@ -252,17 +268,29 @@ export function Misc() {
       </section>
       <ChessRatings />
       <PokerChallenge />
-      <section className="folio-wrap misc-library" aria-labelledby="misc-projects-heading">
-        <h2 id="misc-projects-heading">Other projects</h2>
-        {miscProjects.map(({ name, type, description, image, url }) => (
-          <article key={name}>
-            <ExternalLink href={url} className="misc-feature">
-              <img src={`/projects/${image}.webp`} alt="" width="800" height="504" loading="lazy" decoding="async" />
-              <span>{type}</span><h3>{name}</h3><p>{description}</p>
-            </ExternalLink>
+    </>
+  );
+}
+
+export function OtherProjects() {
+  return (
+    <>
+      <header className="folio-wrap page-heading portfolio-hero other-heading">
+        <h1>Other Projects.</h1>
+      </header>
+      <div className="folio-wrap other-projects">
+        {otherProjects.map(({ name, type, description, image, imageAlt, url, action }) => (
+          <article key={image} className={`other-showcase other-showcase--${image}`} aria-labelledby={`${image}-title`}>
+            <div className="other-showcase__copy">
+              <p className="folio-kicker">{type}</p>
+              <h2 id={`${image}-title`}>{name}</h2>
+              <p>{description}</p>
+              <ExternalLink className="other-showcase__link" href={url}>{action} <span aria-hidden="true">↗</span></ExternalLink>
+            </div>
+            <img className="other-showcase__preview" src={`/projects/${image}.webp`} alt={imageAlt} width="800" height="504" loading="lazy" decoding="async" />
           </article>
         ))}
-      </section>
+      </div>
     </>
   );
 }

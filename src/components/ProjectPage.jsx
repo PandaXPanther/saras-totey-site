@@ -2,7 +2,7 @@ import React from 'react';
 import { IDENTITY, SYSTEMS } from '../data/content.js';
 import { useTradingFeeds } from '../data/useTradingFeeds.js';
 import { summarizePaper } from '../data/tradingFormat.js';
-import { Economics, Agency, Roblox, Misc } from './PortfolioPages.jsx';
+import { Economics, Agency, Roblox, Misc, OtherProjects } from './PortfolioPages.jsx';
 import System from '../sections/System.jsx';
 import Backtest from '../sections/Backtest.jsx';
 import Live from '../sections/Live.jsx';
@@ -11,7 +11,7 @@ import Hero from '../sections/Hero.jsx';
 import Thesis from '../sections/Thesis.jsx';
 import Footer from '../sections/Footer.jsx';
 
-const pages = { economics: Economics, 'att-agency': Agency, roblox: Roblox, misc: Misc };
+const pages = { economics: Economics, 'att-agency': Agency, roblox: Roblox, misc: Misc, 'other-projects': OtherProjects };
 const footerLinks = [
   ['GitHub', `https://github.com/${IDENTITY.github_user}`],
   ['LinkedIn', IDENTITY.linkedin],

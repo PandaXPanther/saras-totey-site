@@ -5,8 +5,8 @@ import pacing from '../data/flight-pacing.json';
 
 const flightPath = '/world/flight/';
 const flightPoster = `${flightPath}continuous-flight-poster.webp`;
-const chapterStarts = [0, 145, 290, 435, 532, 605, 682, 757];
-const scrollScreens = 9.4;
+const chapterStarts = [0, 145, 290, 435, 532, 605, 682, 721, 757];
+const scrollScreens = 1.175 * chapterStarts.length;
 const beamStart = 336;
 const beamEnd = 348;
 const chapterTravel = [...chapterStarts.map((frame) => pacing[frame]), pacing.at(-1)];
@@ -57,7 +57,8 @@ const chapters = [
   { id: 'local-ledger', media: 'ventures', label: 'Local Ledger', eyebrow: 'A public-data observatory', title: 'I wanted to see a place as a living system.', body: 'That curiosity became Local Ledger: jobs, income, housing, schools, and public spending on one research desk, plus a simulator for asking what might change next.', href: '/economics#local-ledger', side: 'right' },
   { id: 'att', media: 'att', label: 'ATT Agency', eyebrow: 'attagency.co', title: 'Want a site that looks like this? I co-founded the studio that builds them.', body: 'At ATT Agency, I help turn a business into a brand, website, campaign, and measurement system without passing the work between disconnected vendors.', href: '/att-agency', side: 'right' },
   { id: 'roblox', media: 'roblox', label: 'Roblox games', eyebrow: 'Roblox game development', title: 'I build games with Ryder.', body: 'I write the gameplay and systems. Ryder designs the worlds, models, and interfaces. You can play our latest releases on Roblox.', href: '/roblox', side: 'left' },
-  { id: 'misc', media: 'misc', label: 'Bots', eyebrow: 'Games I build', title: 'Play against my bots.', body: 'Play chess or battle in Gen 6 Pokémon against bots based on my own games. Take on my heads-up poker bot in Texas Hold’em, too.', secondary: 'I also built Kodama, a Discord historian.', href: '/misc', cta: 'See the bots', side: 'right' },
+  { id: 'misc', media: 'misc', label: 'Bots', eyebrow: 'Games I build', title: 'Play against my bots.', body: 'Play chess or battle in Gen 6 Pokémon against bots based on my own games. Take on my heads-up poker bot in Texas Hold’em, too.', href: '/misc', cta: 'See the bots', side: 'right' },
+  { id: 'other-projects', media: 'stills-v4/wide/243', label: 'Other Projects', eyebrow: 'Other Projects', title: 'Discord history and extemp standings.', body: 'Kodama helps Discord servers search their own history. The Extemp National Points Race tracks high school speakers across the country.', href: '/other-projects', cta: 'Explore the projects', side: 'right' },
   { id: 'contact', media: 'contact', label: 'Contact', eyebrow: 'Boulder to anywhere', title: 'Contact me.', body: 'Discord: PandaXPanther · sarastotey@icloud.com · 720-415-9085', side: 'center' },
 ];
 
@@ -73,7 +74,6 @@ function WorldChapter({ chapter, index, active }) {
       </div>
     ) : <Heading className="world-copy__title">{chapter.title}</Heading>}
     <p>{chapter.body}</p>
-    {chapter.secondary && <p className="world-copy__secondary">{chapter.secondary}</p>}
     {chapter.note && <small className="world-copy__note">{chapter.note}</small>}
     {chapter.href && <a className="glass-button" href={chapter.href} data-work-link="true">{chapter.cta || 'Take me there'}</a>}
     {chapter.id === 'contact' && <div className="world-copy__contact">
@@ -270,7 +270,7 @@ export default function ScrollWorld() {
     chapterJump.current = requestAnimationFrame(move);
   }
 
-  return <main ref={root} className="scroll-world" data-marker={active} data-flight-renderer={playFlight ? 'frames' : undefined} data-scroll-mode="free" data-in-app-webview={isInAppWebView() || undefined}>
+  return <main ref={root} className="scroll-world" style={{ '--world-scroll-screens': scrollScreens }} data-marker={active} data-flight-renderer={playFlight ? 'frames' : undefined} data-scroll-mode="free" data-in-app-webview={isInAppWebView() || undefined}>
     <span className="world-contact-anchor" id="contact" style={{ '--contact-position': progressAtFrame(chapterStarts.at(-1)) }} />
     <div className="scroll-world__sticky">
       <div className="scroll-world__stage" aria-hidden="true">

@@ -4,7 +4,8 @@ export const routes = {
   '/economics': { label: 'Economics', title: 'Economics Projects | Saras Totey', description: 'Explore Econ.mom’s interactive tools and Local Ledger’s public economic data and policy simulator.' },
   '/att-agency': { label: 'ATT Agency', short: 'Agency', title: 'ATT Agency | Saras Totey', description: 'Selected web, technology, and search work from the Boulder marketing studio I co-founded.' },
   '/roblox': { label: 'Roblox', title: 'Roblox Game Development | Saras Totey', description: 'Play Roblox games I build with Ryder Thomas. The catalog follows both creators and their owned communities.' },
-  '/misc': { label: 'Bots', title: 'Play the Bots | Saras Totey', description: 'Play against Saras Totey’s Pokémon, chess, and heads-up poker bots. Explore Kodama and the Extemp National Points Race.' },
+  '/misc': { label: 'Bots', title: 'Play the Bots | Saras Totey', description: 'Play against Saras Totey’s Pokémon, chess, and heads-up poker bots.' },
+  '/other-projects': { label: 'Other Projects', short: 'Projects', title: 'Other Projects | Saras Totey', description: 'Explore Kodama, a historian for Discord servers, and the Extemp National Points Race, a national leaderboard for high school extemp.' },
 };
 
 const legacyPaths = { '/home': '/', '/econ-mom': '/economics', '/local-ledger': '/economics' };

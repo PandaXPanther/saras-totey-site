@@ -92,7 +92,7 @@ section[id] { scroll-margin-top: 8px; }
 .roblox-heading { display: grid; align-items: end; grid-template-columns: minmax(0, 1.55fr) minmax(235px, .85fr); gap: clamp(24px, 6vw, 100px); }
 .roblox-heading h1 { font-weight: 700; letter-spacing: -.085em; line-height: .88; font-size: clamp(57px, 8.8vw, 128px); }
 .roblox-heading h1 em { color: var(--portfolio-link); }
-.agency-work, .agency-studio, .roblox-library, .misc-library { padding-block: 34px clamp(42px, 7vw, 90px); }
+.agency-work, .agency-studio, .roblox-library { padding-block: 34px clamp(42px, 7vw, 90px); }
 .agency-work, .agency-studio, .roblox-library { border-top: 1px solid var(--portfolio-rule); }
 .agency-grid, .game-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 15px; margin-top: 22px; }
 .agency-card { display: block; color: inherit; }
@@ -225,7 +225,7 @@ section[id] { scroll-margin-top: 8px; }
 }
 
 @media (max-width: 530px) {
-  :root { scroll-padding-top: calc(64px + env(safe-area-inset-top)); }
+  :root { scroll-padding-top: calc(64px + env(safe-area-inset-top) + var(--portfolio-nav-offset, 0px)); }
 
   .agency-grid, .game-grid { grid-template-columns: minmax(0, 1fr); }
 
@@ -234,7 +234,7 @@ section[id] { scroll-margin-top: 8px; }
 
 /* Project pages retain the original portfolio's type, glass and spacing. */
 .folio-wrap { padding-inline: clamp(22px, 6vw, 90px); }
-.project-return { position: relative; top: calc(66px + env(safe-area-inset-top)); z-index: 3; height: 0; padding-block: 0; }
+.project-return { position: relative; top: calc(66px + env(safe-area-inset-top) + var(--portfolio-nav-offset, 0px)); z-index: 3; height: 0; padding-block: 0; }
 .project-return a { display: inline-block; padding-block: 4px; color: var(--text-dim); }
 .portfolio-hero {
   display: flex;
@@ -307,15 +307,77 @@ section[id] { scroll-margin-top: 8px; }
 }
 .misc-heading { min-height: min(56svh, 515px); }
 .misc-heading__jump { align-self: flex-start; padding-block: 12px; margin-top: 8px; color: #f2bf99; }
-.misc-library { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; border-top: 1px solid var(--portfolio-rule); }
-.misc-library > h2 { grid-column: 1 / -1; }
-.misc-feature { display: block; color: inherit; }
-.misc-feature:hover h3 { color: var(--portfolio-link); }
-.misc-feature { border: 1px solid var(--portfolio-rule); border-radius: 8px; background: #271f29; padding: 16px; height: 100%; }
-.misc-feature img { width: 100%; height: auto; display: block; border-radius: 5px; margin-bottom: 12px; }
-.misc-feature span { font-size: 14px; color: var(--portfolio-link); }
-.misc-feature h3 { font-size: clamp(24px, 3vw, 40px); margin: 6px 0; font-weight: 650; }
-.misc-feature p { margin: 8px 0 0; color: var(--portfolio-muted); }
+.project-page--other-projects {
+  --portfolio-ink: #182747;
+  --portfolio-muted: #455679;
+  --portfolio-link: #274a92;
+  --portfolio-rule: #23396033;
+  --portfolio-background: radial-gradient(ellipse 85% 480px at 87% 0%, #cdd9f1, transparent), #edf1f7;
+}
+.other-heading {
+  min-height: 0;
+  padding-bottom: clamp(28px, 5vw, 68px);
+}
+.other-projects {
+  display: grid;
+  gap: clamp(18px, 3vw, 36px);
+  padding-bottom: clamp(46px, 8vw, 100px);
+}
+.other-showcase {
+  display: grid;
+  grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+  align-items: center;
+  gap: clamp(24px, 4vw, 64px);
+  padding: clamp(22px, 4vw, 60px);
+  border: 1px solid var(--showcase-edge);
+  border-radius: 16px;
+  background: var(--showcase-surface);
+  color: var(--showcase-ink);
+}
+.other-showcase--kodama {
+  --showcase-surface: #172d24;
+  --showcase-ink: #eff9ec;
+  --showcase-muted: #c3d8c9;
+  --showcase-accent: #b9ef9c;
+  --showcase-edge: #547262;
+}
+.other-showcase--extemp {
+  --showcase-surface: #fbf7ed;
+  --showcase-ink: #162c45;
+  --showcase-muted: #3d536b;
+  --showcase-accent: #245679;
+  --showcase-edge: #c1cdd6;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr);
+}
+.other-showcase .folio-kicker { margin-bottom: 10px; color: var(--showcase-accent); }
+.other-showcase h2 {
+  font: 650 clamp(32px, 4vw, 65px)/.96 var(--font-display);
+  letter-spacing: -.05em;
+  text-wrap: balance;
+}
+.other-showcase h2 + p { margin: 16px 0 18px; color: var(--showcase-muted); font-size: clamp(16px, 1.5vw, 19px); }
+.other-showcase__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 7px 13px;
+  border: 1px solid currentColor;
+  border-radius: 6px;
+  color: var(--showcase-accent);
+  font-weight: 650;
+}
+.other-showcase__link:hover { color: var(--showcase-surface); background: var(--showcase-accent); }
+.other-showcase__preview {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--showcase-edge);
+  border-radius: 8px;
+}
+@media (min-width: 761px) {
+  .other-showcase--extemp .other-showcase__preview { grid-area: 1 / 1; }
+}
 .misc-battle { padding-block: 0 clamp(34px, 5vw, 64px); }
 .misc-battle__panel {
   padding: clamp(18px, 3vw, 34px);
@@ -650,16 +712,16 @@ section[id] { scroll-margin-top: 8px; }
 .project-page--misc {
   --portfolio-background: radial-gradient(ellipse 80% 505px at 86% 2%, #5236598c, transparent 92%), linear-gradient(145deg, #271e29, #1c171e 53%);
 }
-.misc-feature { border-top-color: #b47ca0a3; }
-.misc-feature:hover { border-color: #e4a3cba3; }
 
 @media (max-width: 760px) {
   .econ-feature__grid, .roblox-heading { grid-template-columns: minmax(0, 1fr); }
-  .page-heading { padding-top: calc(104px + env(safe-area-inset-top)); }
+  .page-heading { padding-top: calc(104px + env(safe-area-inset-top) + var(--portfolio-nav-offset, 0px)); }
   .portfolio-hero h1 { font-size: clamp(48px, 12vw, 82px); }
   .agency-heading h1 { font-size: clamp(42px, 9vw, 68px); }
   .misc-heading { min-height: 0; }
+  .other-showcase { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 530px) {
-  .misc-library, .chess-panel { grid-template-columns: minmax(0, 1fr); }
+  .chess-panel { grid-template-columns: minmax(0, 1fr); }
+  .project-page--quant .hero-world { padding-top: calc(120px + var(--portfolio-nav-offset, 0px)); }
 }

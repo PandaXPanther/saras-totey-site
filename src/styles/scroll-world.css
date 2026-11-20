@@ -4,10 +4,10 @@ html:has(.scroll-world) {
 }
 
 .scroll-world {
-  --world-scroll-distance: 940svh;
+  --world-scroll-distance: calc(100svh * var(--world-scroll-screens));
   position: relative;
   min-height: 100dvh;
-  height: var(--world-height, 1040svh);
+  height: var(--world-height, calc(var(--world-scroll-distance) + 100svh));
   padding: 0;
   overflow-anchor: none;
   background: #f7e8ed;
@@ -101,7 +101,6 @@ html:has(.scroll-world) {
 .world-copy p { max-width: 470px; margin: 20px 0 0; color: #55444d; font: 450 clamp(16px, 1.2vw, 19px)/1.5 'Switzer', 'Avenir Next', sans-serif; }
 .world-copy--right p { margin-left: auto; }
 .world-copy--center p { margin-inline: auto; }
-.world-copy p.world-copy__secondary { margin-top: 8px; color: #69565d; font-size: clamp(12px, 1.04vw, 15px); }
 .world-copy__note { display: block; margin-top: 12px; color: #755d69; font: 10px/1.4 'JetBrains Mono', monospace; }
 .world-copy__identity { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .world-copy__identity img {
@@ -191,6 +190,9 @@ html:has(.scroll-world) {
 :is(.glass-nav a[href="/att-agency"], [data-chapter="att"]) { --tab-ink: #953c2d; --tab-accent: #d46b54; --tab-surface: #ffdfd2; }
 :is(.glass-nav a[href="/roblox"], [data-chapter="roblox"]) { --tab-ink: #175c55; --tab-accent: #529f8f; --tab-surface: #d7f3e9; }
 :is(.glass-nav a[href="/misc"], [data-chapter="misc"]) { --tab-ink: #634423; --tab-accent: #b58348; --tab-surface: #f8e9d0; }
+:is(.glass-nav a[href="/other-projects"], [data-chapter="other-projects"]) { --tab-ink: #264686; --tab-accent: #6785cd; --tab-surface: #dfe8ff; }
+.world-copy--other-projects .glass-button { color: var(--tab-ink); background: #f6f8ffb5; }
+.world-copy--other-projects .glass-button:hover { color: #fff; background: var(--tab-ink); }
 
 .glass-nav {
   position: fixed;
@@ -200,6 +202,7 @@ html:has(.scroll-world) {
   display: flex;
   justify-content: center;
   gap: 7px;
+  width: max-content;
   max-width: calc(100% - 16px);
   transform: translateX(-50%);
 }
@@ -265,7 +268,7 @@ html:has(.scroll-world) {
   .world-controls { left: 12px; bottom: max(12px, env(safe-area-inset-bottom)); }
   .glass-nav ~ .audio-dock { bottom: calc(8px + env(safe-area-inset-bottom)); right: max(10px, env(safe-area-inset-right)); }
   .world-route {
-    top: max(61px, calc(env(safe-area-inset-top) + 57px));
+    top: calc(max(61px, calc(env(safe-area-inset-top) + 57px)) + var(--portfolio-nav-offset, 0px));
     right: 50%;
     transform: translateX(50%);
     grid-auto-flow: column;
@@ -273,9 +276,12 @@ html:has(.scroll-world) {
   }
   .world-route button { width: clamp(30px, 9vw, 36px); height: 44px; }
 }
-@media (max-width: 370px) {
-  .glass-nav { gap: 4px; }
-  .glass-nav a { padding-inline: 6px; }
+@media (max-width: 420px) {
+  .glass-nav a { padding-inline: 5px; }
+}
+@media (max-width: 367px) {
+  :root { --portfolio-nav-offset: 48px; }
+  .glass-nav { flex-wrap: wrap; width: min(228px, calc(100% - 16px)); }
 }
 @media (max-height: 620px) and (orientation: portrait) {
   .world-copy, .world-copy--left, .world-copy--right, .world-copy--center { bottom: calc(105px + env(safe-area-inset-bottom)); }
