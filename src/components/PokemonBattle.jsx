@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import BattleHint from './BattleHint.jsx';
-import BattleSoundtrack from './BattleSoundtrack.jsx';
+import { battleFavorites } from './battleThemes.js';
 import PokemonTeam from './PokemonTeam.jsx';
 
-export default function PokemonBattle({ audio, sound, onSound, themes, onRestart, onClose }) {
+export default function PokemonBattle({ audio, sound, onSound, trackName, onRestart, onClose }) {
   const arena = useRef(null);
   const worker = useRef(null);
   const version = useRef(0);
@@ -138,12 +138,23 @@ export default function PokemonBattle({ audio, sound, onSound, themes, onRestart
           <button type="button" onClick={onClose}>Close battle</button>
         </div>
       </div>
+      <div className="pokemon-game__music">
+        <details className="pokemon-game__favorites">
+          <summary>Battle soundtrack <span>(these are my favorite themes)</span></summary>
+          <ul>
+            {battleFavorites.map(([id, name]) => (
+              <li key={id}><a href={`https://www.youtube.com/watch?v=${id}`} target="_blank" rel="noreferrer">{name}</a></li>
+            ))}
+          </ul>
+        </details>
+        {sound && <span className="pokemon-game__track">Battle music · {trackName}</span>}
+      </div>
       <div className="pokemon-game__layout">
         <iframe
           ref={arena}
           className="pokemon-game__arena"
           title="Pokémon Showdown battlefield and battle log"
-          src="/battle-arena/index.html?v=6"
+          src="/battle-arena/index.html?v=7"
           sandbox="allow-scripts"
           allow="autoplay"
           style={{ height: arenaHeight }}
@@ -175,7 +186,6 @@ export default function PokemonBattle({ audio, sound, onSound, themes, onRestart
             <PokemonTeam pokemon={request.side.pokemon} canSwitch={!busy && (!active?.trapped || forced)} preview={preview} choose={choose} />
           )}
         </div>
-        <BattleSoundtrack themes={themes} enabled={sound} audio={audio} />
       </div>
     </div>
   );

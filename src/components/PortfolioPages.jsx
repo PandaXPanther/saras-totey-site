@@ -3,7 +3,7 @@ import catalog from '../data/roblox-games.json';
 import { creators } from '../data/robloxCreators.js';
 import ChessRatings from './ChessRatings.jsx';
 import { createBattleAudio } from './battleAudio.js';
-import { nextBattleThemes } from './battleThemes.js';
+import { nextBattleTheme } from './battleThemes.js';
 
 const PokemonBattle = lazy(() => import('./PokemonBattle.jsx'));
 
@@ -173,24 +173,24 @@ export function Misc() {
   const [battleOpen, setBattleOpen] = useState(false);
   const [battleNumber, setBattleNumber] = useState(0);
   const [battleSound, setBattleSound] = useState(true);
-  const [battleThemes, setBattleThemes] = useState(null);
+  const [battleTrackName, setBattleTrackName] = useState('');
   const battleAudio = useRef(null);
 
   useEffect(() => () => battleAudio.current?.close(), []);
 
   function startBattle() {
-    const themes = nextBattleThemes();
-    battleAudio.current = createBattleAudio(themes.native.url);
-    setBattleThemes(themes);
+    const track = nextBattleTheme();
+    battleAudio.current = createBattleAudio(track.url);
+    setBattleTrackName(track.name);
     setBattleSound(true);
     setBattleNumber((number) => number + 1);
     setBattleOpen(true);
   }
 
   function restartBattle() {
-    const themes = nextBattleThemes();
-    battleAudio.current?.setTheme(themes.native.url);
-    setBattleThemes(themes);
+    const track = nextBattleTheme();
+    battleAudio.current?.setTheme(track.url);
+    setBattleTrackName(track.name);
     setBattleNumber((number) => number + 1);
   }
 
@@ -239,7 +239,7 @@ export function Misc() {
           </div>
           {battleOpen && (
             <Suspense fallback={<p role="status">Starting battle…</p>}>
-              <PokemonBattle key={battleNumber} themes={battleThemes} audio={battleAudio.current}
+              <PokemonBattle key={battleNumber} trackName={battleTrackName} audio={battleAudio.current}
                 sound={battleSound} onSound={(enabled) => {
                   battleAudio.current?.setEnabled(enabled);
                   setBattleSound(enabled);

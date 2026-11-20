@@ -149,24 +149,11 @@ html, body { margin: 0; overflow: hidden; }
 }
 #arena .battle :is(.leftbar, .rightbar) { background: #241725b8; border-color: #be7b7959; }
 #arena .battle .trainer strong { color: #f9e8ec; }
-#arena .battle .trainer .trainersprite {
-  width: 52px;
-  height: 52px;
-  margin: 6px auto;
-  border: 2px solid #d38f9b;
-  border-radius: 12px;
-  background-size: cover !important;
-  background-position: center !important;
-  transform: none;
-}
-#arena .battle .trainer-far .trainersprite { background-image: url('/saras-headshot.jpg') !important; }
-#arena .battle .trainer-near .trainersprite {
-  background:
-    radial-gradient(circle at 50% 50%, #fff 0 8%, #372039 9% 15%, transparent 16%),
-    linear-gradient(#dc6a77 0 44%, #3a2440 45% 55%, #f6e0e5 56% 100%) !important;
-  border-radius: 50%;
-  width: 39px;
-  height: 39px;
+#arena .battle .trainer-far .trainersprite {
+  background-image: url('/battle-arena/saras-trainer.png') !important;
+  background-position: center bottom !important;
+  background-size: 80px 80px !important;
+  opacity: 1;
 }
 .portrait-track {
   position: absolute;

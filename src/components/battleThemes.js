@@ -1,4 +1,4 @@
-const favorites = [
+export const battleFavorites = [
   ['llnXhrCn9Yo', 'Black & White Elite Four'],
   ['0yqm7vrCp-g', 'Volo'],
   ['GIn8_Q27WFY', 'Zinnia'],
@@ -12,31 +12,17 @@ const showdown = [
   ['hgss-kanto-trainer', 'HeartGold & SoulSilver Kanto Trainer'],
   ['bw-subway-trainer', 'Black & White Battle Subway'],
 ];
-const lastInTab = {};
+const previousTrackKey = 'portfolio-battle-theme-showdown';
+let lastInTab;
 
-function freshOrder(tracks, kind) {
-  const order = [...tracks];
-  for (let i = order.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [order[i], order[j]] = [order[j], order[i]];
-  }
+export function nextBattleTheme() {
+  let previous = lastInTab;
+  try { previous = sessionStorage.getItem(previousTrackKey) ?? previous; } catch { /* Memory works in private contexts. */ }
 
-  const key = `portfolio-battle-theme-${kind}`;
-  let previous = lastInTab[kind];
-  try { previous = sessionStorage.getItem(key) ?? previous; } catch { /* Memory works in private contexts. */ }
-  if (order[0][0] === previous) {
-    const j = 1 + Math.floor(Math.random() * (order.length - 1));
-    [order[0], order[j]] = [order[j], order[0]];
-  }
-  lastInTab[kind] = order[0][0];
-  try { sessionStorage.setItem(key, order[0][0]); } catch { /* The next match still skips the previous track. */ }
-  return order;
-}
+  const available = showdown.filter(([file]) => file !== previous);
+  const [file, name] = available[Math.floor(Math.random() * available.length)];
+  lastInTab = file;
+  try { sessionStorage.setItem(previousTrackKey, file); } catch { /* The next match still skips the previous track. */ }
 
-export function nextBattleThemes() {
-  const [file, name] = freshOrder(showdown, 'showdown')[0];
-  return {
-    favorites: freshOrder(favorites, 'favorites'),
-    native: { name, url: `https://play.pokemonshowdown.com/audio/${file}.mp3` },
-  };
+  return { name, url: `https://play.pokemonshowdown.com/audio/${file}.mp3` };
 }

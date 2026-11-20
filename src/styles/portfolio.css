@@ -418,55 +418,26 @@ section[id] { scroll-margin-top: 8px; }
 }
 .pokemon-game__layout {
   display: grid;
-  grid-template-areas: "arena" "controls" "soundtrack";
+  grid-template-areas: "arena" "controls";
   grid-template-columns: minmax(0, 1fr);
   align-items: start;
   gap: 10px;
 }
 .pokemon-game__controls { grid-area: controls; min-width: 0; }
-.pokemon-soundtrack {
-  grid-area: soundtrack;
-  min-width: 0;
-  width: min(100%, 470px);
-  border: 1px solid #dfa9cb42;
-  border-radius: 8px;
-  background: linear-gradient(160deg, #492c42, #281d31 75%);
+.pokemon-game__music {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin-bottom: 10px;
+  color: #e9cddd;
+  font-size: 0.875rem;
 }
-.pokemon-soundtrack summary {
-  padding: 10px 11px;
-  color: #ffecf6;
-  font-size: .875rem;
-  font-weight: 650;
-  cursor: pointer;
-}
-.pokemon-soundtrack summary span { color: #e9cddd; font-weight: 400; }
-.pokemon-soundtrack[open] summary { border-bottom: 1px solid #dfa9cb42; }
-.pokemon-soundtrack label { display: grid; gap: 6px; padding: 9px; font-size: .875rem; font-weight: 650; }
-.pokemon-soundtrack select {
-  min-width: 0;
-  width: 100%;
-  min-height: 38px;
-  padding: 6px;
-  border: 1px solid #b678925d;
-  border-radius: 5px;
-  color: #fff6fa;
-  background: #281d31;
-  font: inherit;
-}
-.pokemon-soundtrack__viewport {
-  position: relative;
-  display: grid;
-  place-items: center;
-  min-height: 200px;
-  aspect-ratio: 16 / 9;
-  border-radius: 0 0 7px 7px;
-  overflow: hidden;
-  background: #1a1320;
-  color: #e4cadc;
-}
-.pokemon-soundtrack__player,
-.pokemon-soundtrack__player iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-.pokemon-soundtrack p { margin: 0; padding: 7px 9px; font-size: .875rem; }
+.pokemon-game__favorites summary { min-height: 24px; color: #ffecf6; cursor: pointer; }
+.pokemon-game__favorites summary span { color: #e9cddd; }
+.pokemon-game__favorites ul { margin: 6px 0; padding-left: 20px; }
+.pokemon-game__favorites a { color: #ffd5ed; }
 .pokemon-game .pokemon-game__status { margin: 12px 0; }
 .pokemon-game .pokemon-game__error { margin: 0 0 12px; color: #ffc2b7; }
 .pokemon-game__choices { min-width: 0; margin: 12px 0 0; padding: 0; border: 0; }

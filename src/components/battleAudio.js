@@ -8,7 +8,6 @@ export function createBattleAudio(theme) {
   const Context = window.AudioContext || window.webkitAudioContext;
   let context;
   let enabled = true;
-  let favoritePlaying = false;
   let closed = false;
 
   function unlockEffects() {
@@ -20,7 +19,7 @@ export function createBattleAudio(theme) {
   }
 
   function syncMusic() {
-    if (closed || !enabled || favoritePlaying) music.pause();
+    if (closed || !enabled) music.pause();
     else void music.play().catch(() => {});
   }
 
@@ -35,10 +34,6 @@ export function createBattleAudio(theme) {
     },
     setTheme(url) {
       music.src = url;
-      syncMusic();
-    },
-    setFavoritePlaying(value) {
-      favoritePlaying = value;
       syncMusic();
     },
     playShiny() {
