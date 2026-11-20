@@ -25,6 +25,8 @@ test('best-five rankings cover a wheel, full house, quads and kickers', () => {
   assert.ok(handRank(cards('As 2h 3d 4s 5s 9h Kd')).score < handRank(cards('2s 3h 4d 5d 6s 9c Jd')).score);
   assert.equal(handRank(cards('As Ah Ac Kd Kc Kh 3d')).label, 'Full house');
   assert.equal(handRank(cards('As Ah Ac Ad Kh Kc 3d')).label, 'Four of a kind');
+  assert.equal(handRank(cards('As Ah Ac Ad Kh Kc 3d')).detail, 'Four aces');
+  assert.equal(handRank(cards('6s 6h Ad Kd 9c 5s 2h')).detail, 'Pair of sixes');
   assert.equal(handRank(cards('As Ks Qs Js Ts 9h 3d')).label, 'Royal flush');
   assert.ok(handRank(cards('As Ah Kd 8c 7d 5s 4h')).score > handRank(cards('Ad Ac Qd 8c 7d 5s 4h')).score);
 });

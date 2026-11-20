@@ -6,9 +6,15 @@ test('the poker table deals a hand privately, pays a fold and rotates the dealer
   await page.goto('/misc#poker');
   const section = page.getByRole('region', { name: 'Play me in poker.' });
   await expect(section).toContainText('Kinji Hakari');
+  await expect(section.getByText('Idle Death Gamble', { exact: true })).toBeVisible();
+  await expect(section.getByText('4:11', { exact: true })).toBeVisible();
   await section.getByRole('button', { name: 'Deal me in' }).click();
   const table = section.getByRole('group', { name: 'Poker table' });
   await expect(table).toBeVisible();
+  await expect(table.getByText('Saras Totey', { exact: true })).toBeVisible();
+  await expect(table.getByLabel('Total pot')).toHaveText('15');
+  await expect(section.getByText('5 chips to call.', { exact: true })).toBeVisible();
+  await expect(section.getByLabel('Total bet this round')).toHaveCount(0);
   await expect(table.getByLabel('Your cards').getByRole('img')).toHaveCount(2);
   await expect(table.getByLabel('Saras’s cards').getByRole('img', { name: 'Face-down card' })).toHaveCount(2);
   await expect(table.getByLabel('Dealer button').first()).toBeVisible();
@@ -20,6 +26,9 @@ test('the poker table deals a hand privately, pays a fold and rotates the dealer
   await expect(table.getByLabel('Saras’s cards').getByRole('img', { name: 'Face-down card' })).toHaveCount(2);
   await section.getByRole('button', { name: 'Next hand' }).click();
   await expect(table.getByLabel('Saras’s seat').getByLabel('Dealer button')).toBeVisible();
+  await expect(section.getByText(/Saras (calls|raises|folds)/).first()).toBeVisible();
+  await section.getByText('Hand history', { exact: true }).click();
+  await expect(section.getByLabel('Betting log')).toBeVisible();
   await expect(section.getByLabel('Betting log')).toContainText(/Saras (calls|raises|folds)/);
   await section.getByRole('button', { name: 'Close table' }).click();
   await expect(section.getByRole('button', { name: 'Deal me in' })).toBeFocused();
@@ -32,8 +41,12 @@ test('phone layout can go all-in and finish a hand', async ({ page }) => {
   await page.goto('/misc#poker');
   const section = page.getByRole('region', { name: 'Play me in poker.' });
   await section.getByRole('button', { name: 'Deal me in' }).click();
+  await expect(section.getByLabel('Total bet this round')).toHaveCount(0);
+  await section.getByRole('button', { name: 'Raise', exact: true }).click();
+  await expect(section.getByLabel('Total bet this round')).toBeVisible();
   await section.getByRole('button', { name: 'Max', exact: true }).click();
   await expect(section.getByLabel('Total bet this round')).toHaveValue('1000');
+  await expect(section.getByText('Adds 995 chips from your stack.', { exact: true })).toBeVisible();
   await section.getByRole('button', { name: 'All-in 1,000', exact: true }).click();
   await expect(section.getByRole('button', { name: /Next hand|Play again/ })).toBeVisible();
   const table = await section.getByRole('group', { name: 'Poker table' }).boundingBox();

@@ -9,7 +9,7 @@ import {
 const chips = (amount) => amount.toLocaleString('en-US');
 
 function Card({ card, hidden }) {
-  if (hidden) return <span className="poker-card poker-card--back" role="img" aria-label="Face-down card"><span aria-hidden="true">♠</span></span>;
+  if (hidden) return <span className="poker-card poker-card--back" role="img" aria-label="Face-down card"><span aria-hidden="true">ST</span></span>;
   if (card == null) return <span className="poker-card poker-card--empty" aria-hidden="true" />;
   const suit = SUITS[cardSuit(card)];
   const rank = cardRank(card);
@@ -25,11 +25,15 @@ function Seat({ hand, seat }) {
   const rank = visible && hand.board.length >= 3 ? handRank([...hand.hole[seat], ...hand.board]).label : null;
 
   return (
-    <div className="saras-poker__seat" data-active={hand.actor === seat} role="group" aria-label={isHuman ? 'Your seat' : 'Saras’s seat'}>
+    <div className="saras-poker__seat" data-active={hand.actor === seat} data-winner={hand.outcome?.winner === seat}
+      role="group" aria-label={isHuman ? 'Your seat' : 'Saras’s seat'}>
       <div className="saras-poker__identity">
         {isHuman ? <span className="saras-poker__avatar" aria-hidden="true">♠</span>
           : <img className="saras-poker__avatar" src="/saras-headshot.jpg" alt="" width="36" height="36" />}
-        <div><strong>{isHuman ? 'You' : 'Totally Real Saras'}</strong><span>{hand.actor === seat ? 'To act' : rank ?? ' '}</span></div>
+        <div className="saras-poker__seat-name">
+          <strong>{isHuman ? 'You' : 'Totally Real Saras'}</strong>
+          {rank && <span>{rank}</span>}
+        </div>
         {hand.dealer === seat && <span className="saras-poker__dealer" aria-label="Dealer button" title="Dealer button">D</span>}
         <div className="saras-poker__stack">
           <span aria-label={isHuman ? 'Your stack' : 'Saras’s stack'}>{chips(hand.stacks[seat])}</span>
@@ -49,33 +53,42 @@ function BettingControls({ hand, act }) {
   const bound = (value) => Math.max(legal.minTo, Math.min(legal.maxTo, value));
   const preset = (fraction) => bound(legal.largest + Math.round((potSize(hand) + legal.toCall) * fraction));
   const [amount, setAmount] = useState(() => available ? String(preset(0.5)) : '');
+  const [sizing, setSizing] = useState(false);
   const size = Number(amount);
   const valid = amount !== '' && Number.isInteger(size) && size >= legal.minTo && size <= legal.maxTo;
   const allIn = valid && size === hand.street[HUMAN] + hand.stacks[HUMAN];
   const verb = allIn ? 'All-in' : (legal.isBet ? 'Bet' : 'Raise to');
 
   return (
-    <div className="saras-poker__controls" aria-label="Your actions">
-      {available && <div className="saras-poker__sizing">
-        <div className="saras-poker__presets" aria-label="Bet presets">
-          {[['Min', legal.minTo], ['½ pot', preset(0.5)], ['Pot', preset(1)], ['Max', legal.maxTo]].map(([name, value]) =>
-            <button type="button" key={name} onClick={() => setAmount(String(value))}>{name}</button>)}
-        </div>
-        <div className="saras-poker__amount">
-          <input type="range" aria-label="Bet size" min={legal.minTo} max={legal.maxTo} value={valid ? size : legal.minTo}
-            disabled={legal.minTo === legal.maxTo} onChange={(event) => setAmount(event.target.value)} />
-          <input type="number" aria-label="Total bet this round" min={legal.minTo} max={legal.maxTo}
-            step="1" inputMode="numeric" value={amount} onChange={(event) => setAmount(event.target.value)} />
-        </div>
-      </div>}
+    <div className="saras-poker__controls" role="group" aria-label="Your actions">
       <div className="saras-poker__action-buttons">
         {legal.toCall > 0 && <button type="button" onClick={() => act({ type: 'fold' })}>Fold</button>}
-        <button type="button" onClick={() => act({ type: legal.toCall ? 'call' : 'check' })}>
+        <button type="button" className={!sizing ? 'saras-poker__primary' : undefined}
+          onClick={() => act({ type: legal.toCall ? 'call' : 'check' })}>
           {legal.toCall ? 'Call ' + chips(legal.toCall) : 'Check'}
         </button>
-        {available && <button type="button" className="saras-poker__primary" disabled={!valid}
-          onClick={() => act({ type: 'raise', to: size })}>{verb}{valid ? ' ' + chips(size) : ''}</button>}
+        {available && <button type="button" aria-expanded={sizing} aria-controls="poker-bet-sizing"
+          onClick={() => setSizing(!sizing)}>{sizing ? 'Cancel sizing' : (legal.isBet ? 'Bet' : 'Raise')}</button>}
       </div>
+      {available && <div id="poker-bet-sizing" className="saras-poker__sizing" hidden={!sizing}>
+        {sizing && <>
+          <div className="saras-poker__presets" role="group" aria-label="Bet presets">
+            {[['Min', legal.minTo], ['Half pot', preset(0.5)], ['Pot', preset(1)], ['Max', legal.maxTo]].map(([name, value]) =>
+              <button type="button" key={name}
+                onClick={() => setAmount(String(value))}>{name}</button>)}
+          </div>
+          <label className="saras-poker__amount">
+            <span>Total bet this round</span>
+            <input type="number" min={legal.minTo} max={legal.maxTo} step="1"
+              inputMode="numeric" value={amount} onChange={(event) => setAmount(event.target.value)} />
+          </label>
+          <p className="saras-poker__bet-help">{valid
+            ? `Adds ${chips(size - hand.street[HUMAN])} chips from your stack.`
+            : `Enter ${chips(legal.minTo)}–${chips(legal.maxTo)} chips.`}</p>
+          <button type="button" className="saras-poker__primary" disabled={!valid}
+            onClick={() => act({ type: 'raise', to: size })}>{verb}{valid ? ' ' + chips(size) : ''}</button>
+        </>}
+      </div>}
     </div>
   );
 }
@@ -96,14 +109,17 @@ function actionText({ type, phase, seat, amount, to, allIn }, dealer) {
 
 function HandLog({ hand }) {
   const panel = useRef(null);
-  useEffect(() => { panel.current.scrollTop = panel.current.scrollHeight; }, [hand.log]);
+  const scrollToLatest = () => {
+    if (panel.current) panel.current.scrollTop = panel.current.scrollHeight;
+  };
+  useEffect(scrollToLatest, [hand.log]);
   return (
-    <aside className="saras-poker__log">
-      <h3>Betting log</h3>
+    <details className="saras-poker__log" onToggle={scrollToLatest}>
+      <summary>Hand history</summary>
       <div role="log" aria-label="Betting log" ref={panel}>
         {hand.log.map((entry, index) => <p key={index} data-seat={entry.seat} data-type={entry.type}>{actionText(entry, hand.dealer)}</p>)}
       </div>
-    </aside>
+    </details>
   );
 }
 
@@ -165,6 +181,7 @@ export default function PokerGame({ onClose }) {
   const { outcome } = hand;
   const matchOver = Boolean(outcome && hand.stacks.includes(0));
   const resultText = outcome && (outcome.winner === null ? 'Split pot' : (outcome.winner === HUMAN ? 'You take the pot' : 'Saras takes the pot'));
+  const legal = hand.actor === HUMAN ? legalActions(hand) : null;
   const botAction = hand.log.findLast(({ seat, type }) => seat === BOT && (type === 'raise' || type === 'bet'));
   const quip = outcome ? (outcome.winner === HUMAN ? 'aight u got that' : 'gg') :
     botAction?.amount > botAction?.potBefore ? 'felt like a spot' : null;
@@ -181,29 +198,43 @@ export default function PokerGame({ onClose }) {
       <div className="saras-poker__layout">
         <div>
           <div className="saras-poker__felt" role="group" aria-label="Poker table">
+            <div className="saras-poker__felt-name"><span aria-hidden="true">ST</span><strong>Saras Totey</strong></div>
             <Seat hand={hand} seat={BOT} />
             <div className="saras-poker__middle">
-              <div className="saras-poker__pot"><span>{PHASE_NAMES[hand.phase]}</span><strong>Pot {chips(potSize(hand))}</strong></div>
+              <div className="saras-poker__pot">
+                <span>Total pot</span><strong aria-label="Total pot">{chips(potSize(hand))}</strong><span>chips</span>
+              </div>
               <div className="saras-poker__board" role="group" aria-label="Community cards">
                 {Array.from({ length: 5 }, (_, index) => <Card key={index} card={hand.board[index]} />)}
               </div>
+              <p className="saras-poker__stage">{PHASE_NAMES[hand.phase]}{!hand.board.length && !outcome && ' · Community cards come on the flop'}</p>
             </div>
             <Seat hand={hand} seat={HUMAN} />
           </div>
-          <div className="saras-poker__decision">
+        </div>
+        <div className="saras-poker__rail">
+          <section className="saras-poker__decision" aria-label="Table action">
             <div className="saras-poker__turn" role="status">
-              <strong>{resultText ?? (hand.actor === HUMAN ? 'Your move' : 'Saras is thinking…')}</strong>
-              {outcome && <span>{matchOver ? (hand.stacks[HUMAN] ? 'You won the match' : 'Saras won the match')
-                : (outcome.reason === 'showdown' ? 'Showdown' : 'Hand ended by a fold')}</span>}
+              <strong>{resultText ?? (legal ? 'Your turn' : 'Saras is thinking…')}</strong>
+              {legal && <span>{legal.toCall ? `${chips(legal.toCall)} chips to call.` : 'Check to pass, or bet.'}</span>}
+              {outcome && <span>{outcome.winner === null ? chips(outcome.pot / 2) + ' chips each.'
+                : chips(outcome.pot) + ' chips · ' + (outcome.reason === 'showdown' ? 'Showdown' : (outcome.winner === HUMAN ? 'Saras folded' : 'You folded'))}</span>}
+              {matchOver && <span>{hand.stacks[HUMAN] ? 'You won the match.' : 'Saras won the match.'}</span>}
             </div>
+            {outcome?.ranks && <dl className="saras-poker__showdown">
+              {outcome.ranks.map(({ detail }, index) => <div key={index} data-winner={index === outcome.winner}>
+                <dt>{index === HUMAN ? 'You' : 'Saras'}</dt><dd>{detail}</dd>
+              </div>)}
+            </dl>}
             {outcome ? <button className="saras-poker__primary" type="button"
               onClick={() => setHand((current) => matchOver ? createHand() : nextHand(current))}>
               {matchOver ? 'Play again' : 'Next hand'}
-            </button> : hand.actor === HUMAN && <BettingControls key={hand.number + ':' + hand.log.length} hand={hand}
+            </button> : legal && <BettingControls key={hand.number + ':' + hand.log.length} hand={hand}
               act={(action) => setHand((current) => applyAction(current, HUMAN, action))} />}
-          </div>
-        </div>
-        <div className="saras-poker__rail">
+          </section>
+          {hand.log.length > 0 && <p className="saras-poker__recent">{
+            actionText(hand.log.findLast(({ type }) => type !== 'street'), hand.dealer)
+          }</p>}
           <HandLog hand={hand} />
           {quip && <p className="saras-poker__quip"><strong>Saras</strong><span>{quip}</span></p>}
         </div>

@@ -101,5 +101,16 @@ export function handRank(cards) {
   const label = category === 8 && high === 14 ? 'Royal flush'
     : category === 0 ? rankNames[high][0].toUpperCase() + rankNames[high].slice(1) + ' high'
       : categoryNames[category];
-  return { score, label };
+  const second = Math.floor(score / (15 ** 3)) % 15;
+  const plural = (rank) => rankNames[rank] + (rank === 6 ? 'es' : 's');
+  let detail = label;
+  if (category === 1) detail = 'Pair of ' + plural(high);
+  if (category === 3) detail = 'Three ' + plural(high);
+  if (category === 7) detail = 'Four ' + plural(high);
+  if (category === 2) detail = 'Two pair, ' + plural(high) + ' and ' + plural(second);
+  if (category === 6) detail = 'Full house, ' + plural(high) + ' over ' + plural(second);
+  if (category >= 4 && category <= 5) {
+    detail = rankNames[high][0].toUpperCase() + rankNames[high].slice(1) + '-high ' + label.toLowerCase();
+  }
+  return { score, label, detail };
 }
