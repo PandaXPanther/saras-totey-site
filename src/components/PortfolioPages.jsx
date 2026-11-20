@@ -204,8 +204,8 @@ export function Misc() {
     <>
       <header className="folio-wrap page-heading portfolio-hero misc-heading">
         <h1>Other projects.</h1>
-        <p>Pokémon battles, a Discord historian, a national extemp scoreboard, and my Chess.com ratings.</p>
-        <a className="misc-heading__chess folio-link" href="#chess">Jump to chess ratings <span aria-hidden="true">↓</span></a>
+        <p>Pokémon battles, a Discord historian, a national extemp scoreboard, and a chess bot trained on my games.</p>
+        <a className="misc-heading__chess folio-link" href="#chess">Jump to chess <span aria-hidden="true">↓</span></a>
       </header>
       <section className="folio-wrap misc-library" aria-label="Featured projects">
         {miscProjects.map(({ name, type, description, image, url }) => (

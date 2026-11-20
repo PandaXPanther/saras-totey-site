@@ -1,0 +1,11 @@
+Stockfish.js 19 Lite, single threaded (v19.0.1)
+Stockfish contributors and Stockfish.js contributors. GNU GPL v3.
+
+These are the unmodified engine binaries from the supplied Nitro Typer package.
+License: COPYING.txt
+Exact corresponding source: source/stockfish.js-v19.0.1.tar.gz
+Evaluation network: source/nn-61e7af4bb97d.nnue
+Rebuild instructions: source/BUILDING.txt
+Upstream: https://github.com/nmrugg/stockfish.js/tree/v19.0.1
+
+Chess rules use chess.js 1.4.0 (BSD-2-Clause). See CHESS-JS-LICENSE.txt.

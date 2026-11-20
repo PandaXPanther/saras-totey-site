@@ -1,0 +1,1 @@
+Matching Stockfish.js v19.0.1 source and lite evaluation network. Extract the source archive, copy nn-61e7af4bb97d.nnue into its src directory, follow its README to install Emscripten and npm dependencies, then run npm run build-single-lite. See THIRD_PARTY_NOTICES.md for attribution and license.

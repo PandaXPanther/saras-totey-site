@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import ChessChallenge from './ChessChallenge.jsx';
 
 const profile = 'https://www.chess.com/member/skibidisarz';
 const stats = 'https://api.chess.com/pub/player/skibidisarz/stats';
@@ -47,8 +48,9 @@ export default function ChessRatings() {
 
   const { ratings, checkedAt, unavailable } = result;
   return (
-    <section id="chess" className="folio-wrap misc-chess" aria-labelledby="chess-heading">
-      <div className="chess-panel">
+    <div id="chess" className="folio-wrap misc-chess">
+      <ChessChallenge />
+      <section className="chess-panel" aria-labelledby="chess-heading">
         <div>
           <p className="folio-kicker">Chess.com · skibidisarz</p>
           <h2 id="chess-heading">Chess ratings</h2>
@@ -63,7 +65,7 @@ export default function ChessRatings() {
               : ratings.length === 0 ? <p>No rated results published yet.</p> : <p>Last checked</p>}
           {checkedAt && <time dateTime={checkedAt.toISOString()}>{checkedAt.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}</time>}
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   );
 }
