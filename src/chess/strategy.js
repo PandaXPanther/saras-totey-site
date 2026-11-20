@@ -96,7 +96,7 @@ export const grades = {
 const explanations = {
   Brilliant: 'A sound sacrifice. The engine’s line gives up material and keeps the position favorable.',
   Great: 'The other options give up a significant part of your advantage.',
-  Best: 'Stockfish found no stronger move at this depth.',
+  Best: 'The engine found no stronger move at this depth.',
   Excellent: 'This keeps nearly all of the value of the best move.',
   Good: 'Playable, with a stronger option available.',
   Book: 'This opening move appears in the games used to train the bot.',

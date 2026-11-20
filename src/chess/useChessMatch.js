@@ -145,14 +145,23 @@ export function useChessMatch(player, control) {
   useEffect(() => {
     if (!ready || outcome || error || turn === player) return;
     let stale = false;
-    const session = engine.current;
-    pickMove(session, new Chess(rules.current.fen()), moves)
+    let replyTimer;
+    const started = performance.now();
+    const pause = 950 + Math.random() * 1300;
+    const delay = minutes ? Math.min(pause, timeLeft(time.current, turn, started) / 4) : pause;
+    pickMove(engine.current, new Chess(rules.current.fen()), moves)
       .then((uci) => {
-        if (!stale && !ended.current && !play(uci, turn) && !ended.current) fail();
+        if (stale || ended.current) return;
+        replyTimer = setTimeout(() => {
+          if (!ended.current && !play(uci, turn) && !ended.current) fail();
+        }, Math.max(0, delay - (performance.now() - started)));
       })
       .catch(() => { if (!stale && !ended.current) fail(); });
-    return () => { stale = true; };
-  }, [moves, ready, outcome, error, player, turn]);
+    return () => {
+      stale = true;
+      clearTimeout(replyTimer);
+    };
+  }, [moves, ready, outcome, error, player, turn, minutes]);
 
   const now = performance.now();
   return {

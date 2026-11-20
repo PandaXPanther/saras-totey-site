@@ -109,7 +109,7 @@ export default function ChessGame({ player, control, onRestart, onClose }) {
   const status = match.outcome
     ? `${match.outcome.winner === player ? 'You won' : match.outcome.winner ? 'Totally Real Saras won' : 'Draw'} · ${match.outcome.reason}`
     : match.error ? 'Engine unavailable. Start a new game to retry.'
-      : !match.ready ? 'Loading Stockfish…'
+      : !match.ready ? 'Loading the engine…'
         : match.turn === player ? 'Your move' : 'Saras is thinking…';
 
   useEffect(() => { heading.current?.focus({ preventScroll: true }); }, []);
@@ -134,18 +134,22 @@ export default function ChessGame({ player, control, onRestart, onClose }) {
   }
 
   function tryMove(from, to) {
-    if (!canPlay) return;
-    const options = board.moves({ square: from, verbose: true }).filter((move) => move.to === to);
-    if (!options.length) return;
-    if (options[0].promotion) setPromotion({ from, to, options });
+    if (!canPlay) return false;
+    const options = board.moves({ square: from, verbose: true }).filter((move) =>
+      move.to === to || (move.isKingsideCastle() && to === 'h' + from[1]) ||
+        (move.isQueensideCastle() && to === 'a' + from[1]));
+    if (!options.length) return false;
+    if (options[0].promotion) setPromotion({ options });
     else submit(options[0]);
+    return true;
   }
 
   function chooseSquare(square) {
     if (!canPlay) return;
     if (selected === square) setSelected(null);
-    else if (targets.includes(square)) tryMove(selected, square);
-    else setSelected(board.get(square)?.color === board.turn() ? square : null);
+    else if (!selected || !tryMove(selected, square)) {
+      setSelected(board.get(square)?.color === board.turn() ? square : null);
+    }
   }
 
   function openReview() {

@@ -32,7 +32,7 @@ test('play a real engine reply and review the result in place', async ({ page })
   await page.keyboard.press('ArrowUp');
   await page.keyboard.press('Enter');
   await expect(page.getByRole('button', { name: 'e4 white pawn', exact: true })).toBeVisible();
-  await expect(page.getByText(/You found the best move|Stockfish preferred/)).toBeVisible();
+  await expect(page.getByText(/You found the best move|The engine preferred/)).toBeVisible();
   await page.getByRole('button', { name: 'First position' }).click();
   await expect(page.getByRole('button', { name: 'e2 white pawn', exact: true })).toBeVisible();
   await expect(page).toHaveURL(/\/misc#chess$/);
@@ -65,4 +65,142 @@ test('an unavailable worker can be restarted and the blitz clock ends the new ga
   await page.clock.fastForward(301000);
   await expect(page.getByRole('status').filter({ hasText: 'Totally Real Saras won · Time' })).toBeVisible();
   await expect(page.getByLabel('Game chat')).toContainText('gg');
+});
+
+async function scriptedOpponent(page, replies, startingPly) {
+  await page.route('**/chess-engine/stockfish-19-lite-single.js', (route) => route.fulfill({
+    contentType: 'text/javascript',
+    body: `
+      const replies = ${JSON.stringify(replies)};
+      let ply = 0;
+      onmessage = ({ data }) => {
+        if (data === 'uci') postMessage('uciok');
+        if (data === 'isready') postMessage('readyok');
+        if (data.startsWith('position ')) {
+          const history = data.split(' moves ')[1];
+          ply = history ? history.trim().split(' ').length : 0;
+        }
+        if (data.startsWith('go ')) {
+          if (data.includes(' searchmoves ')) {
+            postMessage('bestmove (none)');
+            return;
+          }
+          const move = replies[(ply - ${startingPly}) / 2];
+          postMessage('info depth 8 multipv 1 score cp 0 pv ' + move);
+          postMessage('bestmove ' + move);
+        }
+      };
+    `,
+  }));
+}
+
+const square = (page, name) => page.getByRole('group', { name: 'Chessboard' })
+  .getByRole('button', { name: new RegExp('^' + name + ' ') });
+
+async function startUntimed(page, color) {
+  await page.goto('/misc#chess');
+  await page.getByLabel('Play as').selectOption(color);
+  await page.getByLabel('Time control').selectOption('untimed');
+  await page.getByRole('button', { name: 'Start chess game' }).click();
+  await expect(page.getByText('Your move', { exact: true })).toBeVisible();
+}
+
+async function clickMove(page, from, to) {
+  await square(page, from).click();
+  await square(page, to).click();
+  await expect(page.getByText('Your move', { exact: true })).toBeVisible();
+}
+
+async function moveCoordinates(page, from, to) {
+  await page.getByRole('group', { name: 'Chessboard' }).scrollIntoViewIfNeeded();
+  return Promise.all([from, to].map(async (name) => {
+    const box = await square(page, name).boundingBox();
+    return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+  }));
+}
+
+test('chess teaser uses gameplay copy and shows live ratings before the challenge', async ({ page }) => {
+  await page.route('**/pub/player/skibidisarz/stats', (route) => route.fulfill({
+    json: { chess_blitz: { last: { rating: 1717 } }, chess_bullet: { last: { rating: 1873 } } },
+    headers: { 'Access-Control-Allow-Origin': '*' },
+  }));
+  await page.goto('/misc#chess');
+  const chess = page.locator('#chess');
+  await expect(chess.getByRole('region').first()).toHaveAccessibleName('Chess ratings');
+  await expect(chess).toContainText('1,717');
+  await expect(chess).toContainText('1,873');
+  await expect(chess).toContainText('trained off my gameplay');
+  await expect(chess).toContainText('Custom Saras engine');
+  await expect(chess).not.toContainText(/\bshit\b|\d+ rated games/i);
+});
+
+test('mouse drag follows the pointer and castles kingside on the king destination', async ({ page }) => {
+  await scriptedOpponent(page, ['e7e5', 'b8c6', 'g8f6'], 1);
+  await startUntimed(page, 'w');
+  await clickMove(page, 'e1', 'h1');
+  await expect(square(page, 'e1')).toHaveAccessibleName('e1 white king');
+  await expect(page.getByLabel('Move list').getByRole('button')).toHaveCount(0);
+
+  const replyStarted = Date.now();
+  await clickMove(page, 'e2', 'e4');
+  expect(Date.now() - replyStarted).toBeGreaterThanOrEqual(850);
+  await clickMove(page, 'g1', 'f3');
+  await clickMove(page, 'f1', 'e2');
+
+  const [origin, destination] = await moveCoordinates(page, 'e1', 'g1');
+  await page.mouse.move(origin.x, origin.y);
+  await page.mouse.down();
+  await page.mouse.move(destination.x, destination.y, { steps: 6 });
+  const dragged = page.locator('[data-dragged-piece]');
+  await expect(dragged).toBeVisible();
+  await expect(dragged.locator('.saras-chess__piece')).toHaveText('♚');
+  const box = await dragged.boundingBox();
+  expect(Math.abs(box.x + box.width / 2 - destination.x)).toBeLessThan(2);
+  await page.mouse.up();
+  await expect(dragged).toHaveCount(0);
+  await expect(square(page, 'g1')).toHaveAccessibleName('g1 white king');
+  await expect(square(page, 'f1')).toHaveAccessibleName('f1 white rook');
+  await expect(page.getByLabel('Move list').getByRole('button', { name: 'O-O', exact: true })).toBeVisible();
+});
+
+test('touch drag onto the rook castles queenside with Black', async ({ browser, browserName }) => {
+  test.skip(browserName !== 'chromium', 'Uses Chromium touch input to drive the real pointer gesture.');
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true });
+  try {
+    const page = await context.newPage();
+    await scriptedOpponent(page, ['d2d4', 'b1c3', 'c1f4', 'd1d2', 'e2e3'], 0);
+    await startUntimed(page, 'b');
+    await clickMove(page, 'd7', 'd5');
+    await clickMove(page, 'b8', 'c6');
+    await clickMove(page, 'c8', 'f5');
+    await clickMove(page, 'd8', 'd7');
+
+    const [origin, destination] = await moveCoordinates(page, 'e8', 'a8');
+    const touch = await context.newCDPSession(page);
+    await touch.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [origin] });
+    await touch.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [destination] });
+    await expect(page.locator('[data-dragged-piece]')).toBeVisible();
+    await touch.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+    await expect(square(page, 'c8')).toHaveAccessibleName('c8 black king');
+    await expect(square(page, 'd8')).toHaveAccessibleName('d8 black rook');
+    await expect(page.getByLabel('Move list').getByRole('button', { name: 'O-O-O', exact: true })).toBeVisible();
+  } finally {
+    await context.close();
+  }
+});
+
+test('castling stays unavailable when the king would cross an attacked square', async ({ page }) => {
+  await scriptedOpponent(page, ['b7b6', 'e7e6', 'h7h6', 'c8a6'], 1);
+  await startUntimed(page, 'w');
+  await clickMove(page, 'g2', 'g3');
+  await clickMove(page, 'f1', 'g2');
+  await clickMove(page, 'e2', 'e4');
+  await clickMove(page, 'g1', 'f3');
+
+  await square(page, 'e1').click();
+  await expect(square(page, 'g1').locator('.saras-chess__target')).toHaveCount(0);
+  await square(page, 'h1').click();
+  await expect(square(page, 'e1')).toHaveAccessibleName('e1 white king');
+  await expect(square(page, 'h1')).toHaveAccessibleName('h1 white rook');
+  await expect(page.getByLabel('Move list').getByRole('button')).toHaveCount(8);
 });

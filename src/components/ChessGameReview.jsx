@@ -103,7 +103,7 @@ export default function ChessGameReview({ moves, position, onPosition, player, d
           </div>
           {practice?.mode === 'retry' && <p role="status">{!practice.move ? 'Find the best move on the board.'
             : practice.move.lan === chosen.suggested ? 'You found the best move.'
-              : `You played ${practice.move.san}. Stockfish preferred ${chosen.bestMove}.`}</p>}
+              : `You played ${practice.move.san}. The engine preferred ${chosen.bestMove}.`}</p>}
         </div>
       )}
     </div>

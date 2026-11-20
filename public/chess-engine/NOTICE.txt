@@ -1,7 +1,7 @@
 Stockfish.js 19 Lite, single threaded (v19.0.1)
 Stockfish contributors and Stockfish.js contributors. GNU GPL v3.
 
-These are the unmodified engine binaries from the supplied Nitro Typer package.
+The Custom Saras engine pairs Saras’s move selection with the unmodified Stockfish 19 Lite core from the supplied engine package.
 License: COPYING.txt
 Exact corresponding source: source/stockfish.js-v19.0.1.tar.gz
 Evaluation network: source/nn-61e7af4bb97d.nnue

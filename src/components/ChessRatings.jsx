@@ -49,7 +49,6 @@ export default function ChessRatings() {
   const { ratings, checkedAt, unavailable } = result;
   return (
     <div id="chess" className="folio-wrap misc-chess">
-      <ChessChallenge />
       <section className="chess-panel" aria-labelledby="chess-heading">
         <div>
           <p className="folio-kicker">Chess.com · skibidisarz</p>
@@ -66,6 +65,7 @@ export default function ChessRatings() {
           {checkedAt && <time dateTime={checkedAt.toISOString()}>{checkedAt.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}</time>}
         </div>
       </section>
+      <ChessChallenge />
     </div>
   );
 }

@@ -1,5 +1,4 @@
 import React, { lazy, Suspense, useRef, useState } from 'react';
-import { games as trainingGames } from '../chess/profile.json';
 import '../styles/chess.css';
 
 const ChessGame = lazy(() => import('./ChessGame.jsx'));
@@ -24,9 +23,9 @@ export default function ChessChallenge() {
   return <section className="saras-chess" aria-labelledby="saras-chess-heading">
     <header className="saras-chess__header" data-open={Boolean(game)}>
       <div>
-        <p className="folio-kicker">skibidisarz · ~1750</p>
+        <p className="folio-kicker">Custom Saras engine</p>
         <h2 id="saras-chess-heading">Play me in chess.</h2>
-        {!game && <p>Play Totally Real Saras, the bot built from my {trainingGames} rated games. It looks for sacrifices and talks a little shit.</p>}
+        {!game && <p>Challenge Totally Real Saras, a bot trained off my gameplay. Expect sacrifices and a little trash talk.</p>}
       </div>
       {!game && <div className="saras-chess__art" aria-hidden="true"><span>♞</span></div>}
     </header>
@@ -46,7 +45,7 @@ export default function ChessChallenge() {
       <button type="button" ref={start} className="saras-chess__primary" onClick={begin}>Start chess game</button>
     </div>}
     <footer className="saras-chess__attribution">
-      <a href="/chess-engine/NOTICE.txt" target="_blank" rel="noreferrer">Stockfish 19 Lite · engine source</a>
+      <a href="/chess-engine/NOTICE.txt" target="_blank" rel="noreferrer">Engine credits and source</a>
     </footer>
   </section>;
 }
