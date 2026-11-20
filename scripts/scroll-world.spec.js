@@ -151,7 +151,7 @@ test('the homepage stops link to their projects without reference badges', async
   await expect(activeCopy(page).getByRole('link', { name: 'Take me there' })).toHaveAttribute('href', '/economics#local-ledger');
   await chapter(page, 'Roblox games').click();
   await expect(activeCopy(page).getByRole('link', { name: 'Take me there' })).toHaveAttribute('href', '/roblox');
-  await chapter(page, 'Miscellaneous projects').click();
+  await chapter(page, 'Bots').click();
   await expect(activeCopy(page)).toContainText('Play against my bots.');
   await expect(activeCopy(page)).toContainText('Play chess or battle in Gen 6 Pokémon');
   await expect(activeCopy(page)).toContainText('Take on my heads-up poker bot in Texas Hold’em');
@@ -159,7 +159,20 @@ test('the homepage stops link to their projects without reference badges', async
   const origin = await page.evaluate(() => scrollY);
   await activeCopy(page).getByRole('link', { name: 'See the bots' }).click();
   await expect(page).toHaveURL(/\/misc$/);
-  await expect(page.getByRole('main')).not.toContainText('Take on my heads-up poker bot in Texas Hold’em');
+  const bots = page.getByRole('main');
+  await expect(bots.getByRole('heading', { level: 1 })).toHaveText('Play against my bots.');
+  await expect(bots.getByRole('heading', { level: 2 })).toHaveText([
+    'Battle Me in Pokémon',
+    'Chess ratings',
+    'Play me in chess.',
+    'Play me in poker.',
+    'Other projects',
+  ]);
+  const jumps = bots.getByRole('navigation', { name: 'Jump to a bot' });
+  for (const [name, target] of [['Pokémon', 'pokemon-battle'], ['chess', 'chess'], ['poker', 'poker']]) {
+    await expect(jumps.getByRole('link', { name: `Jump to ${name}` })).toHaveAttribute('href', `#${target}`);
+    await expect(bots.locator(`#${target}`)).toBeVisible();
+  }
   await page.getByRole('link', { name: 'Take me back' }).click();
   await expect.poll(() => page.evaluate(() => scrollY)).toBe(origin);
   await expect(activeCopy(page)).toContainText('Play against my bots.');
@@ -167,7 +180,7 @@ test('the homepage stops link to their projects without reference badges', async
 
 test('one glass navigation fits every page at 320px and shows its active tab', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 660 });
-  for (const [path, label] of [['/', 'Home'], ['/quant', 'Trading Systems'], ['/economics', 'Economics'], ['/att-agency', 'ATT Agency'], ['/roblox', 'Roblox'], ['/misc', 'Misc']]) {
+  for (const [path, label] of [['/', 'Home'], ['/quant', 'Trading Systems'], ['/economics', 'Economics'], ['/att-agency', 'ATT Agency'], ['/roblox', 'Roblox'], ['/misc', 'Bots']]) {
     await page.goto(path);
     const nav = page.getByRole('navigation', { name: 'Portfolio pages' });
     await expect(nav).toHaveClass('glass-nav');

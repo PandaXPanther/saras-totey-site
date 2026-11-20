@@ -1,7 +1,7 @@
 import React from 'react';
 import { routes } from '../data/routes.js';
 
-const compactLabels = { '/att-agency': 'ATT', '/economics': 'Econ', '/misc': 'Misc' };
+const compactLabels = { '/att-agency': 'ATT', '/economics': 'Econ' };
 
 export default function Nav({ pathname }) {
   return (

@@ -210,23 +210,14 @@ export function Misc() {
   return (
     <>
       <header className="folio-wrap page-heading portfolio-hero misc-heading">
-        <h1>Other projects.</h1>
-        <p>Challenge my Pokémon, chess, and poker bots, or explore a few of my other projects.</p>
-        <nav className="misc-games-nav" aria-label="Jump to a game">
-          <a className="misc-heading__chess folio-link" href="#chess">Jump to chess <span aria-hidden="true">↓</span></a>
-          <a className="misc-heading__chess folio-link" href="#poker">Jump to poker <span aria-hidden="true">↓</span></a>
+        <h1>Play against my bots.</h1>
+        <p>Battle in Gen 6 Pokémon, play chess, or go heads-up in Texas Hold’em.</p>
+        <nav className="misc-games-nav" aria-label="Jump to a bot">
+          <a className="misc-heading__jump folio-link" href="#pokemon-battle">Jump to Pokémon <span aria-hidden="true">↓</span></a>
+          <a className="misc-heading__jump folio-link" href="#chess">Jump to chess <span aria-hidden="true">↓</span></a>
+          <a className="misc-heading__jump folio-link" href="#poker">Jump to poker <span aria-hidden="true">↓</span></a>
         </nav>
       </header>
-      <section className="folio-wrap misc-library" aria-label="Featured projects">
-        {miscProjects.map(({ name, type, description, image, url }) => (
-          <article key={name}>
-            <ExternalLink href={url} className="misc-feature">
-              <img src={`/projects/${image}.webp`} alt="" width="800" height="504" loading="lazy" decoding="async" />
-              <span>{type}</span><h2>{name}</h2><p>{description}</p>
-            </ExternalLink>
-          </article>
-        ))}
-      </section>
       <section id="pokemon-battle" className="folio-wrap misc-battle" aria-labelledby="pokemon-battle-heading">
         <div className={`misc-battle__panel${battleOpen ? ' misc-battle__panel--playing' : ''}`}>
           <div className="battle-teaser">
@@ -261,6 +252,17 @@ export function Misc() {
       </section>
       <ChessRatings />
       <PokerChallenge />
+      <section className="folio-wrap misc-library" aria-labelledby="misc-projects-heading">
+        <h2 id="misc-projects-heading">Other projects</h2>
+        {miscProjects.map(({ name, type, description, image, url }) => (
+          <article key={name}>
+            <ExternalLink href={url} className="misc-feature">
+              <img src={`/projects/${image}.webp`} alt="" width="800" height="504" loading="lazy" decoding="async" />
+              <span>{type}</span><h3>{name}</h3><p>{description}</p>
+            </ExternalLink>
+          </article>
+        ))}
+      </section>
     </>
   );
 }
