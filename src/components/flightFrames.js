@@ -2,14 +2,14 @@ const lastFrame = 821;
 const framesPerPack = 24;
 const overviewStep = 12;
 const motionStep = 2;
-const motionColumns = 3;
-const motionRows = 2;
-const tilesPerSheet = motionColumns * motionRows;
-const framesPerSheet = tilesPerSheet * motionStep;
+const motionColumns = 4;
+const motionTiles = 12;
+const detailColumns = 3;
+const detailTiles = 6;
 const overviewColumns = 10;
 const formats = {
-  wide: { overview: [192, 108], motion: [1280, 720], canvas: [1920, 1080] },
-  portrait: { overview: [125, 200], motion: [800, 1280], canvas: [900, 1440] },
+  wide: { overview: [320, 180], motion: [768, 432], detail: [1280, 720], canvas: [1920, 1080] },
+  portrait: { overview: [230, 368], motion: [480, 768], detail: [800, 1280], canvas: [900, 1440] },
 };
 
 export function visibleFlightFrame(frame) {
@@ -30,7 +30,7 @@ function stillFromPack(buffer, index) {
 
 async function decode(blob) {
   if (typeof createImageBitmap === 'function') {
-    try { return await createImageBitmap(blob); } catch { /* Use the WebView's normal image decoder. */ }
+    try { return await createImageBitmap(blob); } catch { /* Use the normal image decoder if bitmaps are unavailable. */ }
   }
   const url = URL.createObjectURL(blob);
   try {
@@ -47,6 +47,7 @@ async function decode(blob) {
 }
 
 const release = (image) => image?.close?.();
+const sheetName = (group) => String(group).padStart(2, '0');
 
 async function load(url, controller, priority = 'auto') {
   const timeout = setTimeout(() => controller.abort(), 8000);
@@ -66,29 +67,31 @@ function sheetFrame(target, step) {
   return frame / step;
 }
 
-const motionGroup = (frame) => Math.floor(sheetFrame(frame, motionStep) / tilesPerSheet);
+const motionGroup = (frame) => Math.floor(sheetFrame(frame, motionStep) / motionTiles);
 
 export function createFlightFrames(canvas, variant, onDraw, onUnavailable) {
   const context = canvas.getContext('2d', { alpha: false });
   if (!context) throw new Error('Flight canvas unavailable');
-  const { overview: overviewSize, motion: motionSize, canvas: canvasSize } = formats[variant];
+  const { overview: overviewSize, motion: motionSize, detail: detailSize, canvas: canvasSize } = formats[variant];
   const [width, height] = canvasSize;
   canvas.width = width;
   canvas.height = height;
-  const path = `/world/flight/motion-v2/${variant}/`;
+  const motionPath = `/world/flight/motion-v1/${variant}/`;
+  const detailPath = `/world/flight/motion-v2/${variant}/`;
   const sheets = new Map();
   const requests = new Map();
   const failedAt = new Map();
   const overviewRequest = new AbortController();
   const lastSheet = motionGroup(lastFrame);
-  const enableDetail = variant === 'wide' && !matchMedia('(pointer: coarse)').matches && !navigator.connection?.saveData;
+  const desktop = variant === 'wide' && !matchMedia('(pointer: coarse)').matches;
+  const enableDetail = !navigator.connection?.saveData;
   let overview;
-  let overviewPending = true;
   let still;
   let detailRequest;
   let detailTimer;
   let detailAttempt = -1;
   let target = 0;
+  let destination = 0;
   let direction = 1;
   let isResting = true;
   let disposed = false;
@@ -102,20 +105,16 @@ export function createFlightFrames(canvas, variant, onDraw, onUnavailable) {
   function draw() {
     paintRequest = 0;
     const index = sheetFrame(target, motionStep);
-    const group = Math.floor(index / tilesPerSheet);
+    const group = Math.floor(index / motionTiles);
     let source = sheets.get(group);
-    let tile = index % tilesPerSheet;
+    let tile = index % motionTiles;
     let size = motionSize;
     let columns = motionColumns;
     let frame = Math.min(lastFrame, index * motionStep);
     let quality = 'motion';
 
-    if (still?.frame === target && isResting) {
-      source = still.image;
-      tile = 0;
-      size = canvasSize;
-      columns = 1;
-      frame = target;
+    if (still?.target === target) {
+      ({ image: source, frame, tile, columns, size } = still);
       quality = 'detail';
     } else if (!source) {
       source = overview;
@@ -146,26 +145,46 @@ export function createFlightFrames(canvas, variant, onDraw, onUnavailable) {
     if (Date.now() - failedAt.get(group) < 5000) return;
     const controller = new AbortController();
     requests.set(group, controller);
-    const file = String(group).padStart(2, '0');
-    load(`${path}${file}.webp`, controller).then(decode).then((image) => {
-      if (disposed || controller.signal.aborted) {
-        release(image);
-        return;
-      }
-      sheets.set(group, image);
-      if (sheets.size > 3) {
-        const current = motionGroup(target);
-        const farthest = [...sheets.keys()].sort((a, b) => Math.abs(b - current) - Math.abs(a - current))[0];
-        release(sheets.get(farthest));
-        sheets.delete(farthest);
-      }
-      if (!overviewPending && group === motionGroup(target)) queueSheet(group + direction);
-      requestPaint();
-    }).catch(() => {
-      if (requests.get(group) === controller) failedAt.set(group, Date.now());
-    }).finally(() => {
-      if (requests.get(group) === controller) requests.delete(group);
-    });
+    load(`${motionPath}${sheetName(group)}.webp`, controller, group === motionGroup(target) ? 'high' : 'low')
+      .then(decode).then((image) => {
+        if (disposed || controller.signal.aborted) {
+          release(image);
+          return;
+        }
+        sheets.set(group, image);
+        if (sheets.size > 3) {
+          const current = motionGroup(target);
+          const farthest = [...sheets.keys()].sort((a, b) => Math.abs(b - current) - Math.abs(a - current))[0];
+          release(sheets.get(farthest));
+          sheets.delete(farthest);
+        }
+        requestPaint();
+      }).catch(() => {
+        if (requests.get(group) === controller) failedAt.set(group, Date.now());
+      }).finally(() => {
+        if (requests.get(group) !== controller) return;
+        requests.delete(group);
+        fillQueue();
+      });
+  }
+
+  function fillQueue() {
+    if (disposed) return;
+    const current = motionGroup(target);
+    const next = motionGroup(destination);
+    for (const [group, controller] of requests) {
+      if (Math.min(Math.abs(group - current), Math.abs(group - next)) <= 3) continue;
+      requests.delete(group);
+      controller.abort();
+    }
+    // Prefetch where the native scroll is heading, even while the camera is catching up.
+    const nearby = [next, current];
+    if (!isResting || !target) nearby.push(next + direction);
+    if (!isResting && destination > 0) nearby.push(next + 2 * direction);
+    for (const group of nearby) {
+      if (requests.size >= 3 || (!destination && group !== current && !sheets.has(current))) break;
+      queueSheet(group);
+    }
   }
 
   async function refine(frame) {
@@ -174,61 +193,60 @@ export function createFlightFrames(canvas, variant, onDraw, onUnavailable) {
     detailAttempt = frame;
     const controller = new AbortController();
     detailRequest = controller;
-    const group = String(Math.floor(frame / framesPerPack)).padStart(2, '0');
     try {
-      const data = await load(`/world/flight/frames/wide/${group}.bin`, controller, 'low');
-      const image = await decode(stillFromPack(await data.arrayBuffer(), frame % framesPerPack));
+      let detail;
+      if (desktop) {
+        const group = sheetName(Math.floor(frame / framesPerPack));
+        const data = await load(`/world/flight/frames/wide/${group}.bin`, controller, 'low');
+        const image = await decode(stillFromPack(await data.arrayBuffer(), frame % framesPerPack));
+        detail = { image, frame, tile: 0, columns: 1, size: canvasSize };
+      } else {
+        const sample = sheetFrame(frame, motionStep);
+        const group = sheetName(Math.floor(sample / detailTiles));
+        const image = await load(`${detailPath}${group}.webp`, controller, 'high').then(decode);
+        detail = { image, frame: Math.min(lastFrame, sample * motionStep), tile: sample % detailTiles, columns: detailColumns, size: detailSize };
+      }
       if (disposed || controller.signal.aborted) {
-        release(image);
+        release(detail.image);
         return;
       }
       release(still?.image);
-      still = { frame, image };
+      still = { ...detail, target: frame };
       requestPaint();
     } catch {
-      // The atlas can display the stopped view by itself.
+      // The motion atlas can keep showing the stopped view.
     } finally {
       if (detailRequest === controller) detailRequest = undefined;
     }
   }
 
-  load(`${path}overview.webp`, overviewRequest, 'high').then(decode).then((image) => {
+  load(`/world/flight/overview-v3/${variant}.webp`, overviewRequest, 'high').then(decode).then((image) => {
     if (disposed) release(image);
-    else overview = image;
-  }).catch(() => {
-    // The individual motion sheets can still render if the overview is unavailable.
-  }).finally(() => {
-    if (disposed) return;
-    overviewPending = false;
-    queueSheet(motionGroup(target));
-    requestPaint();
-  });
+    else {
+      overview = image;
+      requestPaint();
+    }
+  }).catch(() => { /* Motion sheets are independently available. */ });
+  queueSheet(0);
 
   return {
-    show(frame, resting) {
+    show(frame, next, resting) {
+      if (next !== destination) direction = Math.sign(next - destination);
       if (frame !== target) {
-        direction = Math.sign(frame - target);
         detailRequest?.abort();
         detailAttempt = -1;
         clearTimeout(detailTimer);
         detailTimer = undefined;
       }
       target = frame;
+      destination = next;
       isResting = resting;
-      const group = motionGroup(frame);
-      const ahead = group + direction;
-      for (const [pending, controller] of requests) {
-        if (pending === group || pending === ahead) continue;
-        requests.delete(pending);
-        controller.abort();
+      fillQueue();
+      if (enableDetail && resting && frame && still?.target !== frame && !detailTimer && detailAttempt !== frame) {
+        detailTimer = setTimeout(() => refine(frame), 100);
       }
-      // Start with broad coverage. An early swipe can also request its immediate view.
-      if (!overviewPending || frame > 0) queueSheet(group);
-      if (!overviewPending && (sheets.has(group) || frame % framesPerSheet >= 4)) queueSheet(ahead);
-      if (enableDetail && resting && frame && !detailTimer && detailAttempt !== frame) {
-        detailTimer = setTimeout(() => refine(frame), 480);
-      }
-      requestPaint();
+      if (paintRequest) cancelAnimationFrame(paintRequest);
+      draw();
     },
     dispose() {
       disposed = true;

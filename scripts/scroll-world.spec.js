@@ -35,10 +35,7 @@ test('the camera paints multiple intermediate frames between wheel movements', a
 
 test('a missing motion sheet cannot freeze the island or hold the chapter links', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.route('**/world/flight/motion-v2/wide/*.webp', async (route) => {
-    if (route.request().url().endsWith('/overview.webp')) await route.continue();
-    else await route.abort();
-  });
+  await page.route('**/world/flight/motion-v1/wide/*.webp', (route) => route.abort());
   await page.route('**/world/flight/frames/wide/*.bin', (route) => route.abort());
   await page.goto('/');
   await expect(world(page)).toHaveAttribute('data-flight-quality', 'overview');
@@ -74,6 +71,7 @@ test('portrait touch scroll and browser chrome resize preserve the flight', asyn
     }
     await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
     await expect.poll(() => renderedFrame(page)).toBeGreaterThan(32);
+    await expect(world(page)).toHaveAttribute('data-flight-quality', 'detail', { timeout: 10_000 });
     const readDistance = () => world(page).evaluate((element) => element.style.getPropertyValue('--world-scroll-distance'));
     const before = await readDistance();
     await page.setViewportSize({ width: 390, height: 805 });
@@ -113,13 +111,17 @@ test('the homepage stops link to their projects without reference badges', async
   await chapter(page, 'Roblox games').click();
   await expect(activeCopy(page).getByRole('link', { name: 'Take me there' })).toHaveAttribute('href', '/roblox');
   await chapter(page, 'Miscellaneous projects').click();
-  await expect(activeCopy(page)).toContainText('The other things I build.');
+  await expect(activeCopy(page)).toContainText('Play against my bots.');
+  await expect(activeCopy(page)).toContainText('Play chess or battle in Gen 6 Pokémon');
+  await expect(activeCopy(page)).toContainText('poker bot');
+  await expect(activeCopy(page).locator('.world-copy__secondary')).toContainText('Kodama');
   const origin = await page.evaluate(() => scrollY);
-  await activeCopy(page).getByRole('link', { name: 'Take me there' }).click();
+  await activeCopy(page).getByRole('link', { name: 'See the bots' }).click();
   await expect(page).toHaveURL(/\/misc$/);
+  await expect(page.getByRole('main')).not.toContainText('I’m also building a poker bot.');
   await page.getByRole('link', { name: 'Take me back' }).click();
   await expect.poll(() => page.evaluate(() => scrollY)).toBe(origin);
-  await expect(activeCopy(page)).toContainText('The other things I build.');
+  await expect(activeCopy(page)).toContainText('Play against my bots.');
 });
 
 test('one glass navigation fits every page at 320px and shows its active tab', async ({ page }) => {

@@ -34,3 +34,9 @@ if __name__ == "__main__":
         directory.mkdir(parents=True, exist_ok=True)
         encode(args.ffmpeg, directory / "overview.webp", crop, overview, 12, "10x7", 59)
         encode(args.ffmpeg, directory / "%02d.webp", crop, motion, 2, "3x2", 74, "unsharp=5:5:0.30:5:5:0,")
+
+    # A sharper whole-route preview covers jumps before nearby motion sheets arrive.
+    previews = FLIGHT / "overview-v3"
+    previews.mkdir(parents=True, exist_ok=True)
+    for name, size in (("wide", (320, 180)), ("portrait", (230, 368))):
+        encode(args.ffmpeg, previews / (name + ".webp"), VARIANTS[name][0], size, 12, "10x7", 57)

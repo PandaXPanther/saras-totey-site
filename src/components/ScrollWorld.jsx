@@ -45,7 +45,7 @@ const chapters = [
   { id: 'local-ledger', media: 'ventures', label: 'Local Ledger', eyebrow: 'A public-data observatory', title: 'I wanted to see a place as a living system.', body: 'That curiosity became Local Ledger: jobs, income, housing, schools, and public spending on one research desk, plus a simulator for asking what might change next.', href: '/economics#local-ledger', side: 'right' },
   { id: 'att', media: 'att', label: 'ATT Agency', eyebrow: 'attagency.co', title: 'Want a site that looks like this? I co-founded the studio that builds them.', body: 'At ATT Agency, I help turn a business into a brand, website, campaign, and measurement system without passing the work between disconnected vendors.', href: '/att-agency', side: 'right' },
   { id: 'roblox', media: 'roblox', label: 'Roblox games', eyebrow: 'Roblox game development', title: 'I build games with Ryder.', body: 'I write the gameplay and systems. Ryder designs the worlds, models, and interfaces. You can play our latest releases on Roblox.', href: '/roblox', side: 'left' },
-  { id: 'misc', media: 'misc', label: 'Miscellaneous projects', eyebrow: 'More projects', title: 'The other things I build.', body: 'A Discord historian, a national extemp scoreboard, and my Chess.com ratings.', href: '/misc', side: 'right' },
+  { id: 'misc', media: 'misc', label: 'Miscellaneous projects', eyebrow: 'Games I build', title: 'Play against my bots.', body: 'Play chess or battle in Gen 6 Pokémon against bots based on my own games. I’m also building a poker bot.', secondary: 'I also built Kodama, a Discord historian.', href: '/misc', cta: 'See the bots', side: 'right' },
   { id: 'contact', media: 'contact', label: 'Contact', eyebrow: 'Boulder to anywhere', title: 'Contact me.', body: 'Discord: PandaXPanther · sarastotey@icloud.com · 720-415-9085', side: 'center' },
 ];
 
@@ -61,8 +61,9 @@ function WorldChapter({ chapter, index, active }) {
       </div>
     ) : <Heading className="world-copy__title">{chapter.title}</Heading>}
     <p>{chapter.body}</p>
+    {chapter.secondary && <p className="world-copy__secondary">{chapter.secondary}</p>}
     {chapter.note && <small className="world-copy__note">{chapter.note}</small>}
-    {chapter.href && <a className="glass-button" href={chapter.href} data-work-link="true">Take me there</a>}
+    {chapter.href && <a className="glass-button" href={chapter.href} data-work-link="true">{chapter.cta || 'Take me there'}</a>}
     {chapter.id === 'contact' && <div className="world-copy__contact">
       <a href="mailto:sarastotey@icloud.com">Email</a>
       <a href={IDENTITY.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
@@ -113,6 +114,7 @@ export default function ScrollWorld() {
     let hintHidden = window.scrollY > 6;
     let camera = null;
     let lastPaint = 0;
+    const phone = matchMedia('(pointer: coarse)').matches;
     let frames;
     let viewing = false;
 
@@ -145,8 +147,8 @@ export default function ScrollWorld() {
       const progress = clamp(y / distance);
       if (camera === null || !frames) camera = progress;
       else {
-        const elapsed = Math.min(16, now - lastPaint);
-        camera += (progress - camera) * (1 - Math.exp(-elapsed / 32));
+        const elapsed = Math.min(phone && !settled ? 24 : 16, now - lastPaint);
+        camera += (progress - camera) * (1 - Math.exp(-elapsed / (phone ? 23 : 32)));
         if (Math.abs(progress - camera) < .0004) camera = progress;
       }
       lastPaint = now;
@@ -155,7 +157,7 @@ export default function ScrollWorld() {
         activeRef.current = chapter;
         setActive(chapter);
       }
-      frames?.show(mediaFrame(camera, settled && camera === progress), settled && camera === progress);
+      frames?.show(mediaFrame(camera, settled && camera === progress), mediaFrame(progress, settled), settled && camera === progress);
       if (!hintHidden && y > 6) {
         hintHidden = true;
         setHasScrolled(true);

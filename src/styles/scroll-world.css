@@ -101,6 +101,7 @@ html:has(.scroll-world) {
 .world-copy p { max-width: 470px; margin: 20px 0 0; color: #55444d; font: 450 clamp(16px, 1.2vw, 19px)/1.5 'Switzer', 'Avenir Next', sans-serif; }
 .world-copy--right p { margin-left: auto; }
 .world-copy--center p { margin-inline: auto; }
+.world-copy p.world-copy__secondary { margin-top: 8px; color: #69565d; font-size: clamp(12px, 1.04vw, 15px); }
 .world-copy__note { display: block; margin-top: 12px; color: #755d69; font: 10px/1.4 'JetBrains Mono', monospace; }
 .world-copy__identity { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .world-copy__identity img {
