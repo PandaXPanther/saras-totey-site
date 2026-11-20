@@ -142,8 +142,8 @@ export default function PokemonBattle({ audio, sound, onSound, trackName, onRest
         <details className="pokemon-game__favorites">
           <summary>Battle soundtrack <span>(these are my favorite themes)</span></summary>
           <ul>
-            {battleFavorites.map(([id, name]) => (
-              <li key={id}><a href={`https://www.youtube.com/watch?v=${id}`} target="_blank" rel="noreferrer">{name}</a></li>
+            {battleFavorites.map(({ youtubeId, name }) => (
+              <li key={youtubeId}><a href={`https://www.youtube.com/watch?v=${youtubeId}`} target="_blank" rel="noreferrer">{name}</a></li>
             ))}
           </ul>
         </details>
