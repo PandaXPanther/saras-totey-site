@@ -7,6 +7,7 @@ import { createBattleAudio } from './battleAudio.js';
 import { nextBattleTheme } from './battleThemes.js';
 
 const PokemonBattle = lazy(() => import('./PokemonBattle.jsx'));
+const hotMicGameId = 10773050059;
 
 const econTools = [
   ['AP FRQ Grader', 'Practice with official AP Macro and Micro rubrics.', '/frq-grader'],
@@ -156,6 +157,11 @@ export function Roblox() {
                 <span>{game.creator}{Number.isFinite(game.visits) && ` · ${game.visits.toLocaleString('en-US')} visits`}</span>
                 <h3>{game.title}</h3>
                 {game.description && <p>{game.description}</p>}
+                {game.id === hotMicGameId && (
+                  <p className="game-card__build-note">
+                    I built a typo-tolerant answer checker with curated datasets and PostgreSQL.
+                  </p>
+                )}
                 <span className="folio-link">Open on Roblox</span>
               </div>
             </ExternalLink>

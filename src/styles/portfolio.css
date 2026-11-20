@@ -126,6 +126,7 @@ section[id] { scroll-margin-top: 8px; }
 .game-card__copy > span:first-child { color: var(--portfolio-muted); font-size: 14px; }
 .game-card__copy h3 { font-weight: 700; }
 .game-card__copy p { margin: 0; }
+.game-card__build-note { color: var(--portfolio-muted); font-size: 14px; line-height: 1.4; }
 .game-card__copy .folio-link { margin-top: auto; padding-top: 8px; color: var(--portfolio-link); }
 .roblox-sources { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 33px; }
 .roblox-sources h3 { margin-right: 8px; font-size: 18px; font-weight: 650; }
