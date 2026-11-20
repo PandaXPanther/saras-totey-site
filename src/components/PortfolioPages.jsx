@@ -3,6 +3,7 @@ import catalog from '../data/roblox-games.json';
 import { creators } from '../data/robloxCreators.js';
 import ChessRatings from './ChessRatings.jsx';
 import { createBattleAudio } from './battleAudio.js';
+import { nextBattleThemes } from './battleThemes.js';
 
 const PokemonBattle = lazy(() => import('./PokemonBattle.jsx'));
 
@@ -172,15 +173,25 @@ export function Misc() {
   const [battleOpen, setBattleOpen] = useState(false);
   const [battleNumber, setBattleNumber] = useState(0);
   const [battleSound, setBattleSound] = useState(true);
+  const [battleThemes, setBattleThemes] = useState(null);
   const battleAudio = useRef(null);
 
   useEffect(() => () => battleAudio.current?.close(), []);
 
   function startBattle() {
-    battleAudio.current = createBattleAudio();
+    const themes = nextBattleThemes();
+    battleAudio.current = createBattleAudio(themes.native);
+    setBattleThemes(themes);
     setBattleSound(true);
     setBattleNumber((number) => number + 1);
     setBattleOpen(true);
+  }
+
+  function restartBattle() {
+    const themes = nextBattleThemes();
+    battleAudio.current?.setTheme(themes.native);
+    setBattleThemes(themes);
+    setBattleNumber((number) => number + 1);
   }
 
   function closeBattle() {
@@ -207,20 +218,34 @@ export function Misc() {
         ))}
       </section>
       <section id="pokemon-battle" className="folio-wrap misc-battle" aria-labelledby="pokemon-battle-heading">
-        <div className="misc-battle__panel">
-          <h2 id="pokemon-battle-heading">Battle Me in Pokémon</h2>
-          <p>I built this battle simulator into my site using Pokémon Showdown. Challenge a bot trained on my own battle data to play like me in Gen 6 Random Battle. Gen 6 was my first generation, and it’s still my favorite. Shuckle is my favorite Pokémon, so Totally Real Saras always leads with a shiny Shuckle. The remaining Pokémon on both teams are randomized every match. Have fun!</p>
-          {battleOpen ? (
+        <div className={`misc-battle__panel${battleOpen ? ' misc-battle__panel--playing' : ''}`}>
+          <div className="battle-teaser">
+            <div className="battle-teaser__copy">
+              {!battleOpen && <span className="battle-teaser__format">Gen 6 Random Battle</span>}
+              <h2 id="pokemon-battle-heading">Battle Me in Pokémon</h2>
+              {!battleOpen && (
+                <>
+                  <p>I built this battle simulator into my site using Pokémon Showdown. Challenge a bot trained on my own battle data to play like me in Gen 6 Random Battle. Gen 6 was my first generation, and it’s still my favorite.</p>
+                  <p><strong>Shuckle is my favorite Pokémon,</strong> so Totally Real Saras always leads with a shiny Shuckle. The remaining Pokémon on both teams are randomized every match. Have fun!</p>
+                  <button type="button" className="folio-button battle-teaser__play" onClick={startBattle}>Start Gen 6 battle</button>
+                </>
+              )}
+            </div>
+            {!battleOpen && (
+              <div className="battle-teaser__art eclipse-landscape" aria-hidden="true">
+                <img src="https://play.pokemonshowdown.com/sprites/ani-shiny/shuckle.gif" alt="" width="108" height="108" loading="lazy" />
+              </div>
+            )}
+          </div>
+          {battleOpen && (
             <Suspense fallback={<p role="status">Starting battle…</p>}>
-              <PokemonBattle key={battleNumber} matchIndex={battleNumber - 1} audio={battleAudio.current}
+              <PokemonBattle key={battleNumber} tracks={battleThemes.favorites} audio={battleAudio.current}
                 sound={battleSound} onSound={(enabled) => {
                   battleAudio.current?.setEnabled(enabled);
                   setBattleSound(enabled);
                 }}
-                onRestart={() => setBattleNumber((number) => number + 1)} onClose={closeBattle} />
+                onRestart={restartBattle} onClose={closeBattle} />
             </Suspense>
-          ) : (
-            <button type="button" className="folio-button" onClick={startBattle}>Start Gen 6 battle</button>
           )}
         </div>
       </section>

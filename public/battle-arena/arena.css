@@ -30,6 +30,9 @@ html, body { margin: 0; overflow: hidden; }
 }
 .battle-feed__heading span { color: #ffd2d5; font-size: 12px; }
 .battle-feed__callout {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin: 7px 10px 2px;
   padding: 6px 8px;
   border-left: 2px solid #ff987c;
@@ -38,6 +41,10 @@ html, body { margin: 0; overflow: hidden; }
   font-size: 12px;
   line-height: 1.25;
 }
+.battle-feed__callout[hidden] { display: none; }
+.battle-feed__callout img { border-radius: 50%; object-fit: cover; }
+.battle-feed__callout strong { color: #ffb3a9; font-weight: 650; }
+.battle-feed__callout [data-banter] { margin-top: 1px; color: #fff1e9; font-size: 13px; }
 #arena .battle-log {
   flex: 1;
   min-height: 0;
@@ -59,36 +66,6 @@ html, body { margin: 0; overflow: hidden; }
 #arena .battle-log a, #arena .battle-log .chat { color: #f5d8e1; }
 #arena .battle-log:focus-visible { outline: 2px solid #ffab9e; outline-offset: -3px; }
 
-#arena[data-theme="arcade"] .backdrop {
-  background: radial-gradient(circle at 69% 30%, #e8434388, transparent 36%),
-    radial-gradient(ellipse at 52% 98%, #b6414160, transparent 64%),
-    linear-gradient(180deg, #130f24 0%, #281227 55%, #140b1e 100%) !important;
-  opacity: 1 !important;
-}
-#arena[data-theme="arcade"] .backdrop::before {
-  content: "";
-  position: absolute;
-  width: 158px;
-  height: 158px;
-  left: 66%;
-  top: 33%;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: radial-gradient(circle at 27% 25%, #54152390 0 5%, transparent 6%),
-    radial-gradient(circle at 66% 34%, #441429c4 0 5%, transparent 6%),
-    radial-gradient(circle at 53% 74%, #451323b0 0 6%, transparent 7%),
-    repeating-radial-gradient(circle at 49% 51%, #5a122a80 0 1px, transparent 2px 15px),
-    radial-gradient(ellipse at 31% 31%, #ffc0a0, #f76567 41%, #d32f49 76%, #77142c 99%);
-  box-shadow: inset -10px -10px 25px #631022b8, 0 0 28px #ff5c6caa, 0 0 80px #ec395868;
-}
-#arena[data-theme="arcade"] .backdrop::after {
-  content: "";
-  position: absolute;
-  inset: 48% 0 0;
-  background: linear-gradient(175deg, #2d1529 4%, #190e1f 34%, #2f1424 62%, #0e0915);
-  clip-path: polygon(0 23%, 8% 19%, 16% 27%, 27% 10%, 31% 22%, 40% 13%, 45% 25%,
-    54% 17%, 64% 25%, 72% 11%, 80% 22%, 90% 6%, 94% 15%, 100% 8%, 100% 100%, 0 100%);
-}
 #arena[data-theme="night"] .backdrop {
   background: radial-gradient(circle at 20% 12%, #d8fcff 0 1px, transparent 2px),
     radial-gradient(circle at 61% 19%, #d8fcff 0 1px, transparent 2px),
@@ -98,14 +75,35 @@ html, body { margin: 0; overflow: hidden; }
     linear-gradient(160deg, #061524 5%, #152342 66%, #162627) !important;
   opacity: 1 !important;
 }
+#arena .battle :is(.leftbar, .rightbar) { background: #241725b8; border-color: #be7b7959; }
+#arena .battle .trainer strong { color: #f9e8ec; }
+#arena .battle .trainer .trainersprite {
+  width: 52px;
+  height: 52px;
+  margin: 6px auto;
+  border: 2px solid #d38f9b;
+  border-radius: 12px;
+  background-size: cover !important;
+  background-position: center !important;
+  transform: none;
+}
+#arena .battle .trainer-far .trainersprite { background-image: url('/saras-headshot.jpg') !important; }
+#arena .battle .trainer-near .trainersprite {
+  background:
+    radial-gradient(circle at 50% 50%, #fff 0 8%, #372039 9% 15%, transparent 16%),
+    linear-gradient(#dc6a77 0 44%, #3a2440 45% 55%, #f6e0e5 56% 100%) !important;
+  border-radius: 50%;
+  width: 39px;
+  height: 39px;
+}
 .portrait-track {
   position: absolute;
   inset: 5% 2%;
   z-index: 3;
   pointer-events: none;
   container-type: size;
-  --badge-height: 36px;
-  --badge-width: 81px;
+  --badge-height: 34px;
+  --badge-width: 86px;
 }
 #arena:is([data-theme="classic"], [data-bounce="false"]) .portrait-track { display: none; }
 .portrait-track__horizontal {
@@ -118,22 +116,22 @@ html, body { margin: 0; overflow: hidden; }
   position: absolute;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   box-sizing: border-box;
   width: var(--badge-width);
   height: var(--badge-height);
-  padding: 3px 4px;
-  border: 1px solid #ffa3a2;
-  border-radius: 6px 11px 6px 11px;
-  background: repeating-linear-gradient(0deg, #ffb5a215 0 1px, transparent 1px 3px), linear-gradient(120deg, #61203d, #211427 72%);
+  padding: 4px 6px;
+  overflow: hidden;
+  border: 1px solid #f8a7a0;
+  border-radius: 999px;
+  background: linear-gradient(115deg, #562f44, #221528 78%);
   color: #fff7fd;
-  box-shadow: -3px 3px 0 #9a41557a, 0 0 14px #ff7a7aa1;
-  font: italic 700 12px/1 'Switzer', system-ui, sans-serif;
-  letter-spacing: .06em;
-  text-transform: uppercase;
+  box-shadow: 0 0 12px #ff7a7a68;
+  font: 650 12px/1 'Switzer', system-ui, sans-serif;
   animation: portrait-y 5.3s linear infinite alternate;
 }
-.portrait-track__badge img { display: block; border-radius: 4px; }
+.portrait-track__badge img { display: block; flex: 0 0 24px; border-radius: 50%; object-fit: cover; }
+.portrait-track__badge span { min-width: 0; overflow: hidden; white-space: nowrap; }
 @keyframes portrait-x { from { transform: translateX(0); } to { transform: translateX(calc(100cqw - var(--badge-width))); } }
 @keyframes portrait-y { from { transform: translateY(0); } to { transform: translateY(calc(100cqh - var(--badge-height))); } }
 .shuckle-sparks {

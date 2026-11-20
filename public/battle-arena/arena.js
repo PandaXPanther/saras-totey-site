@@ -5,6 +5,7 @@
   const field = arena.querySelector('.battlefield');
   const sparks = arena.querySelector('.shuckle-sparks');
   const chat = arena.querySelector('.battle-feed__callout');
+  const message = chat.querySelector('[data-banter]');
   let version = 0;
   let openingShuckle = false;
   let playedOpening = false;
@@ -12,9 +13,9 @@
   let saidHazards = false;
   let lastQuipTurn = -3;
 
-  function say(message) {
+  function say(line) {
     chat.hidden = false;
-    chat.textContent = message;
+    message.textContent = line;
   }
 
   // Kodama's mirror-mode fallback uses short lowercase messages with minimal punctuation.

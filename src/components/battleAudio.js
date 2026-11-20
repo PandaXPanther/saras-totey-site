@@ -1,10 +1,8 @@
 import { suspendAmbientForBattle } from './AudioControl.jsx';
 
-const fallbackTheme = 'https://play.pokemonshowdown.com/audio/oras-trainer.mp3';
-
-export function createBattleAudio() {
+export function createBattleAudio(theme) {
   const restoreAmbient = suspendAmbientForBattle();
-  const music = new Audio(fallbackTheme);
+  const music = new Audio(theme);
   music.volume = 0.20;
   music.loop = true;
   const Context = window.AudioContext || window.webkitAudioContext;
@@ -33,6 +31,10 @@ export function createBattleAudio() {
     setEnabled(value) {
       enabled = value;
       if (value) unlockEffects();
+      syncMusic();
+    },
+    setTheme(url) {
+      music.src = url;
       syncMusic();
     },
     setFavoritePlaying(value) {

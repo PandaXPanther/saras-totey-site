@@ -1,12 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-const tracks = [
-  ['llnXhrCn9Yo', 'Black & White Elite Four'],
-  ['0yqm7vrCp-g', 'Volo'],
-  ['GIn8_Q27WFY', 'Zinnia'],
-  ['vjOKKDgKvp4', 'Lugia'],
-  ['AVUdyEWH2nE', 'Sword & Shield Gym Leader'],
-];
 let playerApi;
 
 function loadPlayerApi() {
@@ -23,8 +16,20 @@ function loadPlayerApi() {
   return playerApi;
 }
 
-export default function BattleSoundtrack({ enabled, matchIndex, audio }) {
-  const [trackIndex, setTrackIndex] = useState(matchIndex % tracks.length);
+export default function BattleSoundtrack({ enabled, tracks, audio }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <details className="pokemon-soundtrack" onToggle={({ currentTarget }) => setOpen(currentTarget.open)}>
+      <summary>Battle soundtrack <span>(these are my favorite themes)</span></summary>
+      {open && (enabled ? <FavoritePlayer tracks={tracks} audio={audio} /> :
+        <p className="pokemon-soundtrack__message">Turn battle sound on to play the favorites.</p>)}
+    </details>
+  );
+}
+
+function FavoritePlayer({ tracks, audio }) {
+  const [trackIndex, setTrackIndex] = useState(0);
   const [seen, setSeen] = useState(false);
   const [unavailable, setUnavailable] = useState(false);
   const viewport = useRef(null);
@@ -53,7 +58,7 @@ export default function BattleSoundtrack({ enabled, matchIndex, audio }) {
   }, [audio]);
 
   useEffect(() => {
-    if (!enabled || !seen) return;
+    if (!seen) return;
     const host = slot.current;
     let disposed = false;
     const order = [...tracks.slice(trackIndex), ...tracks.slice(0, trackIndex)];
@@ -117,21 +122,20 @@ export default function BattleSoundtrack({ enabled, matchIndex, audio }) {
       host.replaceChildren();
       audio.setFavoritePlaying(false);
     };
-  }, [audio, enabled, seen, trackIndex]);
+  }, [audio, seen, tracks, trackIndex]);
 
   return (
-    <aside className="pokemon-soundtrack" aria-label="Battle soundtrack">
+    <div className="pokemon-soundtrack__content">
       <label>
-        Battle soundtrack
+        Start with
         <select value={trackIndex} onChange={({ target }) => setTrackIndex(Number(target.value))}>
           {tracks.map(([id, name], index) => <option key={id} value={index}>{name}</option>)}
         </select>
       </label>
       <div className="pokemon-soundtrack__viewport" ref={viewport}>
         <div ref={slot} className="pokemon-soundtrack__player" />
-        {(!enabled || !seen) && <span>{enabled ? 'Pokémon themes' : 'Sound off'}</span>}
       </div>
-      {enabled && unavailable && <p>Using the Showdown battle theme.</p>}
-    </aside>
+      {unavailable && <p>Using a Showdown battle theme.</p>}
+    </div>
   );
 }

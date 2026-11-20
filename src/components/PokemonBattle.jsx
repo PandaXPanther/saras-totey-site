@@ -3,7 +3,7 @@ import BattleHint from './BattleHint.jsx';
 import BattleSoundtrack from './BattleSoundtrack.jsx';
 import PokemonTeam from './PokemonTeam.jsx';
 
-export default function PokemonBattle({ audio, sound, onSound, matchIndex, onRestart, onClose }) {
+export default function PokemonBattle({ audio, sound, onSound, tracks, onRestart, onClose }) {
   const arena = useRef(null);
   const worker = useRef(null);
   const version = useRef(0);
@@ -143,7 +143,7 @@ export default function PokemonBattle({ audio, sound, onSound, matchIndex, onRes
           ref={arena}
           className="pokemon-game__arena"
           title="Pokémon Showdown battlefield and battle log"
-          src="/battle-arena/index.html?v=3"
+          src="/battle-arena/index.html?v=4"
           sandbox="allow-scripts"
           allow="autoplay"
           style={{ height: arenaHeight }}
@@ -175,7 +175,7 @@ export default function PokemonBattle({ audio, sound, onSound, matchIndex, onRes
             <PokemonTeam pokemon={request.side.pokemon} canSwitch={!busy && (!active?.trapped || forced)} preview={preview} choose={choose} />
           )}
         </div>
-        <BattleSoundtrack matchIndex={matchIndex} enabled={sound} audio={audio} />
+        <BattleSoundtrack tracks={tracks} enabled={sound} audio={audio} />
       </div>
     </div>
   );

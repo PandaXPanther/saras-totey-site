@@ -1,0 +1,52 @@
+.eclipse-landscape,
+#arena[data-theme="arcade"] .backdrop {
+  --eclipse-x: 58%;
+  --eclipse-y: 34%;
+  --eclipse-size: min(47%, 196px);
+  --eclipse-ink: #411225;
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse at var(--eclipse-x) var(--eclipse-y), #d63d5780, transparent 48%),
+    linear-gradient(172deg, #110d1c 0%, #291127 55%, #170e25 100%) !important;
+  opacity: 1 !important;
+}
+
+.eclipse-landscape::before,
+#arena[data-theme="arcade"] .backdrop::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  width: var(--eclipse-size);
+  aspect-ratio: 1;
+  left: var(--eclipse-x);
+  top: var(--eclipse-y);
+  transform: translate(-50%, -50%);
+  border: 1px solid #ffa298;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, #3a1024 0 4%, transparent 4.5%),
+    radial-gradient(circle at 50% 37%, var(--eclipse-ink) 0 3px, transparent 3.5px),
+    radial-gradient(circle at 61% 56%, var(--eclipse-ink) 0 3px, transparent 3.5px),
+    radial-gradient(circle at 39% 56%, var(--eclipse-ink) 0 3px, transparent 3.5px),
+    radial-gradient(circle at 50% 74%, var(--eclipse-ink) 0 4px, transparent 4.5px),
+    radial-gradient(circle at 71% 38%, var(--eclipse-ink) 0 4px, transparent 4.5px),
+    radial-gradient(circle at 29% 38%, var(--eclipse-ink) 0 4px, transparent 4.5px),
+    radial-gradient(circle at 50% 14%, var(--eclipse-ink) 0 4px, transparent 4.5px),
+    radial-gradient(circle at 81% 68%, var(--eclipse-ink) 0 4px, transparent 4.5px),
+    radial-gradient(circle at 19% 68%, var(--eclipse-ink) 0 4px, transparent 4.5px),
+    radial-gradient(circle closest-side, transparent 24%, #6f1731 25% 26%, transparent 27% 46%,
+      #6f1731 47% 48%, transparent 49% 70%, #6f1731 71% 73%, transparent 74% 95%, #a42a47 97%, transparent 100%),
+    radial-gradient(ellipse at 35% 32%, #ffac91, #ee5b66 57%, #aa274b 100%);
+  box-shadow: inset -8px -12px 24px #73122a78, 0 0 24px #ff5b71bd, 0 0 76px #e44a6059;
+}
+
+.eclipse-landscape::after,
+#arena[data-theme="arcade"] .backdrop::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 48% 0 0;
+  background: linear-gradient(172deg, #2c172c 4%, #160e22 35%, #28142a 66%, #110b1a);
+  clip-path: polygon(0 26%, 7% 21%, 14% 29%, 26% 7%, 31% 23%, 43% 15%, 48% 28%,
+    54% 19%, 65% 25%, 73% 9%, 81% 20%, 91% 4%, 97% 12%, 100% 8%, 100% 100%, 0 100%);
+}

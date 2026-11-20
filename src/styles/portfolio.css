@@ -316,23 +316,74 @@ section[id] { scroll-margin-top: 8px; }
 .misc-feature p { margin: 8px 0 0; color: var(--portfolio-muted); }
 .misc-battle { padding-bottom: clamp(34px, 5vw, 64px); }
 .misc-battle__panel {
-  padding: clamp(20px, 4vw, 43px);
+  padding: clamp(18px, 3vw, 34px);
   border: 1px solid var(--portfolio-rule);
-  border-top-color: #b47ca0a3;
-  border-radius: 12px;
-  background: radial-gradient(ellipse at 100% 0%, #563752a3, transparent 78%), #271f29;
+  border-top-color: #ef9f9d8c;
+  border-radius: 16px;
+  background: radial-gradient(ellipse at 95% 5%, #633d543f, transparent 70%), #261d29;
+  box-shadow: 0 20px 50px #0b081549;
 }
 .misc-battle__panel h2 {
   margin: 0 0 14px;
-  font-size: clamp(29px, 4vw, 51px);
+  font: 650 clamp(38px, 5vw, 66px)/.98 var(--font-display);
+  letter-spacing: -.045em;
 }
 .misc-battle__panel p {
   max-width: 65ch;
-  margin: 0 0 20px;
+  margin: 0 0 15px;
   color: var(--portfolio-muted);
 }
-.misc-battle .folio-button { color: #291b27; font-family: inherit; cursor: pointer; }
-.misc-battle .folio-button:hover { background: #f6c6df; }
+.battle-teaser {
+  display: grid;
+  grid-template-areas: "copy art";
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(16px, 4vw, 58px);
+}
+.battle-teaser__copy { grid-area: copy; min-width: 0; }
+.battle-teaser__format {
+  display: block;
+  margin-bottom: 9px;
+  color: #ffb2a6;
+  font: 600 .8125rem/1.3 var(--font-mono);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.battle-teaser__copy strong { color: #fff2f4; }
+.misc-battle .battle-teaser__play {
+  min-height: 48px;
+  color: #301626;
+  background: #ffad99;
+  font-family: inherit;
+  cursor: pointer;
+}
+.misc-battle .battle-teaser__play:hover { background: #ffd0bf; }
+.battle-teaser__art {
+  grid-area: art;
+  position: relative;
+  min-height: clamp(228px, 31vw, 348px);
+  overflow: hidden;
+  border: 1px solid #e6a7ab68;
+  border-radius: 11px;
+  --eclipse-x: 56%;
+  --eclipse-y: 38%;
+  --eclipse-size: min(53%, 225px);
+}
+.battle-teaser__art img {
+  position: absolute;
+  inset: auto auto 9% 55%;
+  width: clamp(106px, 16vw, 155px);
+  height: auto;
+  transform: translateX(-50%);
+  filter: drop-shadow(0 9px 6px #10091c);
+  image-rendering: pixelated;
+}
+.misc-battle__panel--playing .battle-teaser { display: block; }
+.misc-battle__panel--playing h2 { font-size: clamp(31px, 4vw, 46px); margin-bottom: 15px; }
+@media (max-width: 720px) {
+  .battle-teaser { grid-template-areas: "art" "copy"; grid-template-columns: minmax(0, 1fr); }
+  .battle-teaser__art { min-height: clamp(185px, 40vw, 248px); --eclipse-size: min(44%, 155px); }
+}
 .pokemon-game {
   container-type: inline-size;
   padding: clamp(10px, 2vw, 20px);
@@ -377,11 +428,20 @@ section[id] { scroll-margin-top: 8px; }
 .pokemon-soundtrack {
   grid-area: soundtrack;
   min-width: 0;
-  width: min(100%, 408px);
+  width: min(100%, 470px);
   border: 1px solid #dfa9cb42;
   border-radius: 8px;
   background: linear-gradient(160deg, #492c42, #281d31 75%);
 }
+.pokemon-soundtrack summary {
+  padding: 10px 11px;
+  color: #ffecf6;
+  font-size: .875rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+.pokemon-soundtrack summary span { color: #e9cddd; font-weight: 400; }
+.pokemon-soundtrack[open] summary { border-bottom: 1px solid #dfa9cb42; }
 .pokemon-soundtrack label { display: grid; gap: 6px; padding: 9px; font-size: .875rem; font-weight: 650; }
 .pokemon-soundtrack select {
   min-width: 0;
@@ -408,12 +468,6 @@ section[id] { scroll-margin-top: 8px; }
 .pokemon-soundtrack__player,
 .pokemon-soundtrack__player iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 .pokemon-soundtrack p { margin: 0; padding: 7px 9px; font-size: .875rem; }
-@container (min-width: 1110px) {
-  .pokemon-game__layout {
-    grid-template-areas: "arena soundtrack" "controls controls";
-    grid-template-columns: minmax(0, 1fr) 230px;
-  }
-}
 .pokemon-game .pokemon-game__status { margin: 12px 0; }
 .pokemon-game .pokemon-game__error { margin: 0 0 12px; color: #ffc2b7; }
 .pokemon-game__choices { min-width: 0; margin: 12px 0 0; padding: 0; border: 0; }
