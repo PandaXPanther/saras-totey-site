@@ -1,8 +1,75 @@
 html, body { margin: 0; overflow: hidden; }
 #arena { display: grid; gap: 6px; }
-.battlefield { width: min(100%, 640px); margin-inline: auto; overflow: hidden; }
+.battlefield { position: relative; width: min(100%, 640px); margin-inline: auto; overflow: hidden; }
 #arena :is(.battle, .battle-log) { position: relative; inset: auto; box-sizing: border-box; }
 #arena .battle-log { height: 138px; }
+
+#arena[data-theme="arcade"] .backdrop {
+  background: radial-gradient(circle at 72% 31%, #ffcb8f 0 8%, #ff7eb0 8% 13%, transparent 13.4%),
+    radial-gradient(ellipse at 68% 42%, #943471 0%, transparent 56%),
+    linear-gradient(180deg, #161238 0%, #39204a 52%, #16102a 100%) !important;
+  opacity: 1 !important;
+}
+#arena[data-theme="arcade"] .backdrop::after {
+  content: "";
+  position: absolute;
+  inset: 55% -18% -22%;
+  transform-origin: center 12%;
+  transform: perspective(225px) rotateX(46deg);
+  background: repeating-linear-gradient(90deg, #fc7dc969 0 1px, transparent 1px 43px),
+    repeating-linear-gradient(0deg, #fc7dc969 0 1px, transparent 1px 24px),
+    linear-gradient(#a2487d80, #25113d);
+  border-top: 1px solid #ffa7d8;
+}
+#arena[data-theme="night"] .backdrop {
+  background: radial-gradient(circle at 20% 12%, #d8fcff 0 1px, transparent 2px),
+    radial-gradient(circle at 61% 19%, #d8fcff 0 1px, transparent 2px),
+    radial-gradient(circle at 81% 38%, #bbffeb 0 1px, transparent 2px),
+    radial-gradient(ellipse at 17% 31%, #27b19b8a 0%, transparent 51%),
+    radial-gradient(ellipse at 81% 41%, #5474cb 0%, transparent 45%),
+    linear-gradient(160deg, #061524 5%, #152342 66%, #162627) !important;
+  opacity: 1 !important;
+}
+.portrait-track {
+  position: absolute;
+  inset: 5% 2%;
+  z-index: 3;
+  pointer-events: none;
+  --badge-height: 28px;
+  --badge-width: 65px;
+}
+#arena:is([data-theme="classic"], [data-bounce="false"]) .portrait-track { display: none; }
+.portrait-track__horizontal {
+  position: absolute;
+  inset-block: 0;
+  width: var(--badge-width);
+  animation: portrait-x 7s linear infinite alternate;
+}
+.portrait-track__badge {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  box-sizing: border-box;
+  width: var(--badge-width);
+  height: var(--badge-height);
+  padding: 2px 3px;
+  border: 1px solid #fcb6bf;
+  border-radius: 999px;
+  background: #251633d6;
+  color: #fff7fd;
+  box-shadow: 0 0 8px #fb63baaa;
+  font: 700 11px/1 system-ui, sans-serif;
+  animation: portrait-y 5.3s linear infinite alternate;
+}
+.portrait-track__badge img { display: block; border-radius: 50%; }
+@keyframes portrait-x { from { left: 0; } to { left: calc(100% - var(--badge-width)); } }
+@keyframes portrait-y { from { top: 0; } to { top: calc(100% - var(--badge-height)); } }
+@media (prefers-reduced-motion: reduce) {
+  .portrait-track__horizontal, .portrait-track__badge { animation: none; }
+  .portrait-track__horizontal { right: 0; }
+  .portrait-track__badge { bottom: 0; }
+}
 
 @media (min-width: 920px) {
   #arena { grid-template-columns: 640px minmax(0, 1fr); }

@@ -1,6 +1,7 @@
 // This frame runs the hosted Pokémon Showdown renderer in its own sandbox.
 (() => {
   const send = (type, values) => parent.postMessage({ type: `pokemon-arena:${type}`, ...values }, '*');
+  const arena = document.querySelector('#arena');
   let version = 0;
 
   try {
@@ -30,9 +31,12 @@
         if (battle.atQueueEnd) rendered();
       }
       if (data.type === 'pokemon-arena:sound') battle.setMute(!data.on);
+      if (data.type === 'pokemon-arena:theme' && ['arcade', 'night', 'classic'].includes(data.theme)) {
+        arena.dataset.theme = data.theme;
+        arena.dataset.bounce = String(data.portraitBounce === true);
+      }
     });
 
-    const arena = document.querySelector('#arena');
     new ResizeObserver(() => send('height', { height: arena.offsetHeight })).observe(arena);
     send('ready');
   } catch (error) {

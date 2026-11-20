@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { lazy, Suspense, useState } from 'react';
 import catalog from '../data/roblox-games.json';
 import { creators } from '../data/robloxCreators.js';
 import ChessRatings from './ChessRatings.jsx';
-import PokemonBattle from './PokemonBattle.jsx';
+
+const PokemonBattle = lazy(() => import('./PokemonBattle.jsx'));
 
 const econTools = [
   ['AP FRQ Grader', 'Practice with official AP Macro and Micro rubrics.', '/frq-grader'],
@@ -192,7 +193,9 @@ export function Misc() {
           <h2 id="pokemon-battle-heading">Battle Me in Pokémon</h2>
           <p>I built this battle simulator into my site using Pokémon Showdown. Challenge a bot trained on my own battle data to play like me in Gen 6 Random Battle. Gen 6 was my first generation, and it’s still my favorite. You get a fresh team every match. Have fun!</p>
           {battleOpen ? (
-            <PokemonBattle key={battleNumber} onRestart={() => setBattleNumber((number) => number + 1)} onClose={() => setBattleOpen(false)} />
+            <Suspense fallback={<p role="status">Starting battle…</p>}>
+              <PokemonBattle key={battleNumber} onRestart={() => setBattleNumber((number) => number + 1)} onClose={() => setBattleOpen(false)} />
+            </Suspense>
           ) : (
             <button type="button" className="folio-button" onClick={() => setBattleOpen(true)}>Start Gen 6 battle</button>
           )}

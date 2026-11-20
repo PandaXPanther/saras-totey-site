@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Pokémon Showdown battlefield</title>
   <link rel="stylesheet" href="https://play.pokemonshowdown.com/style/battle.css">
-  <link rel="stylesheet" href="/battle-arena/arena.css">
+  <link rel="stylesheet" href="/battle-arena/arena.css?v=2">
   <script defer src="https://play.pokemonshowdown.com/config/config.js"></script>
   <script defer src="https://play.pokemonshowdown.com/js/lib/jquery-1.11.0.min.js"></script>
   <script defer src="https://play.pokemonshowdown.com/js/lib/html-sanitizer-minified.js"></script>
@@ -21,11 +21,21 @@
   <script defer src="https://play.pokemonshowdown.com/data/teambuilder-tables.js"></script>
   <script defer src="https://play.pokemonshowdown.com/js/battle-tooltips.js"></script>
   <script defer src="https://play.pokemonshowdown.com/js/battle.js"></script>
-  <script defer src="/battle-arena/arena.js"></script>
+  <script defer src="/battle-arena/arena.js?v=2"></script>
 </head>
 <body>
-  <div id="arena">
-    <div class="battlefield"><div class="battle" aria-label="Battlefield"></div></div>
+  <div id="arena" data-theme="arcade" data-bounce="true">
+    <div class="battlefield">
+      <div class="battle" aria-label="Battlefield"></div>
+      <div class="portrait-track" aria-hidden="true">
+        <div class="portrait-track__horizontal">
+          <div class="portrait-track__badge">
+            <img src="/saras-headshot.jpg" alt="" width="25" height="25">
+            <span>Saras</span>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="battle-log" role="log" aria-label="Battle log" tabindex="0"></div>
   </div>
 </body>

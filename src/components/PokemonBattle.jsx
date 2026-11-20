@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import PokemonTeam from './PokemonTeam.jsx';
 
 export default function PokemonBattle({ onRestart, onClose }) {
   const arena = useRef(null);
@@ -12,6 +13,8 @@ export default function PokemonBattle({ onRestart, onClose }) {
   const [turn, setTurn] = useState(0);
   const [outcome, setOutcome] = useState(null);
   const [sound, setSound] = useState(false);
+  const [theme, setTheme] = useState('arcade');
+  const [portraitBounce, setPortraitBounce] = useState(true);
   const [mega, setMega] = useState(false);
   const [error, setError] = useState('');
   const [failed, setFailed] = useState(false);
@@ -84,6 +87,12 @@ export default function PokemonBattle({ onRestart, onClose }) {
     };
   }, [arenaReady]);
 
+  useEffect(() => {
+    if (arenaReady) {
+      arena.current?.contentWindow?.postMessage({ type: 'pokemon-arena:theme', theme, portraitBounce }, '*');
+    }
+  }, [arenaReady, theme, portraitBounce]);
+
   function choose(choice) {
     setError('');
     setChoosing(true);
@@ -105,6 +114,17 @@ export default function PokemonBattle({ onRestart, onClose }) {
       <div className="pokemon-game__bar">
         <strong>{turn > 0 ? `Turn ${turn}` : 'Gen 6 Random Battle'}</strong>
         <div className="pokemon-game__actions">
+          <label className="pokemon-game__theme">
+            Arena
+            <select value={theme} onChange={({ target }) => setTheme(target.value)}>
+              <option value="arcade">Saras Arcade</option>
+              <option value="night">Aurora Night</option>
+              <option value="classic">Showdown Classic</option>
+            </select>
+          </label>
+          <button type="button" onClick={() => setPortraitBounce(!portraitBounce)} aria-pressed={portraitBounce} disabled={theme === 'classic'}>
+            Portrait bounce
+          </button>
           <button type="button" onClick={() => {
             arena.current?.contentWindow?.postMessage({ type: 'pokemon-arena:sound', on: !sound }, '*');
             setSound(!sound);
@@ -129,6 +149,11 @@ export default function PokemonBattle({ onRestart, onClose }) {
       {active && (
         <fieldset className="pokemon-game__choices" disabled={busy || forced}>
           <legend>Moves</legend>
+          {active.canMegaEvo && (
+            <button type="button" className="pokemon-game__mega" aria-pressed={mega} onClick={() => setMega(!mega)}>
+              <span aria-hidden="true">✧</span> {mega ? 'Mega Evolution armed' : 'Mega Evolve'}
+            </button>
+          )}
           <div className="pokemon-game__grid pokemon-game__grid--moves">
             {active.moves.map(({ id, move, pp, maxpp, disabled }, index) => (
               <button type="button" key={id} disabled={disabled} onClick={() => choose(`move ${index + 1}${mega ? ' mega' : ''}`)}>
@@ -137,26 +162,10 @@ export default function PokemonBattle({ onRestart, onClose }) {
               </button>
             ))}
           </div>
-          {active.canMegaEvo && (
-            <label className="pokemon-game__mega">
-              <input type="checkbox" checked={mega} onChange={({ target }) => setMega(target.checked)} />
-              Mega Evolve
-            </label>
-          )}
         </fieldset>
       )}
       {request?.side?.pokemon && (
-        <fieldset className="pokemon-game__choices" disabled={busy || (active?.trapped && !forced)}>
-          <legend>Your team</legend>
-          <div className="pokemon-game__grid">
-            {request.side.pokemon.map(({ ident, condition, active: isActive }, index) => (
-              <button type="button" key={ident} disabled={isActive || condition.endsWith(' fnt')} onClick={() => choose(`${preview ? 'team' : 'switch'} ${index + 1}`)}>
-                <strong>{ident.slice(4)}</strong>
-                <small>{isActive ? 'Active' : condition.endsWith(' fnt') ? 'Fainted' : condition}</small>
-              </button>
-            ))}
-          </div>
-        </fieldset>
+        <PokemonTeam pokemon={request.side.pokemon} canSwitch={!busy && (!active?.trapped || forced)} preview={preview} choose={choose} />
       )}
     </div>
   );
