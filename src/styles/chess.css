@@ -45,27 +45,33 @@
   border-radius: 8px;
   isolation: isolate;
   background:
-    radial-gradient(ellipse at 52% 48%, #8e3e7966, #23162ba8 72%, #1b1124e0),
+    radial-gradient(ellipse at 50% 29%, #9d305b78, #2817317a 52%, #1b1124e0 100%),
     repeating-conic-gradient(#3e284c 0% 25%, #664064 0% 50%) 50% / 25% 25%;
   box-shadow: inset 0 0 28px #1a0d24a0, 0 12px 22px #1a0d244d;
   overflow: hidden;
 }
 .saras-chess__art::before {
   position: absolute;
-  inset: 19% 12%;
+  inset: 5% 6% auto;
+  height: 43%;
   content: "";
-  border: 1px solid #f17590;
-  border-radius: 50%;
-  box-shadow: 0 0 15px #f04b77, inset 0 0 15px #ed365e76;
-  transform: rotate(-22deg) scaleY(.61);
+  background: linear-gradient(180deg, #ff7689, #ff3b62 53%, #df2153);
+  clip-path: polygon(
+    0% 0%, 8% 13%, 20% 28%, 32% 40%, 42% 49%, 43% 54%,
+    41% 67%, 42% 73%, 50% 83%, 58% 73%, 59% 67%, 57% 54%,
+    58% 49%, 68% 40%, 80% 28%, 92% 13%, 100% 0%,
+    96% 13%, 89% 26%, 80% 39%, 71% 50%, 64% 56%,
+    67% 72%, 66% 79%, 61% 87%, 50% 100%, 39% 87%,
+    34% 79%, 33% 72%, 36% 56%, 29% 50%, 20% 39%, 11% 26%, 4% 13%
+  );
 }
 .saras-chess__art span {
   position: relative;
-  font: normal clamp(62px, 16.5vw, 135px)/.95 "Segoe UI Symbol", "DejaVu Sans", "Arial Unicode MS", serif;
+  font: normal clamp(48px, 13vw, 111px)/.95 "Segoe UI Symbol", "DejaVu Sans", "Arial Unicode MS", serif;
   color: #211325;
   -webkit-text-stroke: 1px #e5abd1;
   text-shadow: 0 0 16px #ed5ba578, 4px 9px 14px #130a18;
-  transform: translateY(-3%);
+  transform: translateY(26%);
 }
 .saras-chess__setup { display: flex; align-items: end; flex-wrap: wrap; gap: 9px; margin-top: 18px; }
 .saras-chess__setup label { display: grid; gap: 4px; color: var(--chess-muted); font-size: .79rem; }
