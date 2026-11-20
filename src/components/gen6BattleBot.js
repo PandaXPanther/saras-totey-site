@@ -147,7 +147,9 @@ export class Gen6BattleBot extends RandomPlayerAI {
         known.add(this.opponent.lastMove);
         this.revealedMoves.set(ident, known);
       }
-      if ((kind === '-start' || kind === '-end') && value === 'move: Encore') this.opponent.encored = kind === '-start';
+      if ((kind === '-start' || kind === '-end') && (value === 'Encore' || value === 'move: Encore')) {
+        this.opponent.encored = kind === '-start';
+      }
     }
     const boosts = ident === this.opponent?.ident ? this.opponent.boosts : ident.startsWith('p2a:') ? this.ownBoosts : null;
     if (boosts && (kind === '-boost' || kind === '-unboost' || kind === '-setboost')) {
@@ -252,6 +254,7 @@ export class Gen6BattleBot extends RandomPlayerAI {
     const danger = this.incomingDamage(user);
     const scores = moves.map(({ move: option }) => {
       const move = lookupGen6Move(option.move);
+      if (move.id === 'encore' && foe.encored) return -Infinity;
       if (foe.ability === 'magicbounce' && move.flags.reflectable) return -3;
       const hit = move.accuracy === true ? 1 : move.accuracy / 100;
       if (move.category !== 'Status') {

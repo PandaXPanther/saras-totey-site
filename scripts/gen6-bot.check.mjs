@@ -148,3 +148,36 @@ for await (const chunk of matchup.p1) {
 }
 assert.equal(choices, 4);
 console.log('Effectiveness verified before a public Levitate reveal, after the reveal, and after switching.');
+
+const encoreReplay = BattleStreams.getPlayerStreams(new BattleStreams.BattleStream());
+const encoreBot = new Gen6BattleBot(encoreReplay.p2, { seed: [9472, 3201, 1023, 1] });
+const encoreRun = encoreBot.start();
+const whiscashTeam = [
+  { species: 'Stantler', ability: 'Intimidate', level: 86, moves: ['Return'] },
+  { species: 'Whiscash', ability: 'Oblivious', level: 86, moves: ['Dragon Dance', 'Earthquake', 'Waterfall', 'Zen Headbutt'] },
+];
+await encoreReplay.omniscient.write([
+  '>start {"formatid":"gen6randombattle","seed":[42,888,16,107]}',
+  `>player p1 ${JSON.stringify({ name: 'You', team: Teams.pack(whiscashTeam) })}`,
+  `>player p2 ${JSON.stringify({ name: 'Totally Real Saras', team: Teams.pack([shuckle]) })}`,
+].join('\n'));
+let encoreTurn = 0;
+const encoreAttempts = [];
+const knockOffTurns = [];
+for await (const chunk of encoreReplay.p1) {
+  for (const line of chunk.split('\n')) {
+    if (line.startsWith('|turn|')) encoreTurn = Number(line.split('|')[2]);
+    if (line.startsWith("|move|p2a: Saras' Shuckle|Encore|")) encoreAttempts.push(encoreTurn);
+    if (line.startsWith("|move|p2a: Saras' Shuckle|Knock Off|")) knockOffTurns.push(encoreTurn);
+    if (line.startsWith('|request|')) {
+      const request = JSON.parse(line.slice('|request|'.length));
+      if (!request.active) continue;
+      if (encoreTurn === 8) await encoreReplay.omniscient.write('>forcewin p1');
+      else await encoreReplay.p1.write(encoreTurn === 1 ? 'switch 2' : 'move 1');
+    }
+  }
+}
+await encoreRun;
+assert.deepEqual(encoreAttempts, [3, 7]);
+assert.deepEqual(knockOffTurns, [4, 5, 6]);
+console.log('Shuckle uses Encore once per lock and uses Knock Off while Whiscash is already locked.');
