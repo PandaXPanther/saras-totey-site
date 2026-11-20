@@ -15,6 +15,8 @@
     "test:browser": "playwright test"
   },
   "dependencies": {
+    "@pkmn/randoms": "0.11.0",
+    "@pkmn/sim": "0.11.0",
     "@react-three/drei": "^9.114.3",
     "@react-three/fiber": "^8.17.10",
     "framer-motion": "^11.11.17",

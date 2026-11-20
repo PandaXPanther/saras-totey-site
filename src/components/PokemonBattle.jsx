@@ -1,0 +1,163 @@
+import React, { useEffect, useRef, useState } from 'react';
+
+export default function PokemonBattle({ onRestart, onClose }) {
+  const arena = useRef(null);
+  const worker = useRef(null);
+  const version = useRef(0);
+  const [arenaReady, setArenaReady] = useState(false);
+  const [arenaHeight, setArenaHeight] = useState(360);
+  const [request, setRequest] = useState(null);
+  const [choosing, setChoosing] = useState(false);
+  const [rendering, setRendering] = useState(false);
+  const [turn, setTurn] = useState(0);
+  const [outcome, setOutcome] = useState(null);
+  const [sound, setSound] = useState(false);
+  const [mega, setMega] = useState(false);
+  const [error, setError] = useState('');
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    function onArenaMessage({ source, data }) {
+      if (source !== arena.current?.contentWindow || !data) return;
+
+      if (data.type === 'pokemon-arena:ready') {
+        window.clearTimeout(timeout);
+        setArenaReady(true);
+      }
+      if (data.type === 'pokemon-arena:height' && Number.isFinite(data.height)) {
+        setArenaHeight(Math.max(160, Math.min(data.height, 560)));
+      }
+      if (data.type === 'pokemon-arena:rendered' && data.version === version.current) {
+        setTurn(data.turn);
+        setRendering(false);
+      }
+      if (data.type === 'pokemon-arena:failed') setFailed(true);
+    }
+
+    window.addEventListener('message', onArenaMessage);
+    const timeout = window.setTimeout(() => setFailed(true), 20000);
+    return () => {
+      window.removeEventListener('message', onArenaMessage);
+      window.clearTimeout(timeout);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!arenaReady) return;
+
+    const session = new Worker(new URL('./pokemonBattle.worker.js', import.meta.url), { type: 'module' });
+    worker.current = session;
+
+    session.onmessage = ({ data }) => {
+      switch (data.type) {
+        case 'commands': {
+          const commands = data.commands;
+          const result = commands.find((line) => /^\|(win\||tie\b)/.test(line));
+          if (result) setOutcome(result.startsWith('|win|You') ? 'You won!' : result.startsWith('|tie') ? 'Draw.' : 'The bot won.');
+          setRendering(true);
+          version.current += 1;
+          arena.current?.contentWindow?.postMessage({
+            type: 'pokemon-arena:commands',
+            commands,
+            version: version.current,
+          }, '*');
+          break;
+        }
+        case 'request':
+          setRequest(data.request);
+          setChoosing(false);
+          setMega(false);
+          break;
+        case 'invalid-choice':
+          setError(data.message);
+          setChoosing(false);
+          break;
+        case 'failure':
+          setFailed(true);
+          break;
+      }
+    };
+    session.onerror = () => setFailed(true);
+    return () => {
+      session.terminate();
+      worker.current = null;
+    };
+  }, [arenaReady]);
+
+  function choose(choice) {
+    setError('');
+    setChoosing(true);
+    worker.current?.postMessage({ choice });
+  }
+
+  const active = request?.active?.[0];
+  const forced = request?.forceSwitch?.[0];
+  const preview = request?.teamPreview;
+  const busy = !request || request.wait || choosing || rendering || Boolean(outcome) || failed;
+  let status = 'Starting battle…';
+  if (request) status = forced ? 'Choose a Pokémon to send in.' : preview ? 'Choose your lead.' : 'Choose a move or switch.';
+  if (choosing || rendering || request?.wait) status = 'Resolving turn…';
+  if (outcome) status = outcome;
+  if (failed) status = 'The battle couldn’t load. Start a new battle to try again.';
+
+  return (
+    <div className="pokemon-game">
+      <div className="pokemon-game__bar">
+        <strong>{turn > 0 ? `Turn ${turn}` : 'Gen 6 Random Battle'}</strong>
+        <div className="pokemon-game__actions">
+          <button type="button" onClick={() => {
+            arena.current?.contentWindow?.postMessage({ type: 'pokemon-arena:sound', on: !sound }, '*');
+            setSound(!sound);
+          }} aria-pressed={sound} disabled={!arenaReady}>
+            {sound ? 'Sound on' : 'Sound off'}
+          </button>
+          <button type="button" onClick={onRestart}>New battle</button>
+          <button type="button" onClick={onClose}>Close battle</button>
+        </div>
+      </div>
+      <iframe
+        ref={arena}
+        className="pokemon-game__arena"
+        title="Pokémon Showdown battlefield and battle log"
+        src="/battle-arena/index.html"
+        sandbox="allow-scripts"
+        allow="autoplay"
+        style={{ height: arenaHeight }}
+      />
+      <p role="status" className="pokemon-game__status">{status}</p>
+      {error && <p role="alert" className="pokemon-game__error">{error}</p>}
+      {active && (
+        <fieldset className="pokemon-game__choices" disabled={busy || forced}>
+          <legend>Moves</legend>
+          <div className="pokemon-game__grid pokemon-game__grid--moves">
+            {active.moves.map(({ id, move, pp, maxpp, disabled }, index) => (
+              <button type="button" key={id} disabled={disabled} onClick={() => choose(`move ${index + 1}${mega ? ' mega' : ''}`)}>
+                <strong>{move}</strong>
+                {maxpp > 0 && <small>{pp}/{maxpp} PP</small>}
+              </button>
+            ))}
+          </div>
+          {active.canMegaEvo && (
+            <label className="pokemon-game__mega">
+              <input type="checkbox" checked={mega} onChange={({ target }) => setMega(target.checked)} />
+              Mega Evolve
+            </label>
+          )}
+        </fieldset>
+      )}
+      {request?.side?.pokemon && (
+        <fieldset className="pokemon-game__choices" disabled={busy || (active?.trapped && !forced)}>
+          <legend>Your team</legend>
+          <div className="pokemon-game__grid">
+            {request.side.pokemon.map(({ ident, condition, active: isActive }, index) => (
+              <button type="button" key={ident} disabled={isActive || condition.endsWith(' fnt')} onClick={() => choose(`${preview ? 'team' : 'switch'} ${index + 1}`)}>
+                <strong>{ident.slice(4)}</strong>
+                <small>{isActive ? 'Active' : condition.endsWith(' fnt') ? 'Fainted' : condition}</small>
+              </button>
+            ))}
+          </div>
+        </fieldset>
+      )}
+    </div>
+  );
+}

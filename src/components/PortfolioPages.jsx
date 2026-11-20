@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import catalog from '../data/roblox-games.json';
 import { creators } from '../data/robloxCreators.js';
 import ChessRatings from './ChessRatings.jsx';
+import PokemonBattle from './PokemonBattle.jsx';
 
 const econTools = [
   ['AP FRQ Grader', 'Practice with official AP Macro and Micro rubrics.', '/frq-grader'],
@@ -14,9 +15,6 @@ const agencyWork = [
   { title: 'Thriftly', type: 'Paid social campaign', href: 'https://attagency.co/#work', image: 'thriftly' },
   { title: 'Shital Tayde', type: 'Artist portfolio', href: 'https://shital-tayde-art.pages.dev', image: 'shital' },
 ];
-
-const showdownUrl = 'https://play.pokemonshowdown.com/';
-const showdownReplayUrl = 'https://replay.pokemonshowdown.com/gen6randombattle-2716688165';
 
 const miscProjects = [
   { name: 'Kodama', type: 'Discord bot', url: 'https://askkodama.com/', description: 'A historian for Discord servers. Kodama searches old conversations and answers questions using the server’s own context.', image: 'kodama' },
@@ -169,7 +167,8 @@ export function Roblox() {
 }
 
 export function Misc() {
-  const [replayOpen, setReplayOpen] = useState(false);
+  const [battleOpen, setBattleOpen] = useState(false);
+  const [battleNumber, setBattleNumber] = useState(0);
 
   return (
     <>
@@ -192,18 +191,11 @@ export function Misc() {
         <div className="misc-battle__panel">
           <h2 id="pokemon-battle-heading">Battle Me in Pokémon</h2>
           <p>I built this battle simulator into my site using Pokémon Showdown. Challenge a bot trained on my own battle data to play like me in Gen 6 Random Battle. Gen 6 was my first generation, and it’s still my favorite. You get a fresh team every match. Have fun!</p>
-          <div className="page-actions">
-            <ExternalLink className="folio-button" href={showdownUrl}>Play Gen 6 Random Battle</ExternalLink>
-            <button type="button" className="folio-link misc-battle__replay-toggle" aria-expanded={replayOpen} aria-controls="showdown-replay" onClick={() => setReplayOpen((open) => !open)}>
-              {replayOpen ? 'Close replay' : 'Watch a Gen 6 replay'}
-            </button>
-          </div>
-          <p className="misc-battle__instructions">Choose <strong>[Gen 6] Random Battle</strong> from Showdown’s format menu.</p>
-          <div id="showdown-replay" hidden={!replayOpen}>
-            {replayOpen && (
-              <iframe title="Gen 6 Random Battle replay on Pokémon Showdown" src={showdownReplayUrl} allow="autoplay" referrerPolicy="no-referrer" />
-            )}
-          </div>
+          {battleOpen ? (
+            <PokemonBattle key={battleNumber} onRestart={() => setBattleNumber((number) => number + 1)} onClose={() => setBattleOpen(false)} />
+          ) : (
+            <button type="button" className="folio-button" onClick={() => setBattleOpen(true)}>Start Gen 6 battle</button>
+          )}
         </div>
       </section>
       <ChessRatings />

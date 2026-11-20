@@ -1,0 +1,10 @@
+html, body { margin: 0; overflow: hidden; }
+#arena { display: grid; gap: 6px; }
+.battlefield { width: min(100%, 640px); margin-inline: auto; overflow: hidden; }
+#arena :is(.battle, .battle-log) { position: relative; inset: auto; box-sizing: border-box; }
+#arena .battle-log { height: 138px; }
+
+@media (min-width: 920px) {
+  #arena { grid-template-columns: 640px minmax(0, 1fr); }
+  #arena .battle-log { height: 360px; }
+}
