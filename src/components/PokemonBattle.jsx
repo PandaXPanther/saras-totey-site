@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
+import BattleHint from './BattleHint.jsx';
+import BattleSoundtrack from './BattleSoundtrack.jsx';
 import PokemonTeam from './PokemonTeam.jsx';
 
-export default function PokemonBattle({ onRestart, onClose }) {
+export default function PokemonBattle({ audio, sound, onSound, matchIndex, onRestart, onClose }) {
   const arena = useRef(null);
   const worker = useRef(null);
   const version = useRef(0);
@@ -12,7 +14,6 @@ export default function PokemonBattle({ onRestart, onClose }) {
   const [rendering, setRendering] = useState(false);
   const [turn, setTurn] = useState(0);
   const [outcome, setOutcome] = useState(null);
-  const [sound, setSound] = useState(false);
   const [theme, setTheme] = useState('arcade');
   const [portraitBounce, setPortraitBounce] = useState(true);
   const [mega, setMega] = useState(false);
@@ -34,6 +35,7 @@ export default function PokemonBattle({ onRestart, onClose }) {
         setTurn(data.turn);
         setRendering(false);
       }
+      if (data.type === 'pokemon-arena:shiny-entrance') audio.playShiny();
       if (data.type === 'pokemon-arena:failed') setFailed(true);
     }
 
@@ -43,7 +45,7 @@ export default function PokemonBattle({ onRestart, onClose }) {
       window.removeEventListener('message', onArenaMessage);
       window.clearTimeout(timeout);
     };
-  }, []);
+  }, [audio]);
 
   useEffect(() => {
     if (!arenaReady) return;
@@ -56,7 +58,7 @@ export default function PokemonBattle({ onRestart, onClose }) {
         case 'commands': {
           const commands = data.commands;
           const result = commands.find((line) => /^\|(win\||tie\b)/.test(line));
-          if (result) setOutcome(result.startsWith('|win|You') ? 'You won!' : result.startsWith('|tie') ? 'Draw.' : 'The bot won.');
+          if (result) setOutcome(result.startsWith('|win|You') ? 'You won!' : result.startsWith('|tie') ? 'Draw.' : 'Totally Real Saras won.');
           setRendering(true);
           version.current += 1;
           arena.current?.contentWindow?.postMessage({
@@ -93,6 +95,10 @@ export default function PokemonBattle({ onRestart, onClose }) {
     }
   }, [arenaReady, theme, portraitBounce]);
 
+  useEffect(() => {
+    if (arenaReady) arena.current?.contentWindow?.postMessage({ type: 'pokemon-arena:sound', on: sound }, '*');
+  }, [arenaReady, sound]);
+
   function choose(choice) {
     setError('');
     setChoosing(true);
@@ -117,7 +123,7 @@ export default function PokemonBattle({ onRestart, onClose }) {
           <label className="pokemon-game__theme">
             Arena
             <select value={theme} onChange={({ target }) => setTheme(target.value)}>
-              <option value="arcade">Saras Arcade</option>
+              <option value="arcade">Crimson Moon</option>
               <option value="night">Aurora Night</option>
               <option value="classic">Showdown Classic</option>
             </select>
@@ -125,48 +131,52 @@ export default function PokemonBattle({ onRestart, onClose }) {
           <button type="button" onClick={() => setPortraitBounce(!portraitBounce)} aria-pressed={portraitBounce} disabled={theme === 'classic'}>
             Portrait bounce
           </button>
-          <button type="button" onClick={() => {
-            arena.current?.contentWindow?.postMessage({ type: 'pokemon-arena:sound', on: !sound }, '*');
-            setSound(!sound);
-          }} aria-pressed={sound} disabled={!arenaReady}>
+          <button type="button" onClick={() => onSound(!sound)} aria-pressed={sound}>
             {sound ? 'Sound on' : 'Sound off'}
           </button>
           <button type="button" onClick={onRestart}>New battle</button>
           <button type="button" onClick={onClose}>Close battle</button>
         </div>
       </div>
-      <iframe
-        ref={arena}
-        className="pokemon-game__arena"
-        title="Pokémon Showdown battlefield and battle log"
-        src="/battle-arena/index.html"
-        sandbox="allow-scripts"
-        allow="autoplay"
-        style={{ height: arenaHeight }}
-      />
-      <p role="status" className="pokemon-game__status">{status}</p>
-      {error && <p role="alert" className="pokemon-game__error">{error}</p>}
-      {active && (
-        <fieldset className="pokemon-game__choices" disabled={busy || forced}>
-          <legend>Moves</legend>
-          {active.canMegaEvo && (
-            <button type="button" className="pokemon-game__mega" aria-pressed={mega} onClick={() => setMega(!mega)}>
-              <span aria-hidden="true">✧</span> {mega ? 'Mega Evolution armed' : 'Mega Evolve'}
-            </button>
+      <div className="pokemon-game__layout">
+        <iframe
+          ref={arena}
+          className="pokemon-game__arena"
+          title="Pokémon Showdown battlefield and battle log"
+          src="/battle-arena/index.html?v=3"
+          sandbox="allow-scripts"
+          allow="autoplay"
+          style={{ height: arenaHeight }}
+        />
+        <div className="pokemon-game__controls">
+          <p role="status" className="pokemon-game__status">{status}</p>
+          {error && <p role="alert" className="pokemon-game__error">{error}</p>}
+          {active && (
+            <fieldset className="pokemon-game__choices" disabled={busy || forced}>
+              <legend>Moves</legend>
+              {active.canMegaEvo && (
+                <button type="button" className="pokemon-game__mega" aria-pressed={mega} onClick={() => setMega(!mega)}>
+                  <span aria-hidden="true">✧</span> {mega ? 'Mega Evolution armed' : 'Mega Evolve'}
+                </button>
+              )}
+              <div className="pokemon-game__grid pokemon-game__grid--moves">
+                {active.moves.map(({ id, move, pp, maxpp, disabled, description, meta }, index) => (
+                  <BattleHint key={id} name={move} description={description} meta={meta}>
+                    <button type="button" className="pokemon-game__move" disabled={disabled} onClick={() => choose(`move ${index + 1}${mega ? ' mega' : ''}`)}>
+                      <strong>{move}</strong>
+                      {maxpp > 0 && <small>{pp}/{maxpp} PP</small>}
+                    </button>
+                  </BattleHint>
+                ))}
+              </div>
+            </fieldset>
           )}
-          <div className="pokemon-game__grid pokemon-game__grid--moves">
-            {active.moves.map(({ id, move, pp, maxpp, disabled }, index) => (
-              <button type="button" key={id} disabled={disabled} onClick={() => choose(`move ${index + 1}${mega ? ' mega' : ''}`)}>
-                <strong>{move}</strong>
-                {maxpp > 0 && <small>{pp}/{maxpp} PP</small>}
-              </button>
-            ))}
-          </div>
-        </fieldset>
-      )}
-      {request?.side?.pokemon && (
-        <PokemonTeam pokemon={request.side.pokemon} canSwitch={!busy && (!active?.trapped || forced)} preview={preview} choose={choose} />
-      )}
+          {request?.side?.pokemon && (
+            <PokemonTeam pokemon={request.side.pokemon} canSwitch={!busy && (!active?.trapped || forced)} preview={preview} choose={choose} />
+          )}
+        </div>
+        <BattleSoundtrack matchIndex={matchIndex} enabled={sound} audio={audio} />
+      </div>
     </div>
   );
 }

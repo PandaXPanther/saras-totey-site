@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Icons } from '@pkmn/img';
+import BattleHint from './BattleHint.jsx';
 
 const stats = {
   atk: 'Attack', def: 'Defense', spa: 'Sp. Atk', spd: 'Sp. Def', spe: 'Speed',
@@ -51,8 +52,8 @@ export default function PokemonTeam({ pokemon, canSwitch, preview, choose }) {
           <span>{selected.details.split(', ').find((detail) => /^L\d+$/.test(detail))}</span>
         </div>
         <dl>
-          <div><dt>Item</dt><dd>{selected.itemName || 'None'}</dd></div>
-          <div><dt>Ability</dt><dd>{selected.abilityName || 'Unknown'}</dd></div>
+          <div><dt>Item</dt><dd>{selected.itemDescription ? <BattleHint name={selected.itemName} description={selected.itemDescription} /> : selected.itemName || 'None'}</dd></div>
+          <div><dt>Ability</dt><dd>{selected.abilityDescription ? <BattleHint name={selected.abilityName} description={selected.abilityDescription} /> : selected.abilityName || 'Unknown'}</dd></div>
         </dl>
         <dl className="pokemon-game__stats">
           <div><dt>HP</dt><dd>{fainted(selected) ? '0' : selected.condition.split(' ')[0]}</dd></div>

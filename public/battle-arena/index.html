@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Pokémon Showdown battlefield</title>
   <link rel="stylesheet" href="https://play.pokemonshowdown.com/style/battle.css">
-  <link rel="stylesheet" href="/battle-arena/arena.css?v=2">
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&amp;display=swap">
+  <link rel="stylesheet" href="/battle-arena/arena.css?v=3">
   <script defer src="https://play.pokemonshowdown.com/config/config.js"></script>
   <script defer src="https://play.pokemonshowdown.com/js/lib/jquery-1.11.0.min.js"></script>
   <script defer src="https://play.pokemonshowdown.com/js/lib/html-sanitizer-minified.js"></script>
@@ -21,7 +22,7 @@
   <script defer src="https://play.pokemonshowdown.com/data/teambuilder-tables.js"></script>
   <script defer src="https://play.pokemonshowdown.com/js/battle-tooltips.js"></script>
   <script defer src="https://play.pokemonshowdown.com/js/battle.js"></script>
-  <script defer src="/battle-arena/arena.js?v=2"></script>
+  <script defer src="/battle-arena/arena.js?v=3"></script>
 </head>
 <body>
   <div id="arena" data-theme="arcade" data-bounce="true">
@@ -30,13 +31,21 @@
       <div class="portrait-track" aria-hidden="true">
         <div class="portrait-track__horizontal">
           <div class="portrait-track__badge">
-            <img src="/saras-headshot.jpg" alt="" width="25" height="25">
+            <img src="/saras-headshot.jpg" alt="" width="28" height="28">
             <span>Saras</span>
           </div>
         </div>
       </div>
+      <div class="shuckle-sparks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
     </div>
-    <div class="battle-log" role="log" aria-label="Battle log" tabindex="0"></div>
+    <section class="battle-feed" aria-labelledby="battle-feed-title">
+      <header class="battle-feed__heading">
+        <h1 id="battle-feed-title">Battle feed</h1>
+        <span>vs. Totally Real Saras</span>
+      </header>
+      <div class="battle-feed__callout" aria-label="Totally Real Saras" aria-live="polite" hidden></div>
+      <div class="battle-log" role="log" aria-label="Battle log" tabindex="0"></div>
+    </section>
   </div>
 </body>
 </html>

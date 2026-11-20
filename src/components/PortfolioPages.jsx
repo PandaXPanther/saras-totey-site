@@ -1,7 +1,8 @@
-import React, { lazy, Suspense, useState } from 'react';
+import React, { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import catalog from '../data/roblox-games.json';
 import { creators } from '../data/robloxCreators.js';
 import ChessRatings from './ChessRatings.jsx';
+import { createBattleAudio } from './battleAudio.js';
 
 const PokemonBattle = lazy(() => import('./PokemonBattle.jsx'));
 
@@ -170,6 +171,23 @@ export function Roblox() {
 export function Misc() {
   const [battleOpen, setBattleOpen] = useState(false);
   const [battleNumber, setBattleNumber] = useState(0);
+  const [battleSound, setBattleSound] = useState(true);
+  const battleAudio = useRef(null);
+
+  useEffect(() => () => battleAudio.current?.close(), []);
+
+  function startBattle() {
+    battleAudio.current = createBattleAudio();
+    setBattleSound(true);
+    setBattleNumber((number) => number + 1);
+    setBattleOpen(true);
+  }
+
+  function closeBattle() {
+    battleAudio.current?.close();
+    battleAudio.current = null;
+    setBattleOpen(false);
+  }
 
   return (
     <>
@@ -191,13 +209,18 @@ export function Misc() {
       <section id="pokemon-battle" className="folio-wrap misc-battle" aria-labelledby="pokemon-battle-heading">
         <div className="misc-battle__panel">
           <h2 id="pokemon-battle-heading">Battle Me in Pokémon</h2>
-          <p>I built this battle simulator into my site using Pokémon Showdown. Challenge a bot trained on my own battle data to play like me in Gen 6 Random Battle. Gen 6 was my first generation, and it’s still my favorite. You get a fresh team every match. Have fun!</p>
+          <p>I built this battle simulator into my site using Pokémon Showdown. Challenge a bot trained on my own battle data to play like me in Gen 6 Random Battle. Gen 6 was my first generation, and it’s still my favorite. Shuckle is my favorite Pokémon, so Totally Real Saras always leads with a shiny Shuckle. The remaining Pokémon on both teams are randomized every match. Have fun!</p>
           {battleOpen ? (
             <Suspense fallback={<p role="status">Starting battle…</p>}>
-              <PokemonBattle key={battleNumber} onRestart={() => setBattleNumber((number) => number + 1)} onClose={() => setBattleOpen(false)} />
+              <PokemonBattle key={battleNumber} matchIndex={battleNumber - 1} audio={battleAudio.current}
+                sound={battleSound} onSound={(enabled) => {
+                  battleAudio.current?.setEnabled(enabled);
+                  setBattleSound(enabled);
+                }}
+                onRestart={() => setBattleNumber((number) => number + 1)} onClose={closeBattle} />
             </Suspense>
           ) : (
-            <button type="button" className="folio-button" onClick={() => setBattleOpen(true)}>Start Gen 6 battle</button>
+            <button type="button" className="folio-button" onClick={startBattle}>Start Gen 6 battle</button>
           )}
         </div>
       </section>

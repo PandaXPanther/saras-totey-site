@@ -334,6 +334,7 @@ section[id] { scroll-margin-top: 8px; }
 .misc-battle .folio-button { color: #291b27; font-family: inherit; cursor: pointer; }
 .misc-battle .folio-button:hover { background: #f6c6df; }
 .pokemon-game {
+  container-type: inline-size;
   padding: clamp(10px, 2vw, 20px);
   border: 1px solid #dfa9cb55;
   border-radius: 10px;
@@ -358,11 +359,60 @@ section[id] { scroll-margin-top: 8px; }
   font: inherit;
 }
 .pokemon-game__arena {
+  grid-area: arena;
   display: block;
   width: 100%;
   border: 0;
   border-radius: 6px;
   background: #29212c;
+}
+.pokemon-game__layout {
+  display: grid;
+  grid-template-areas: "arena" "controls" "soundtrack";
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 10px;
+}
+.pokemon-game__controls { grid-area: controls; min-width: 0; }
+.pokemon-soundtrack {
+  grid-area: soundtrack;
+  min-width: 0;
+  width: min(100%, 408px);
+  border: 1px solid #dfa9cb42;
+  border-radius: 8px;
+  background: linear-gradient(160deg, #492c42, #281d31 75%);
+}
+.pokemon-soundtrack label { display: grid; gap: 6px; padding: 9px; font-size: .875rem; font-weight: 650; }
+.pokemon-soundtrack select {
+  min-width: 0;
+  width: 100%;
+  min-height: 38px;
+  padding: 6px;
+  border: 1px solid #b678925d;
+  border-radius: 5px;
+  color: #fff6fa;
+  background: #281d31;
+  font: inherit;
+}
+.pokemon-soundtrack__viewport {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 200px;
+  aspect-ratio: 16 / 9;
+  border-radius: 0 0 7px 7px;
+  overflow: hidden;
+  background: #1a1320;
+  color: #e4cadc;
+}
+.pokemon-soundtrack__player,
+.pokemon-soundtrack__player iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.pokemon-soundtrack p { margin: 0; padding: 7px 9px; font-size: .875rem; }
+@container (min-width: 1110px) {
+  .pokemon-game__layout {
+    grid-template-areas: "arena soundtrack" "controls controls";
+    grid-template-columns: minmax(0, 1fr) 230px;
+  }
 }
 .pokemon-game .pokemon-game__status { margin: 12px 0; }
 .pokemon-game .pokemon-game__error { margin: 0 0 12px; color: #ffc2b7; }
@@ -385,6 +435,55 @@ section[id] { scroll-margin-top: 8px; }
 .pokemon-game__grid button { display: grid; align-content: center; gap: 2px; min-height: 58px; text-align: left; }
 .pokemon-game__grid--moves button { background: #493047; }
 .pokemon-game__grid small { color: #ead2e2; font-size: 0.8125rem; }
+.battle-hint { position: relative; min-width: 0; }
+.pokemon-game button.pokemon-game__move { width: 100%; padding-inline-end: 38px; }
+.pokemon-game button.battle-hint__info {
+  position: absolute;
+  inset: 4px 4px auto auto;
+  display: grid;
+  place-items: center;
+  min-height: 36px;
+  width: 34px;
+  padding: 0;
+  border-color: transparent;
+  background: none;
+  color: #efcfe6;
+  text-align: center;
+}
+.pokemon-game button.battle-hint__term {
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+  font: inherit;
+}
+.battle-hint__bubble {
+  position: absolute;
+  z-index: 12;
+  bottom: calc(100% + 4px);
+  left: 0;
+  display: none;
+  gap: 3px;
+  width: min(238px, 64vw);
+  padding: 8px 10px;
+  border: 1px solid #c992af;
+  border-radius: 6px;
+  background: #201526;
+  color: #fff2f8;
+  box-shadow: 0 6px 24px #0007;
+  font-size: .8125rem;
+  font-weight: 400;
+  line-height: 1.3;
+}
+.battle-hint__bubble strong { color: #ffd0e4; }
+.battle-hint:is(:focus-within, [data-pinned="true"]) > .battle-hint__bubble { display: grid; }
+@media (hover: hover) {
+  .battle-hint:hover > .battle-hint__bubble { display: grid; }
+}
+.pokemon-game__grid--moves .battle-hint:nth-child(4n) > .battle-hint__bubble { left: auto; right: 0; }
 .pokemon-game button.pokemon-game__mega {
   margin-bottom: 8px;
   background: #482e59;
@@ -437,6 +536,7 @@ section[id] { scroll-margin-top: 8px; }
 .pokemon-game__stats dd { font-variant-numeric: tabular-nums; }
 @media (max-width: 530px) {
   .pokemon-game__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pokemon-game__grid--moves .battle-hint:nth-child(2n) > .battle-hint__bubble { left: auto; right: 0; }
 }
 .misc-chess { padding-bottom: clamp(47px, 7vw, 94px); }
 .chess-panel {

@@ -27,8 +27,21 @@ async function readBattle() {
       if (line.startsWith('|request|')) {
         const request = JSON.parse(line.slice('|request|'.length));
         for (const pokemon of request.side?.pokemon || []) {
-          pokemon.itemName = gen6.items.get(pokemon.item).name;
-          pokemon.abilityName = gen6.abilities.get(pokemon.ability || pokemon.baseAbility).name;
+          const item = gen6.items.get(pokemon.item);
+          const ability = gen6.abilities.get(pokemon.ability || pokemon.baseAbility);
+          pokemon.itemName = item.name;
+          pokemon.itemDescription = item.desc || item.shortDesc;
+          pokemon.abilityName = ability.name;
+          pokemon.abilityDescription = ability.desc || ability.shortDesc;
+        }
+        for (const active of request.active || []) {
+          for (const option of active.moves) {
+            const move = gen6.moves.get(option.id);
+            const generic = move.id.startsWith('hiddenpower') ? gen6.moves.get('hiddenpower') : move;
+            option.description = move.desc || generic.desc || move.shortDesc || generic.shortDesc || 'No additional effect.';
+            option.meta = [move.type, move.category, move.basePower ? `${move.basePower} power` : '',
+              typeof move.accuracy === 'number' ? `${move.accuracy}% accuracy` : ''].filter(Boolean).join(' · ');
+          }
         }
         self.postMessage({ type: 'request', request });
       } else if (line.startsWith('|error|')) {
@@ -52,5 +65,5 @@ void readBattle().catch(reportFailure);
 void writeBattle(streams.omniscient, [
   '>start {"formatid":"gen6randombattle"}',
   '>player p1 {"name":"You"}',
-  `>player p2 ${JSON.stringify({ name: 'Portfolio Bot', team: Teams.pack(createBotTeam()) })}`,
+  `>player p2 ${JSON.stringify({ name: 'Totally Real Saras', team: Teams.pack(createBotTeam()) })}`,
 ].join('\n'));
