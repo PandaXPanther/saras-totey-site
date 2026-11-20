@@ -88,7 +88,6 @@ export function createFlightFrames(canvas, variant, onDraw, onUnavailable) {
   let overview;
   let still;
   let detailRequest;
-  let detailTimer;
   let detailAttempt = -1;
   let target = 0;
   let destination = 0;
@@ -172,11 +171,15 @@ export function createFlightFrames(canvas, variant, onDraw, onUnavailable) {
     if (disposed) return;
     const current = motionGroup(target);
     const next = motionGroup(destination);
+    const stopped = isResting && target !== 0;
     for (const [group, controller] of requests) {
-      if (Math.min(Math.abs(group - current), Math.abs(group - next)) <= 3) continue;
+      const keep = stopped ? group === current : Math.min(Math.abs(group - current), Math.abs(group - next)) <= 3;
+      if (keep) continue;
       requests.delete(group);
       controller.abort();
     }
+    // After a swipe, let the sharp stopped frame use the available bandwidth.
+    if (stopped && enableDetail && (detailRequest || detailAttempt !== target || still?.target === target)) return;
     // Prefetch where the native scroll is heading, even while the camera is catching up.
     const nearby = [next, current];
     if (!isResting || !target) nearby.push(next + direction);
@@ -188,7 +191,6 @@ export function createFlightFrames(canvas, variant, onDraw, onUnavailable) {
   }
 
   async function refine(frame) {
-    detailTimer = undefined;
     if (disposed || !isResting || frame !== target || !frame || detailAttempt === frame) return;
     detailAttempt = frame;
     const controller = new AbortController();
@@ -216,7 +218,10 @@ export function createFlightFrames(canvas, variant, onDraw, onUnavailable) {
     } catch {
       // The motion atlas can keep showing the stopped view.
     } finally {
-      if (detailRequest === controller) detailRequest = undefined;
+      if (detailRequest === controller) {
+        detailRequest = undefined;
+        fillQueue();
+      }
     }
   }
 
@@ -235,23 +240,18 @@ export function createFlightFrames(canvas, variant, onDraw, onUnavailable) {
       if (frame !== target) {
         detailRequest?.abort();
         detailAttempt = -1;
-        clearTimeout(detailTimer);
-        detailTimer = undefined;
-      }
+          }
       target = frame;
       destination = next;
       isResting = resting;
       fillQueue();
-      if (enableDetail && resting && frame && still?.target !== frame && !detailTimer && detailAttempt !== frame) {
-        detailTimer = setTimeout(() => refine(frame), 100);
-      }
+      if (enableDetail && resting && frame && still?.target !== frame) refine(frame);
       if (paintRequest) cancelAnimationFrame(paintRequest);
       draw();
     },
     dispose() {
       disposed = true;
       cancelAnimationFrame(paintRequest);
-      clearTimeout(detailTimer);
       overviewRequest.abort();
       detailRequest?.abort();
       requests.forEach((controller) => controller.abort());
