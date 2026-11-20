@@ -61,6 +61,20 @@ export default function PokemonTeam({ pokemon, canSwitch, preview, choose }) {
             <div key={key}><dt>{label}</dt><dd>{selected.stats?.[key] ?? '–'}</dd></div>
           ))}
         </dl>
+        {selected.moveDetails?.length > 0 && (
+          <dl className="pokemon-game__moveset">
+            <div>
+              <dt>Moveset</dt>
+              <dd>
+                <ul aria-label="Moveset">
+                  {selected.moveDetails.map(({ name, description, meta }) => (
+                    <li key={`${selected.ident}:${name}`}><BattleHint name={name} description={description} meta={meta} /></li>
+                  ))}
+                </ul>
+              </dd>
+            </div>
+          </dl>
+        )}
       </section>
     </fieldset>
   );

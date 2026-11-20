@@ -1,6 +1,6 @@
 import { BattleStreams, Teams } from '@pkmn/sim';
 import { TeamGenerators } from '@pkmn/randoms';
-import { createBotTeam, Gen6BattleBot, gen6 } from './gen6BattleBot.js';
+import { createBotTeam, Gen6BattleBot, gen6, lookupGen6Move } from './gen6BattleBot.js';
 
 Teams.setGeneratorFactory(TeamGenerators);
 
@@ -20,6 +20,17 @@ async function writeBattle(stream, command) {
   }
 }
 
+function describeMove(id) {
+  const move = lookupGen6Move(id);
+  const generic = move.id === 'hiddenpower' ? gen6.moves.get('hiddenpower') : move;
+  return {
+    name: move.name,
+    description: move.desc || generic.desc || move.shortDesc || generic.shortDesc || 'No additional effect.',
+    meta: [move.type, move.category, move.basePower ? `${move.basePower} power` : '',
+      typeof move.accuracy === 'number' ? `${move.accuracy}% accuracy` : ''].filter(Boolean).join(' · '),
+  };
+}
+
 async function readBattle() {
   for await (const chunk of streams.p1) {
     const commands = [];
@@ -33,14 +44,13 @@ async function readBattle() {
           pokemon.itemDescription = item.desc || item.shortDesc;
           pokemon.abilityName = ability.name;
           pokemon.abilityDescription = ability.desc || ability.shortDesc;
+          pokemon.moveDetails = pokemon.moves.map(describeMove);
         }
         for (const active of request.active || []) {
           for (const option of active.moves) {
-            const move = gen6.moves.get(option.id);
-            const generic = move.id.startsWith('hiddenpower') ? gen6.moves.get('hiddenpower') : move;
-            option.description = move.desc || generic.desc || move.shortDesc || generic.shortDesc || 'No additional effect.';
-            option.meta = [move.type, move.category, move.basePower ? `${move.basePower} power` : '',
-              typeof move.accuracy === 'number' ? `${move.accuracy}% accuracy` : ''].filter(Boolean).join(' · ');
+            const { description, meta } = describeMove(option.move);
+            option.description = description;
+            option.meta = meta;
           }
         }
         self.postMessage({ type: 'request', request });

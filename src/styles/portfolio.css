@@ -558,9 +558,33 @@ section[id] { scroll-margin-top: 8px; }
 .pokemon-game__inspector dt { color: #ead2e2; font-size: .8125rem; }
 .pokemon-game__inspector dd { margin: 0; color: #fff6fa; font-weight: 650; }
 .pokemon-game__stats dd { font-variant-numeric: tabular-nums; }
+.pokemon-game__inspector .pokemon-game__moveset { flex-basis: 100%; }
+.pokemon-game__moveset > div { width: 100%; }
+.pokemon-game__moveset ul {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px 8px;
+  margin: 5px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.pokemon-game__moveset button.battle-hint__term {
+  min-height: 36px;
+  width: 100%;
+  padding: 4px 6px;
+  border: 1px solid #dfa9cb42;
+  border-radius: 5px;
+  background: #342639;
+  font-size: .8125rem;
+  overflow-wrap: anywhere;
+}
+.pokemon-game__moveset li:nth-child(n+3) .battle-hint__bubble { left: auto; right: 0; }
 @media (max-width: 530px) {
   .pokemon-game__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .pokemon-game__grid--moves .battle-hint:nth-child(2n) > .battle-hint__bubble { left: auto; right: 0; }
+  .pokemon-game__moveset ul { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pokemon-game__moveset li:nth-child(odd) .battle-hint__bubble { left: 0; right: auto; }
+  .pokemon-game__moveset li:nth-child(even) .battle-hint__bubble { left: auto; right: 0; }
 }
 .misc-chess { padding-bottom: clamp(47px, 7vw, 94px); }
 .chess-panel {

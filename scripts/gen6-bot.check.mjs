@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { BattleStreams, Teams } from '@pkmn/sim';
 import { TeamGenerators } from '@pkmn/randoms';
-import { createBotTeam, Gen6BattleBot } from '../src/components/gen6BattleBot.js';
+import { createBotTeam, Gen6BattleBot, lookupGen6Move } from '../src/components/gen6BattleBot.js';
 
 Teams.setGeneratorFactory(TeamGenerators);
 
@@ -58,3 +58,53 @@ returning.receiveRequest({
 });
 assert.deepEqual(responses, ['move 2']);
 console.log('Magic Bounce verified against Shuckle’s lead hazards and Cresselia’s Toxic after Espeon switches back in.');
+
+
+async function playIntoArceus(item) {
+  const replay = BattleStreams.getPlayerStreams(new BattleStreams.BattleStream());
+  const opponent = new Gen6BattleBot(replay.p2, { seed: [9472, 3201, 1023, 1] });
+  const opponentRun = opponent.start();
+  const team = [
+    { species: 'Dedenne', level: 84, ability: 'Cheek Pouch', item: 'Sitrus Berry', moves: ['Thunderbolt'] },
+    { species: 'Arceus-Flying', level: 76, ability: 'Multitype', item: 'Sky Plate', moves: ['Judgment'] },
+  ];
+  const opposition = [
+    { species: 'Tyrantrum', level: 82, ability: 'Rock Head', item, moves: ['Earthquake', 'Stone Edge', 'Dragon Claw', 'Crunch'] },
+    { species: 'Jolteon', level: 82, ability: 'Volt Absorb', moves: ['Thunderbolt'] },
+  ];
+  await replay.omniscient.write([
+    '>start {"formatid":"gen6randombattle","seed":[1352,7415,1614,1]}',
+    `>player p1 ${JSON.stringify({ name: 'You', team: Teams.pack(team) })}`,
+    `>player p2 ${JSON.stringify({ name: 'Totally Real Saras', team: Teams.pack(opposition) })}`,
+  ].join('\n'));
+
+  const transcript = [];
+  let choices = 0;
+  for await (const chunk of replay.p1) {
+    for (const line of chunk.split('\n')) {
+      if (!line.startsWith('|request|')) {
+        transcript.push(line);
+        continue;
+      }
+      const request = JSON.parse(line.slice('|request|'.length));
+      if (!request.active) continue;
+      choices += 1;
+      if (choices === 1) await replay.p1.write('switch 2');
+      if (choices === 2) await replay.p1.write('move 1');
+      if (choices === 3) await replay.omniscient.write('>forcewin p1');
+    }
+  }
+  await opponentRun;
+  assert.equal(transcript.filter((line) => line.startsWith('|move|p2a: Tyrantrum|Earthquake|')).length, 1);
+  assert.equal(transcript.filter((line) => line === '|-immune|p1a: Arceus').length, 1);
+  return transcript.slice(transcript.indexOf('|turn|2') + 1);
+}
+
+const lockedTurn = await playIntoArceus('Choice Scarf');
+assert.ok(lockedTurn.some((line) => line.startsWith('|switch|p2a: Jolteon|')));
+const unlockedTurn = await playIntoArceus('Life Orb');
+assert.ok(unlockedTurn.some((line) => line.startsWith('|move|p2a: Tyrantrum|Stone Edge|')));
+assert.equal(lookupGen6Move('return102').basePower, 102);
+assert.equal(lookupGen6Move('Frustration 102').name, 'Frustration');
+assert.equal(lookupGen6Move('hiddenpowerice60').type, 'Ice');
+console.log('Tyrantrum verified against Arceus-Flying with and without a Choice lock.');

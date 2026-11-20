@@ -2,6 +2,13 @@ import { Dex, RandomPlayerAI, Teams } from '@pkmn/sim';
 
 export const gen6 = Dex.mod('gen6');
 
+export function lookupGen6Move(name) {
+  const happinessMove = /^(return|frustration)\s*(\d+)$/i.exec(name);
+  if (!happinessMove) return gen6.moves.get(name);
+  const [, move, power] = happinessMove;
+  return { ...gen6.moves.get(move), basePower: Number(power) };
+}
+
 const hazards = { stealthrock: 1, spikes: 3, toxicspikes: 2, stickyweb: 1 };
 const shuckleName = "Saras' Shuckle";
 const speed = (pokemon) => stat(pokemon, 'spe') * (pokemon.item === 'choicescarf' ? 1.5 : 1) *
@@ -47,8 +54,9 @@ function stat(pokemon, key) {
   return pokemon.stats[key] * (stage > 0 ? (2 + stage) / 2 : 2 / (2 - stage));
 }
 
-function typeFactor(type, target, move) {
-  const ability = target.ability;
+function typeFactor(type, target, move, attackerAbility) {
+  const bypassesAbility = ['moldbreaker', 'turboblaze', 'teravolt'].includes(attackerAbility);
+  const ability = bypassesAbility ? '' : target.ability;
   if (type === 'Ground' && (ability === 'levitate' || target.item === 'airballoon') && move !== 'thousandarrows') return 0;
   if (type === 'Water' && ['waterabsorb', 'stormdrain', 'dryskin'].includes(ability)) return 0;
   if (type === 'Electric' && ['voltabsorb', 'motordrive', 'lightningrod'].includes(ability)) return 0;
@@ -62,7 +70,7 @@ function typeFactor(type, target, move) {
 
 function damage(move, user, target) {
   if (move.category === 'Status') return 0;
-  const effectiveness = typeFactor(move.type, target, move.id);
+  const effectiveness = typeFactor(move.type, target, move.id, user.ability);
   if (!effectiveness) return 0;
   if (move.damage) return (move.damage === 'level' ? user.lv : move.damage) / target.maxHp;
   if (move.id === 'superfang') return target.hp / 2;
@@ -156,17 +164,31 @@ export class Gen6BattleBot extends RandomPlayerAI {
     const user = this.roster.find((pokemon) => pokemon.active);
     this.shuckleMove = user?.ident.endsWith(shuckleName) && active && this.target?.hp > 0 ?
       this.chooseShuckleMove(active) : null;
-    if (!this.shuckleMove && this.target?.hp > 0 && user && active && !active.trapped && this.turn - this.lastSwitch > 1) {
+    if (!this.shuckleMove && this.target?.hp > 0 && user && active && !active.trapped) {
       const current = pokemonInfo({ ...user, boosts: this.ownBoosts });
-      const outgoing = bestDamage(active.moves.filter((move) => !move.disabled).map((move) => gen6.moves.get(move.id)), current, this.target);
-      const incoming = this.incomingDamage(current);
-      const reserves = this.roster.filter((pokemon) => !pokemon.active && !pokemon.condition.endsWith(' fnt'));
-      const improvement = Math.max(-1, ...reserves.map((pokemon) => this.switchValue(pokemon))) -
-        (outgoing - incoming + 0.12 * current.hp);
-      const shucklePivot = user.ident.endsWith(shuckleName) && improvement > 0.16;
-      if (shucklePivot || (outgoing < Math.min(0.3, this.target.hp * 0.82) && incoming >= 0.2 && improvement > 0.36)) {
-        this.move = 0;
-        this.lastSwitch = this.turn;
+      const available = active.moves.filter(({ disabled }) => !disabled).map(({ move }) => lookupGen6Move(move));
+      const outgoing = bestDamage(available, current, this.target);
+      const reserves = this.roster
+        .map((pokemon, index) => ({ pokemon, slot: index + 1 }))
+        .filter(({ pokemon }) => !pokemon.active && !pokemon.condition.endsWith(' fnt'));
+      if (!outgoing && available.length && available.every(({ category }) => category !== 'Status')) {
+        const counters = reserves.filter(({ pokemon }) =>
+          bestDamage(pokemon.moves.map(lookupGen6Move), pokemonInfo(pokemon), this.target) > 0);
+        if (counters.length) {
+          this.lastSwitch = this.turn;
+          return this.choose(`switch ${this.chooseSwitch(active, counters)}`);
+        }
+      }
+
+      if (this.turn - this.lastSwitch > 1) {
+        const incoming = this.incomingDamage(current);
+        const improvement = Math.max(-1, ...reserves.map(({ pokemon }) => this.switchValue(pokemon))) -
+          (outgoing - incoming + 0.12 * current.hp);
+        const shucklePivot = user.ident.endsWith(shuckleName) && improvement > 0.16;
+        if (shucklePivot || (outgoing < Math.min(0.3, this.target.hp * 0.82) && incoming >= 0.2 && improvement > 0.36)) {
+          this.move = 0;
+          this.lastSwitch = this.turn;
+        }
       }
     }
     return super.receiveRequest(request);
@@ -197,7 +219,7 @@ export class Gen6BattleBot extends RandomPlayerAI {
 
   switchValue(pokemon) {
     const user = pokemonInfo(pokemon);
-    const outgoing = bestDamage(pokemon.moves.map((id) => gen6.moves.get(id)), user, this.target);
+    const outgoing = bestDamage(pokemon.moves.map(lookupGen6Move), user, this.target);
     const incoming = this.incomingDamage(user);
     const rock = this.botHazards.stealthrock ? typeFactor('Rock', user) / 8 : 0;
     const spikes = user.types.includes('Flying') || user.ability === 'levitate' ? 0 : (this.botHazards.spikes || 0) * 0.08;
@@ -219,11 +241,12 @@ export class Gen6BattleBot extends RandomPlayerAI {
     const foe = this.target;
     const danger = this.incomingDamage(user);
     const scores = moves.map(({ move: option }) => {
-      const move = gen6.moves.get(option.move);
+      const move = lookupGen6Move(option.move);
       if (foe.ability === 'magicbounce' && move.flags.reflectable) return -3;
       const hit = move.accuracy === true ? 1 : move.accuracy / 100;
       if (move.category !== 'Status') {
         const dealt = damage(move, user, foe);
+        if (!dealt) return -Infinity;
         const lethal = dealt > foe.hp * 0.92;
         const canAttack = priority(user, foe) || move.priority > 0 || danger < user.hp;
         const gain = Math.min(dealt, foe.hp) + (lethal && canAttack ? 0.55 : 0) + (move.drain ? 0.09 : 0);
