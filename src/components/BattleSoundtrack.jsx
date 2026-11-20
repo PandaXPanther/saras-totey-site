@@ -78,12 +78,13 @@ function FavoritePlayer({ tracks, nativeTheme, audio }) {
     let disposed = false;
     const { index } = requested;
     const order = [...tracks.slice(index), ...tracks.slice(0, index)];
+    const queue = order.map(([id]) => id);
     const params = new URLSearchParams({
       enablejsapi: '1',
       origin: window.location.origin,
       playsinline: '1',
       loop: '1',
-      playlist: order.slice(1).map(([id]) => id).join(','),
+      playlist: queue.join(','),
     });
     const frame = document.createElement('iframe');
     frame.title = 'YouTube battle soundtrack';
@@ -99,7 +100,9 @@ function FavoritePlayer({ tracks, nativeTheme, audio }) {
           onReady({ target }) {
             if (disposed) return;
             target.setVolume(36);
-            if (visible.current && !document.hidden) target.playVideo();
+            if (visible.current && !document.hidden) target.loadPlaylist(queue, 0, 0);
+            else target.cuePlaylist(queue, 0, 0);
+            target.setLoop(true);
           },
           onStateChange({ data, target }) {
             if (disposed) return;
