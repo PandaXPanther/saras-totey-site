@@ -5,8 +5,9 @@ import pacing from '../data/flight-pacing.json';
 
 const flightPath = '/world/flight/';
 const flightPoster = `${flightPath}continuous-flight-poster.webp`;
-const chapterStarts = [0, 145, 290, 435, 532, 605, 682, 721, 757];
-const scrollScreens = 1.175 * chapterStarts.length;
+const chapterStarts = [0, 145, 290, 532, 605, 682, 721, 757];
+// Keep the homepage's full scroll distance as cards are combined.
+const scrollScreens = 10.575;
 const beamStart = 336;
 const beamEnd = 348;
 const chapterTravel = [...chapterStarts.map((frame) => pacing[frame]), pacing.at(-1)];
@@ -53,8 +54,7 @@ const portraitFlight = '(max-width: 760px) and (orientation: portrait)';
 const chapters = [
   { id: 'intro', media: 'continuous-flight-poster', label: 'Home', eyebrow: 'Boulder, Colorado', title: 'Saras Totey.', body: `I’m a ${getAge()}-year-old full-stack developer who grew up in Boulder. I build trading bots, research markets, and make other cool projects.`, note: 'Pronounced “sahr-iss.” Age updates automatically every June 25.', side: 'left' },
   { id: 'trading', media: 'countersnipe', label: 'Trading systems', eyebrow: 'Markets, then code', title: 'I like finding the moment a market disagrees with itself.', body: 'That puzzle is why I build trading bots. What began with Roblox items became live CS2 arbitrage, prediction-market research, and systems where the logs and mistakes are as interesting as the wins.', href: '/quant', side: 'left' },
-  { id: 'econ-mom', media: 'prediction', label: 'Econ.mom', eyebrow: 'Twelve tools, every source shown', title: 'I wanted economics to feel touchable.', body: 'I built Econ.mom because changing an assumption and seeing the result makes a model click faster than memorizing one. Its free tools keep every formula and dataset visible.', href: '/economics#econ-mom', side: 'left' },
-  { id: 'local-ledger', media: 'ventures', label: 'Local Ledger', eyebrow: 'A public-data observatory', title: 'I wanted to see a place as a living system.', body: 'That curiosity became Local Ledger: jobs, income, housing, schools, and public spending on one research desk, plus a simulator for asking what might change next.', href: '/economics#local-ledger', side: 'right' },
+  { id: 'economics', media: 'prediction', label: 'Economics', eyebrow: 'Econ.mom + Local Ledger', title: 'I wanted economics to feel touchable.', body: 'Econ.mom makes economic models interactive and shows every formula and dataset. Local Ledger brings jobs, housing, schools, and public spending together so you can explore them and simulate policy changes.', href: '/economics', cta: 'Explore economics', side: 'left' },
   { id: 'att', media: 'att', label: 'ATT Agency', eyebrow: 'attagency.co', title: 'Want a site that looks like this? I co-founded the studio that builds them.', body: 'At ATT Agency, I help turn a business into a brand, website, campaign, and measurement system without passing the work between disconnected vendors.', href: '/att-agency', side: 'right' },
   { id: 'roblox', media: 'roblox', label: 'Roblox games', eyebrow: 'Roblox game development', title: 'I build games with Ryder.', body: 'I write the gameplay and systems. Ryder designs the worlds, models, and interfaces. You can play our latest releases on Roblox.', href: '/roblox', side: 'left' },
   { id: 'misc', media: 'misc', label: 'Bots', eyebrow: 'Games I build', title: 'Play against my bots.', body: 'Play chess or battle in Gen 6 Pokémon against bots based on my own games. Take on my heads-up poker bot in Texas Hold’em, too.', href: '/misc', cta: 'See the bots', side: 'right' },

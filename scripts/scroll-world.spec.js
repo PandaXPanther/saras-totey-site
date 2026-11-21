@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { devices, expect, test } from 'playwright/test';
 
 const pacing = JSON.parse(readFileSync(new URL('../src/data/flight-pacing.json', import.meta.url)));
-const chapterIds = ['intro', 'trading', 'econ-mom', 'local-ledger', 'att', 'roblox', 'misc', 'other-projects', 'contact'];
+const chapterIds = ['intro', 'trading', 'economics', 'att', 'roblox', 'misc', 'other-projects', 'contact'];
 const world = (page) => page.locator('.scroll-world');
 const renderedFrame = (page) => world(page).evaluate((element) => Number(element.dataset.renderedFrame));
 const activeCopy = (page) => world(page).locator('.world-copy.is-active');
@@ -22,13 +22,13 @@ test('the camera paints multiple intermediate frames between wheel movements', a
     new MutationObserver(() => window.flightFrames.push(Number(element.dataset.renderedFrame)))
       .observe(element, { attributes: true, attributeFilter: ['data-rendered-frame'] });
   });
-  await page.mouse.wheel(0, 320);
+  await page.mouse.wheel(0, 360);
   await expect.poll(() => renderedFrame(page)).toBeGreaterThanOrEqual(59);
   const frames = await page.evaluate(() => flightFrames);
   expect(new Set(frames.filter((frame) => frame > 0 && frame < 54)).size).toBeGreaterThanOrEqual(2);
 
-  await chapter(page, 'Local Ledger').click();
-  await expect(activeCopy(page)).toContainText('A public-data observatory', { timeout: 10_000 });
+  await chapter(page, 'Economics').click();
+  await expect(activeCopy(page)).toHaveAttribute('data-chapter', 'economics', { timeout: 10_000 });
   await page.mouse.move(80, 100);
   await page.mouse.wheel(0, -8000);
   await expect.poll(() => renderedFrame(page), { timeout: 10_000 }).toBe(0);
@@ -42,7 +42,7 @@ test('a missing motion sheet cannot freeze the island or hold the chapter links'
   await expect(world(page)).toHaveAttribute('data-flight-quality', 'overview');
   await expect.poll(() => renderedFrame(page)).toBe(0);
 
-  for (const [delta, minimum] of [[420, 48], [460, 100], [-640, 20]]) {
+  for (const [delta, minimum] of [[473, 48], [517, 100], [-720, 20]]) {
     await page.mouse.wheel(0, delta);
     if (delta > 0) await expect.poll(() => renderedFrame(page)).toBeGreaterThan(minimum);
     else await expect.poll(() => renderedFrame(page)).toBeLessThan(70);
@@ -99,18 +99,19 @@ test('the flight does not stop on the foreground beam', async ({ page }) => {
   await world(page).evaluate((element, progress) => {
     const distance = parseFloat(element.style.getPropertyValue('--world-scroll-distance'));
     window.scrollTo(0, Math.round(distance * progress));
-  }, (2 + (pacing[345] - pacing[290]) / (pacing[435] - pacing[290])) / chapterIds.length);
+  }, (2 + (pacing[345] - pacing[290]) / (pacing[532] - pacing[290])) / chapterIds.length);
   await expect.poll(() => renderedFrame(page)).toBe(348);
 });
 
-test('all nine chapters stay active for equal scroll distances', async ({ page }) => {
+test('eight chapters share the full scroll distance equally', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
+  await expect(page.getByRole('navigation', { name: 'World chapters' }).getByRole('button')).toHaveCount(chapterIds.length);
   for (const viewport of [{ width: 1753, height: 963 }, { width: 390, height: 650 }]) {
     await page.setViewportSize(viewport);
     await expect.poll(() => world(page).evaluate((element) =>
       parseFloat(element.style.getPropertyValue('--world-scroll-distance'))
-    )).toBeCloseTo(viewport.height * 1.175 * chapterIds.length);
+    )).toBeCloseTo(viewport.height * 10.575, 1);
     for (const [index, id] of chapterIds.entries()) {
       for (const position of [index / chapterIds.length + .001, (index + 1) / chapterIds.length - .001]) {
         await world(page).evaluate((element, fraction) => {
@@ -133,12 +134,12 @@ test('the economics view settles on the full-size source still', async ({ page }
   await world(page).evaluate((element, progress) => {
     const distance = parseFloat(element.style.getPropertyValue('--world-scroll-distance'));
     window.scrollTo(0, Math.round(distance * progress));
-  }, (2 + (pacing[frame] - pacing[290]) / (pacing[435] - pacing[290])) / chapterIds.length);
+  }, (2 + (pacing[frame] - pacing[290]) / (pacing[532] - pacing[290])) / chapterIds.length);
   const still = await fetchStill;
   expect(still.ok()).toBe(true);
   await expect(world(page)).toHaveAttribute('data-flight-quality', 'detail');
   await expect.poll(() => renderedFrame(page)).toBe(frame);
-  await expect(activeCopy(page)).toHaveAttribute('data-chapter', 'econ-mom');
+  await expect(activeCopy(page)).toHaveAttribute('data-chapter', 'economics');
   const canvasSize = await world(page).locator('canvas').evaluate(({ width, height }) => [width, height]);
   expect(canvasSize).toEqual([2560, 1440]);
 });
@@ -148,10 +149,17 @@ test('the homepage stops link to their projects and return to the same scroll po
   await page.goto('/');
   await expect(world(page).locator('canvas, video')).toHaveCount(0);
   await expect(world(page).locator('details')).toHaveCount(0);
-  await chapter(page, 'Econ.mom').click();
-  await expect(activeCopy(page).getByRole('link', { name: 'Take me there' })).toHaveAttribute('href', '/economics#econ-mom');
-  await chapter(page, 'Local Ledger').click();
-  await expect(activeCopy(page).getByRole('link', { name: 'Take me there' })).toHaveAttribute('href', '/economics#local-ledger');
+  await chapter(page, 'Economics').click();
+  await expect(activeCopy(page)).toContainText('Econ.mom');
+  await expect(activeCopy(page)).toContainText('Local Ledger');
+  const economicsOrigin = await page.evaluate(() => scrollY);
+  await activeCopy(page).getByRole('link', { name: 'Explore economics' }).click();
+  await expect(page).toHaveURL(/\/economics$/);
+  await expect(page.locator('main #econ-mom')).toBeVisible();
+  await expect(page.locator('main #local-ledger')).toBeVisible();
+  await page.getByRole('link', { name: 'Take me back' }).click();
+  await expect.poll(() => page.evaluate(() => scrollY)).toBe(economicsOrigin);
+  await expect(activeCopy(page)).toHaveAttribute('data-chapter', 'economics');
   await chapter(page, 'Roblox games').click();
   await expect(activeCopy(page).getByRole('link', { name: 'Take me there' })).toHaveAttribute('href', '/roblox');
   await chapter(page, 'Bots').click();
