@@ -5,7 +5,7 @@ const routes = [
   ['/work-with-me', 'studio'],
   ['/roblox', 'voxel'],
   ['/misc', 'games'],
-  ['/other-projects', 'network'],
+  ['/other-projects', 'anime'],
 ];
 
 const picture = (canvas) => canvas.evaluate((element) => element.toDataURL());
@@ -40,24 +40,36 @@ for (const [route, scene] of routes) {
   });
 }
 
-test('background motion can be paused and honors the system preference', async ({ page }) => {
+test('background motion has no pause button and settles on its own', async ({ page }) => {
   await page.goto('/work-with-me');
   const canvas = page.locator('canvas[data-scene="studio"]');
-  const pause = page.getByRole('button', { name: 'Pause background animation' });
-  await pause.click();
-  const paused = await picture(canvas);
-  await page.waitForTimeout(180);
-  expect(await picture(canvas)).toBe(paused);
+  await expect.poll(() => paintedPixels(canvas)).toBeGreaterThan(0);
+  await expect(page.getByRole('button', { name: 'Pause background animation' })).toHaveCount(0);
+  await page.waitForTimeout(5200);
+  const settled = await picture(canvas);
+  await page.waitForTimeout(250);
+  expect(await picture(canvas)).toBe(settled);
+});
 
-  await page.getByRole('button', { name: 'Resume background animation' }).click();
-  await expect.poll(() => picture(canvas)).not.toBe(paused);
-
+test('reduced motion still displays the background artwork', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await expect(pause).toBeHidden();
-  await page.waitForTimeout(100);
+  await page.goto('/work-with-me');
+  const canvas = page.locator('canvas[data-scene="studio"]');
+  await expect.poll(() => paintedPixels(canvas)).toBeGreaterThan(0);
   const staticImage = await picture(canvas);
-  await page.waitForTimeout(180);
+  await page.waitForTimeout(250);
   expect(await picture(canvas)).toBe(staticImage);
+});
+
+test('Other Projects shows the About me scores and selected honors', async ({ page }) => {
+  await page.goto('/other-projects');
+  const about = page.getByRole('region', { name: 'About me' });
+  await expect(about).toContainText('1590');
+  await expect(about).toContainText('4.62');
+  await expect(about).toContainText('USAEBO Round 2 Gold');
+  await expect(about).toContainText('Academic All-American');
+  await expect(page.getByRole('heading', { name: 'Kodama' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Extemp National Points Race' })).toBeVisible();
 });
 
 test('the background stops drawing when its heading scrolls offscreen', async ({ page }) => {

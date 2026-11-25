@@ -1,25 +1,21 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { pageScenes, sceneWidth, sceneHeight } from './pageScenes.js';
 
 const frameInterval = 1000 / 30;
-let backgroundPaused = false;
+const sceneDuration = 4800;
 
 function PageBackdrop({ scene }) {
   const canvasRef = useRef(null);
-  const elapsed = useRef(0);
-  const [paused, setPaused] = useState(backgroundPaused);
-  const [available, setAvailable] = useState(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     if (!ctx) return undefined;
-    setAvailable(true);
-
     const motion = matchMedia('(prefers-reduced-motion: reduce)');
     let visible = false;
     let frame = 0;
     let lastPaint = 0;
+    let elapsed = 0;
     let width = 0;
     let height = 0;
     let pixelRatio = 1;
@@ -31,7 +27,7 @@ function PageBackdrop({ scene }) {
       const fit = Math.min(width / sceneWidth, height / sceneHeight);
       ctx.translate((width - sceneWidth * fit) / 2, (height - sceneHeight * fit) / 2);
       ctx.scale(fit, fit);
-      pageScenes[scene](ctx, elapsed.current / 1000);
+      pageScenes[scene](ctx, elapsed / 1000);
     }
 
     function resize() {
@@ -46,7 +42,7 @@ function PageBackdrop({ scene }) {
     }
 
     function sync() {
-      if (paused || motion.matches || !visible || document.hidden) {
+      if (elapsed >= sceneDuration || motion.matches || !visible || document.hidden) {
         cancelAnimationFrame(frame);
         frame = 0;
         lastPaint = 0;
@@ -58,7 +54,7 @@ function PageBackdrop({ scene }) {
     function tick(now) {
       frame = 0;
       if (!lastPaint || now - lastPaint >= frameInterval - 1) {
-        elapsed.current += lastPaint ? Math.min(now - lastPaint, 70) : 0;
+        if (lastPaint) elapsed = Math.min(sceneDuration, elapsed + now - lastPaint);
         lastPaint = now;
         paint();
       }
@@ -85,23 +81,9 @@ function PageBackdrop({ scene }) {
       document.removeEventListener('visibilitychange', sync);
       window.removeEventListener('resize', resize);
     };
-  }, [scene, paused]);
+  }, [scene]);
 
-  const label = paused ? 'Resume background animation' : 'Pause background animation';
-  return (
-    <>
-      <canvas className="folio-scene" data-scene={scene} ref={canvasRef} aria-hidden="true" />
-      {available && (
-        <button type="button" className="folio-scene-toggle" aria-label={label} title={label}
-          onClick={() => {
-            backgroundPaused = !paused;
-            setPaused(backgroundPaused);
-          }}>
-          <span className={paused ? 'folio-scene-toggle__play' : 'folio-scene-toggle__pause'} aria-hidden="true" />
-        </button>
-      )}
-    </>
-  );
+  return <canvas className="folio-scene" data-scene={scene} ref={canvasRef} aria-hidden="true" />;
 }
 
 export default function ProjectHeading({ scene, className, children }) {

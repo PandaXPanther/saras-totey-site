@@ -195,7 +195,7 @@ test('the homepage stops link to their projects and return to the same scroll po
   await expect(page).toHaveURL(/\/other-projects$/);
   const projects = page.getByRole('main');
   await expect(projects.getByRole('heading', { level: 1 })).toHaveText('Other Projects.');
-  await expect(projects.getByRole('heading', { level: 2 })).toHaveText(['Kodama', 'Extemp National Points Race']);
+  await expect(projects.getByRole('article').getByRole('heading', { level: 2 })).toHaveText(['Kodama', 'Extemp National Points Race']);
   await expect(projects.getByRole('link', { name: 'Explore Kodama' })).toHaveAttribute('href', 'https://askkodama.com/');
   await expect(projects.getByRole('link', { name: 'View the standings' })).toHaveAttribute('href', 'https://national-points-race.pages.dev/');
   await page.getByRole('link', { name: 'Take me back' }).click();

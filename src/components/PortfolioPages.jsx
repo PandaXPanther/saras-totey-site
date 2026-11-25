@@ -245,7 +245,7 @@ export function Misc() {
   return (
     <>
       <ProjectHeading scene="games" className="portfolio-hero misc-heading">
-        <h1>Play against my bots.</h1>
+        <h1>Play against <span>my bots.</span></h1>
         <p>Battle in Gen 6 Pokémon, play chess, or go heads-up in Texas Hold’em.</p>
         <nav className="misc-games-nav" aria-label="Jump to a bot">
           <a className="misc-heading__jump folio-link" href="#pokemon-battle">Jump to Pokémon <span aria-hidden="true">↓</span></a>
@@ -294,10 +294,30 @@ export function Misc() {
 export function OtherProjects() {
   return (
     <>
-      <ProjectHeading scene="network" className="portfolio-hero other-heading">
+      <ProjectHeading scene="anime" className="portfolio-hero other-heading">
         <h1>Other Projects.</h1>
       </ProjectHeading>
       <div className="folio-wrap other-projects">
+        <section className="about-panel" aria-labelledby="about-me">
+          <div>
+            <h2 id="about-me">About me</h2>
+            <p>I build software, research U.S. income inequality, and compete in extemporaneous speaking.</p>
+            <dl className="about-scores">
+              <div><dt>SAT</dt><dd>1590</dd></div>
+              <div><dt>GPA</dt><dd>4.62</dd></div>
+            </dl>
+          </div>
+          <div className="about-honors">
+            <h3>Selected honors</h3>
+            <ul>
+              <li>USAEBO Round 2 Gold</li>
+              <li>2× National Economics Challenge finalist</li>
+              <li>Science Olympiad State Champion in Astronomy and Forensics</li>
+              <li>NSDA Academic All-American and 2× National Tournament Qualifier</li>
+              <li>Diamond Challenge Social Innovation Finalist</li>
+            </ul>
+          </div>
+        </section>
         {otherProjects.map(({ name, type, description, image, imageAlt, url, action }) => (
           <article key={image} className={`other-showcase other-showcase--${image}`} aria-labelledby={`${image}-title`}>
             <div className="other-showcase__copy">
