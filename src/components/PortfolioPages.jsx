@@ -15,10 +15,33 @@ const econTools = [
   ['Shadow Fed', 'Compare a model policy rate with what the Fed actually does.', '/shadow-fed'],
 ];
 
-const agencyWork = [
-  { title: 'BAIR', type: 'Musician portfolio', href: 'https://bairmusic.net', image: 'bair' },
-  { title: 'Thriftly', type: 'Paid social campaign', href: 'https://attagency.co/#work', image: 'thriftly' },
-  { title: 'Shital Tayde', type: 'Artist portfolio', href: 'https://shital-tayde-art.pages.dev', image: 'shital' },
+const workOffers = [
+  {
+    id: 'websites',
+    studio: 'ATT Agency',
+    title: 'Websites & marketing',
+    description: 'I co-founded ATT Agency, where I lead web development and search. We build custom sites and run advertising and social campaigns for growing businesses.',
+    image: '/projects/att-agency-home.png',
+    imageAlt: 'ATT Agency homepage with white and purple typography',
+    imageSize: [1320, 720],
+    projectLabel: 'Visit ATT Agency',
+    projectUrl: 'https://attagency.co/',
+    inquiryLabel: 'Start an ATT project',
+    inquiryUrl: 'https://attagency.co/#contact',
+  },
+  {
+    id: 'roblox',
+    studio: 'Heavens Interactive',
+    title: 'Roblox game development',
+    description: 'We take Roblox games from concept to launch. I build the gameplay and systems, and Ryder leads the visual design and builds the worlds.',
+    image: '/projects/breed-a-fish.webp',
+    imageAlt: 'A Roblox character holding a bright orange fish in Breed a Fish',
+    imageSize: [768, 432],
+    projectLabel: 'Play Breed a Fish',
+    projectUrl: 'https://www.roblox.com/games/83347621580247',
+    inquiryLabel: 'Start a Heavens project',
+    inquiryUrl: 'https://heavensinteractive.com/start',
+  },
 ];
 
 const otherProjects = [
@@ -99,41 +122,29 @@ export function Economics() {
   );
 }
 
-export function Agency() {
+export function WorkWithMe() {
   return (
     <>
-      <header className="folio-wrap page-heading portfolio-hero agency-heading">
-        <div>
-          <p className="folio-kicker">ATT Agency · Boulder</p>
-          <h1>Small businesses deserve technical work that holds up.</h1>
-          <p>I co-founded ATT with Ryder Thomas and Sunny Avula. I lead web development, technology, and search for the studio.</p>
-          <div className="agency-heading__actions">
-            <ExternalLink className="folio-button" href="https://attagency.co/">Visit ATT Agency</ExternalLink>
-            <span><strong>20+</strong> projects shipped</span>
-          </div>
-        </div>
+      <header className="folio-wrap page-heading work-heading">
+        <p className="folio-kicker">Work with me</p>
+        <h1>I build websites and <em>Roblox games.</em></h1>
       </header>
-      <section className="folio-wrap agency-work">
-        <h2>Selected studio work</h2>
-        <div className="agency-grid">
-          {agencyWork.map(({ title, type, image, href }) => (
-            <article key={title}>
-              <ExternalLink className="agency-card" href={href}>
-                <img src={`/projects/${image}.webp`} alt="" width="800" height="504" loading="lazy" decoding="async" />
-                <span>{type}</span><h3>{title}</h3>
-              </ExternalLink>
-            </article>
-          ))}
-        </div>
-      </section>
-      <section className="folio-wrap agency-studio">
-        <h2>The studio</h2>
-        <dl>
-          <div><dt>Saras Totey</dt><dd>Web, technology & search</dd></div>
-          <div><dt><ExternalLink href="https://ryduzz.com/">Ryder Thomas</ExternalLink></dt><dd>Creative, advertising & video</dd></div>
-          <div><dt><ExternalLink href="https://sunnyavula.com/">Sunny Avula</ExternalLink></dt><dd>Strategy, accounts & reporting</dd></div>
-        </dl>
-      </section>
+      <div className="folio-wrap work-offers">
+        {workOffers.map(({ id, studio, title, description, image, imageAlt, imageSize, projectLabel, projectUrl, inquiryLabel, inquiryUrl }) => (
+          <section key={id} id={id} aria-labelledby={`${id}-offer`} className={`work-offer work-offer--${id}`}>
+            <img className="work-offer__image" src={image} alt={imageAlt} width={imageSize[0]} height={imageSize[1]} decoding="async" />
+            <div className="work-offer__copy">
+              <p className="folio-kicker">{studio}</p>
+              <h2 id={`${id}-offer`}>{title}</h2>
+              <p className="work-offer__description">{description}</p>
+              <div className="page-actions">
+                <ExternalLink className="folio-button" href={inquiryUrl}>{inquiryLabel}</ExternalLink>
+                <ExternalLink className="folio-link" href={projectUrl}>{projectLabel}</ExternalLink>
+              </div>
+            </div>
+          </section>
+        ))}
+      </div>
     </>
   );
 }
@@ -149,7 +160,10 @@ export function Roblox() {
           <p className="folio-kicker">Saras Totey & Ryder Thomas</p>
           <h1>Building worlds <br />in <em>Roblox.</em></h1>
           <p>Ryder and I make games together, from a first mechanic in Studio to a world you can jump into.</p>
-          <a className="folio-button" href="#games">Browse our games</a>
+          <div className="page-actions roblox-heading__actions">
+            <a className="folio-button" href="#games">Browse our games</a>
+            <a className="folio-link" href="/work-with-me#roblox">Commission a Roblox game</a>
+          </div>
         </div>
         <div className="roblox-roles">
           {creators.map(({ id, name, role, description }) => (

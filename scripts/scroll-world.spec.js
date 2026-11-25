@@ -205,9 +205,35 @@ test('the homepage stops link to their projects and return to the same scroll po
   await expect(activeCopy(page)).toContainText('Contact me.');
 });
 
+test('Work with me links visitors to each studio from the homepage', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  await chapter(page, 'Work with me').click();
+  await activeCopy(page).getByRole('link', { name: 'Work with me' }).click();
+  await expect(page).toHaveURL(/\/work-with-me$/);
+  const main = page.getByRole('main');
+  await expect(main.getByRole('link', { name: 'Visit ATT Agency' })).toHaveAttribute('href', 'https://attagency.co/');
+  await expect(main.getByRole('img', { name: 'ATT Agency homepage with white and purple typography' })).toBeVisible();
+  await expect(main.getByRole('link', { name: 'Start an ATT project' })).toHaveAttribute('href', 'https://attagency.co/#contact');
+  await expect(main.getByRole('link', { name: 'Start a Heavens project' })).toHaveAttribute('href', 'https://heavensinteractive.com/start');
+  await main.getByRole('link', { name: 'Take me back' }).click();
+  await expect(activeCopy(page)).toHaveAttribute('data-chapter', 'att');
+});
+
+test('existing ATT links and the Roblox commission link reach the hiring page', async ({ page }) => {
+  await page.goto('/att-agency/');
+  await expect(page).toHaveURL(/\/work-with-me$/);
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://sarastotey.com/work-with-me');
+
+  await page.goto('/roblox');
+  await page.getByRole('link', { name: 'Commission a Roblox game' }).click();
+  await expect(page).toHaveURL(/\/work-with-me#roblox$/);
+  await expect(page.locator('#roblox').getByRole('link', { name: 'Start a Heavens project' })).toBeVisible();
+});
+
 test('one glass navigation fits every page at 320px and shows its active tab', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 660 });
-  for (const [path, label] of [['/', 'Home'], ['/quant', 'Trading Systems'], ['/economics', 'Economics'], ['/att-agency', 'ATT Agency'], ['/roblox', 'Roblox'], ['/misc', 'Bots'], ['/other-projects', 'Other Projects']]) {
+  for (const [path, label] of [['/', 'Home'], ['/quant', 'Trading Systems'], ['/economics', 'Economics'], ['/work-with-me', 'Work with me'], ['/roblox', 'Roblox'], ['/misc', 'Bots'], ['/other-projects', 'Other Projects']]) {
     await page.goto(path);
     const nav = page.getByRole('navigation', { name: 'Portfolio pages' });
     await expect(nav).toHaveClass('glass-nav');

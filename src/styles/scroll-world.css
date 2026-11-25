@@ -187,7 +187,7 @@ html:has(.scroll-world) {
 :is(.glass-nav a[href="/quant"], [data-chapter="trading"]) { --tab-ink: #80304e; --tab-accent: #c95585; --tab-surface: #f6dce9; }
 :is(.glass-nav a[href="/economics"], [data-chapter="econ-mom"]) { --tab-ink: #5b3b91; --tab-accent: #9672dc; --tab-surface: #eee3ff; }
 [data-chapter="local-ledger"] { --tab-ink: #27634d; --tab-accent: #6b9f69; --tab-surface: #e1f5e7; }
-:is(.glass-nav a[href="/att-agency"], [data-chapter="att"]) { --tab-ink: #953c2d; --tab-accent: #d46b54; --tab-surface: #ffdfd2; }
+:is(.glass-nav a[href="/work-with-me"], [data-chapter="att"]) { --tab-ink: #953c2d; --tab-accent: #d46b54; --tab-surface: #ffdfd2; }
 :is(.glass-nav a[href="/roblox"], [data-chapter="roblox"]) { --tab-ink: #175c55; --tab-accent: #529f8f; --tab-surface: #d7f3e9; }
 :is(.glass-nav a[href="/misc"], [data-chapter="misc"]) { --tab-ink: #634423; --tab-accent: #b58348; --tab-surface: #f8e9d0; }
 :is(.glass-nav a[href="/other-projects"], [data-chapter="other-projects"]) { --tab-ink: #264686; --tab-accent: #6785cd; --tab-surface: #dfe8ff; }
