@@ -3,6 +3,7 @@ import catalog from '../data/roblox-games.json';
 import { creators } from '../data/robloxCreators.js';
 import ChessRatings from './ChessRatings.jsx';
 import PokerChallenge from './PokerChallenge.jsx';
+import ProjectHeading from './ProjectHeading.jsx';
 import { createBattleAudio } from './battleAudio.js';
 import { nextBattleTheme } from './battleThemes.js';
 
@@ -22,6 +23,7 @@ const workOffers = [
     title: 'Websites & marketing',
     description: 'I co-founded ATT Agency, where I lead web development and search. We build custom sites and run advertising and social campaigns for growing businesses.',
     image: '/projects/att-agency-home.png',
+    mobileImage: '/projects/att-agency-mobile.png',
     imageAlt: 'ATT Agency homepage with white and purple typography',
     imageSize: [1320, 720],
     projectLabel: 'Visit ATT Agency',
@@ -72,14 +74,14 @@ function ExternalLink({ children, href, className }) {
 export function Economics() {
   return (
     <>
-      <header className="folio-wrap page-heading portfolio-hero economics-heading">
+      <ProjectHeading scene="economics" className="portfolio-hero economics-heading">
         <p className="folio-kicker">Econ.mom · Local Ledger</p>
         <h1>Economics.</h1>
         <p>I build practical tools for learning economics and exploring the numbers behind local economies.</p>
         <nav className="page-jumps" aria-label="Economics projects">
           <a className="folio-button" href="#econ-mom">Explore Econ.mom</a><a className="folio-link" href="#local-ledger">Explore Local Ledger</a>
         </nav>
-      </header>
+      </ProjectHeading>
       <section id="econ-mom" className="econ-feature">
         <div className="folio-wrap econ-feature__grid">
           <div>
@@ -125,14 +127,17 @@ export function Economics() {
 export function WorkWithMe() {
   return (
     <>
-      <header className="folio-wrap page-heading work-heading">
+      <ProjectHeading scene="studio" className="work-heading">
         <p className="folio-kicker">Work with me</p>
         <h1>I build websites and <em>Roblox games.</em></h1>
-      </header>
+      </ProjectHeading>
       <div className="folio-wrap work-offers">
-        {workOffers.map(({ id, studio, title, description, image, imageAlt, imageSize, projectLabel, projectUrl, inquiryLabel, inquiryUrl }) => (
+        {workOffers.map(({ id, studio, title, description, image, mobileImage, imageAlt, imageSize, projectLabel, projectUrl, inquiryLabel, inquiryUrl }) => (
           <section key={id} id={id} aria-labelledby={`${id}-offer`} className={`work-offer work-offer--${id}`}>
-            <img className="work-offer__image" src={image} alt={imageAlt} width={imageSize[0]} height={imageSize[1]} decoding="async" />
+            <picture>
+              {mobileImage && <source media="(max-width: 740px)" srcSet={mobileImage} />}
+              <img className="work-offer__image" src={image} alt={imageAlt} width={imageSize[0]} height={imageSize[1]} decoding="async" />
+            </picture>
             <div className="work-offer__copy">
               <p className="folio-kicker">{studio}</p>
               <h2 id={`${id}-offer`}>{title}</h2>
@@ -155,7 +160,7 @@ export function Roblox() {
 
   return (
     <>
-      <header className="folio-wrap page-heading roblox-heading">
+      <ProjectHeading scene="voxel" className="roblox-heading">
         <div>
           <p className="folio-kicker">Saras Totey & Ryder Thomas</p>
           <h1>Building worlds <br />in <em>Roblox.</em></h1>
@@ -173,7 +178,7 @@ export function Roblox() {
             </article>
           ))}
         </div>
-      </header>
+      </ProjectHeading>
       <section id="games" className="folio-wrap roblox-library">
         <div className="library-heading"><h2>Public games</h2><span>{games.length} experiences · updated daily from Roblox</span></div>
         {games.length === 0 && <p>No public games with covers to show yet.</p>}
@@ -239,7 +244,7 @@ export function Misc() {
 
   return (
     <>
-      <header className="folio-wrap page-heading portfolio-hero misc-heading">
+      <ProjectHeading scene="games" className="portfolio-hero misc-heading">
         <h1>Play against my bots.</h1>
         <p>Battle in Gen 6 Pokémon, play chess, or go heads-up in Texas Hold’em.</p>
         <nav className="misc-games-nav" aria-label="Jump to a bot">
@@ -247,7 +252,7 @@ export function Misc() {
           <a className="misc-heading__jump folio-link" href="#chess">Jump to chess <span aria-hidden="true">↓</span></a>
           <a className="misc-heading__jump folio-link" href="#poker">Jump to poker <span aria-hidden="true">↓</span></a>
         </nav>
-      </header>
+      </ProjectHeading>
       <section id="pokemon-battle" className="folio-wrap misc-battle" aria-labelledby="pokemon-battle-heading">
         <div className={`misc-battle__panel${battleOpen ? ' misc-battle__panel--playing' : ''}`}>
           <div className="battle-teaser">
@@ -289,9 +294,9 @@ export function Misc() {
 export function OtherProjects() {
   return (
     <>
-      <header className="folio-wrap page-heading portfolio-hero other-heading">
+      <ProjectHeading scene="network" className="portfolio-hero other-heading">
         <h1>Other Projects.</h1>
-      </header>
+      </ProjectHeading>
       <div className="folio-wrap other-projects">
         {otherProjects.map(({ name, type, description, image, imageAlt, url, action }) => (
           <article key={image} className={`other-showcase other-showcase--${image}`} aria-labelledby={`${image}-title`}>
