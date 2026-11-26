@@ -1,4 +1,6 @@
 import { expect, test } from 'playwright/test';
+import { Chess } from 'chess.js';
+import * as scenes from '../src/components/pageScenes.js';
 
 const routes = [
   ['/economics', 'economics'],
@@ -12,6 +14,17 @@ const picture = (canvas) => canvas.evaluate((element) => element.toDataURL());
 const paintedPixels = (canvas) => canvas.evaluate((element) => {
   const ctx = element.getContext('2d');
   return ctx.getImageData(element.width * .6, element.height * .5, 1, 1).data[3];
+});
+
+test('the Bots replay follows the Alien Gambit sacrifice to queen mate', () => {
+  expect(scenes.alienGambit).toBeDefined();
+  const game = new Chess();
+  game.loadPgn('1. e4 c6 2. d4 d5 3. Nd2 dxe4 4. Nxe4 Nf6 5. Ng5 h6');
+  expect(scenes.alienGambit.fen).toBe(game.fen());
+
+  const moves = scenes.alienGambit.moves.map(([from, to]) => game.move({ from, to }).san);
+  expect(moves).toEqual(['Nxf7', 'Kxf7', 'Nf3', 'g6', 'Bc4+', 'Kg7', 'Ne5', 'e6', 'Qd3', 'Nbd7', 'Qxg6#']);
+  expect(game.isCheckmate()).toBe(true);
 });
 
 test('the ATT Agency preview uses the homepage crop for its screen size', async ({ page }) => {

@@ -213,23 +213,62 @@ function polygon(ctx, points, fill) {
   ctx.fill();
 }
 
-const chessBackRank = ['rook', 'knight', 'bishop', 'queen', 'king', 'bishop', 'knight', 'rook'];
-const chessmen = [];
-for (const row of [0, 1, 6, 7]) {
-  for (let col = 0; col < 8; col += 1) {
-    chessmen.push({ col, row, side: row < 4 ? 'black' : 'white', kind: row === 1 || row === 6 ? 'pawn' : chessBackRank[col] });
-  }
-}
-chessmen.sort((a, b) => a.col + a.row - b.col - b.row);
+// Witty_Alien vs Gabuzyan, starting just before 6.Nxf7.
+// https://www.chess.com/game/live/93888082885
+export const alienGambit = {
+  fen: 'rnbqkb1r/pp2ppp1/2p2n1p/6N1/3P4/8/PPP2PPP/R1BQKBNR w KQkq - 0 6',
+  moves: [
+    ['g5', 'f7', .54], ['e8', 'f7', .35], ['g1', 'f3', .24], ['g7', 'g6', .24],
+    ['f1', 'c4', .28], ['f7', 'g7', .24], ['f3', 'e5', .25], ['e7', 'e6', .23],
+    ['d1', 'd3', .29], ['b8', 'd7', .24], ['d3', 'g6', .59],
+  ],
+};
 
-const opening = [
-  { col: 4, row: 6, toCol: 4, toRow: 4, start: .36 },
-  { col: 4, row: 1, toCol: 4, toRow: 3, start: 1.17 },
-  { col: 6, row: 7, toCol: 5, toRow: 5, start: 1.98 },
-  { col: 1, row: 0, toCol: 2, toRow: 2, start: 2.79 },
-  { col: 5, row: 7, toCol: 1, toRow: 3, start: 3.60 },
-];
-const chessMoves = new Map(opening.map(move => [move.row * 8 + move.col, move]));
+const chessFiles = 'abcdefgh';
+const pieceKinds = { p: 'pawn', n: 'knight', b: 'bishop', r: 'rook', q: 'queen', k: 'king' };
+const depthOrder = (a, b) => a.col + a.row - b.col - b.row;
+
+function buildChessReplay({ fen, moves }) {
+  const board = new Map();
+  const [placement] = fen.split(' ');
+  for (const [row, rank] of placement.split('/').entries()) {
+    let col = 0;
+    for (const symbol of rank) {
+      const emptySquares = Number(symbol);
+      if (emptySquares) {
+        col += emptySquares;
+      } else {
+        const letter = symbol.toLowerCase();
+        const side = letter === symbol ? 'black' : 'white';
+        board.set(chessFiles[col] + (8 - row), { col, row, side, kind: pieceKinds[letter] });
+        col += 1;
+      }
+    }
+  }
+
+  let start = .20;
+  const steps = moves.map(([from, to, duration]) => {
+    const moving = board.get(from);
+    const captured = board.get(to);
+    const toCol = chessFiles.indexOf(to[0]);
+    const toRow = 8 - Number(to[1]);
+    board.delete(from);
+    board.delete(to);
+    const pieces = [...board.values()].sort(depthOrder);
+    board.set(to, { ...moving, col: toCol, row: toRow });
+    const end = start + duration;
+    const step = { start, end, moving, captured, toCol, toRow, pieces };
+    start = end + .05;
+    return step;
+  });
+
+  const finalPieces = [...board.values()].sort(depthOrder);
+  const queen = board.get(moves.at(-1)[1]);
+  const matedKing = finalPieces.find(piece => piece.kind === 'king' && piece.side === 'black');
+  return { steps, finalPieces, queen, matedKing };
+}
+
+const chessReplay = buildChessReplay(alienGambit);
 const pawnStem = [[-6, -5], [-3, -13], [-3, -17], [3, -17], [3, -13], [6, -5]];
 const bishopStem = [[-8, -5], [-4, -12], [-3, -18], [3, -18], [4, -12], [8, -5]];
 const knightSilhouette = [[-9, -5], [-7, -15], [-2, -22], [-5, -29], [1, -27], [5, -30], [9, -22], [10, -16], [6, -14], [0, -18], [-1, -12], [6, -5]];
@@ -285,6 +324,9 @@ const squareX = (col, row) => boardX + (col - row) * squareWidth;
 const squareY = (col, row) => boardY + (col + row - 7) * squareDepth;
 
 function games(ctx, t) {
+  const move = chessReplay.steps.find(step => t < step.end);
+  const mate = !move;
+  const { queen, matedKing } = chessReplay;
   glow(ctx, boardX, boardY, 245, '#a74f997d');
   glow(ctx, 561, 91, 147, '#d17a5267');
   for (let row = 0; row < 8; row += 1) {
@@ -294,30 +336,37 @@ function games(ctx, t) {
     }
   }
 
-  let moving;
-  for (const man of chessmen) {
-    const move = chessMoves.get(man.row * 8 + man.col);
-    const phase = move ? (t - move.start) / .62 : -1;
-    if (phase > 0 && phase < 1) {
-      moving = man;
-    } else {
-      const col = phase >= 1 ? move.toCol : man.col;
-      const row = phase >= 1 ? move.toRow : man.row;
-      drawChessPiece(ctx, man, squareX(col, row), squareY(col, row), false);
-    }
+  if (mate) {
+    const queenX = squareX(queen.col, queen.row);
+    const queenY = squareY(queen.col, queen.row);
+    glow(ctx, queenX, queenY - 12, 48, '#80ffce85');
+    topTile(ctx, queenX, queenY, squareWidth, squareDepth, '#6eeec785', '#b2ffdb');
+    topTile(ctx, squareX(matedKing.col, matedKing.row), squareY(matedKing.col, matedKing.row),
+      squareWidth, squareDepth, '#ed789f78', '#ffd0e0');
   }
 
-  if (moving) {
-    const move = chessMoves.get(moving.row * 8 + moving.col);
-    const phase = (t - move.start) / .62;
+  const pieces = move ? move.pieces : chessReplay.finalPieces;
+  for (const man of pieces) {
+    drawChessPiece(ctx, man, squareX(man.col, man.row), squareY(man.col, man.row), mate && man === queen);
+  }
+
+  if (move) {
+    const { moving, captured } = move;
+    const phase = Math.max(0, (t - move.start) / (move.end - move.start));
     const eased = phase * phase * (3 - 2 * phase);
-    const col = move.col + (move.toCol - move.col) * eased;
-    const row = move.row + (move.toRow - move.row) * eased;
+    const col = moving.col + (move.toCol - moving.col) * eased;
+    const row = moving.row + (move.toRow - moving.row) * eased;
     const x = squareX(col, row);
     const y = squareY(col, row);
     const lift = Math.sin(Math.PI * phase) * (moving.kind === 'knight' ? 19 : 8);
-    glow(ctx, x, y - 11, 28, '#ffc68b84');
-    drawChessPiece(ctx, moving, x, y - lift, true);
+    if (captured) {
+      ctx.save();
+      ctx.globalAlpha = Math.min(1, (1 - phase) * 4);
+      drawChessPiece(ctx, captured, squareX(captured.col, captured.row), squareY(captured.col, captured.row), false);
+      ctx.restore();
+    }
+    if (phase > 0) glow(ctx, x, y - 11, 28, captured ? '#86ffd493' : '#ffc68b84');
+    drawChessPiece(ctx, moving, x, y - lift, phase > 0);
   }
 }
 
