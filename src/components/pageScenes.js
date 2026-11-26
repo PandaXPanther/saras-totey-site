@@ -128,9 +128,12 @@ function studio(ctx, t) {
   line(ctx, 590, connectorY + 44, 641, connectorY + 44, '#338977a8', 1.5);
   ring(ctx, 646, connectorY + 44, 5, '#338977');
   const progress = (t * 32) % 136;
+  ctx.save();
+  ctx.globalAlpha = Math.min(1, progress / 12, (136 - progress) / 12);
   if (progress < 41) dot(ctx, 549 + progress, connectorY, 4, '#2b8978');
   else if (progress < 85) dot(ctx, 590, connectorY + progress - 41, 4, '#2b8978');
   else dot(ctx, 590 + progress - 85, connectorY + 44, 4, '#2b8978');
+  ctx.restore();
 }
 
 function topTile(ctx, x, y, width, depth, fill, stroke) {
@@ -269,6 +272,9 @@ function buildChessReplay({ fen, moves }) {
 }
 
 const chessReplay = buildChessReplay(alienGambit);
+const chessResetFade = 0.32;
+const chessMateHold = 2.4;
+const chessLoopLength = chessReplay.steps.at(-1).end + chessMateHold + 2 * chessResetFade;
 const pawnStem = [[-6, -5], [-3, -13], [-3, -17], [3, -17], [3, -13], [6, -5]];
 const bishopStem = [[-8, -5], [-4, -12], [-3, -18], [3, -18], [4, -12], [8, -5]];
 const knightSilhouette = [[-9, -5], [-7, -15], [-2, -22], [-5, -29], [1, -27], [5, -30], [9, -22], [10, -16], [6, -14], [0, -18], [-1, -12], [6, -5]];
@@ -324,7 +330,9 @@ const squareX = (col, row) => boardX + (col - row) * squareWidth;
 const squareY = (col, row) => boardY + (col + row - 7) * squareDepth;
 
 function games(ctx, t) {
-  const move = chessReplay.steps.find(step => t < step.end);
+  const loopTime = (t + chessResetFade) % chessLoopLength;
+  const replayTime = loopTime - chessResetFade;
+  const move = chessReplay.steps.find(step => replayTime < step.end);
   const mate = !move;
   const { queen, matedKing } = chessReplay;
   glow(ctx, boardX, boardY, 245, '#a74f997d');
@@ -336,6 +344,8 @@ function games(ctx, t) {
     }
   }
 
+  ctx.save();
+  ctx.globalAlpha = Math.min(1, loopTime / chessResetFade, (chessLoopLength - loopTime) / chessResetFade);
   if (mate) {
     const queenX = squareX(queen.col, queen.row);
     const queenY = squareY(queen.col, queen.row);
@@ -352,7 +362,7 @@ function games(ctx, t) {
 
   if (move) {
     const { moving, captured } = move;
-    const phase = Math.max(0, (t - move.start) / (move.end - move.start));
+    const phase = Math.max(0, (replayTime - move.start) / (move.end - move.start));
     const eased = phase * phase * (3 - 2 * phase);
     const col = moving.col + (move.toCol - moving.col) * eased;
     const row = moving.row + (move.toRow - moving.row) * eased;
@@ -361,13 +371,14 @@ function games(ctx, t) {
     const lift = Math.sin(Math.PI * phase) * (moving.kind === 'knight' ? 19 : 8);
     if (captured) {
       ctx.save();
-      ctx.globalAlpha = Math.min(1, (1 - phase) * 4);
+      ctx.globalAlpha *= Math.min(1, (1 - phase) * 4);
       drawChessPiece(ctx, captured, squareX(captured.col, captured.row), squareY(captured.col, captured.row), false);
       ctx.restore();
     }
     if (phase > 0) glow(ctx, x, y - 11, 28, captured ? '#86ffd493' : '#ffc68b84');
     drawChessPiece(ctx, moving, x, y - lift, phase > 0);
   }
+  ctx.restore();
 }
 
 const towers = [
@@ -406,6 +417,8 @@ function drawMecha(ctx, x, y, tilt) {
 }
 
 function anime(ctx, t) {
+  const orbit = t * Math.PI / 7;
+  const approach = (1 - Math.cos(orbit)) / 2;
   glow(ctx, 492, 154, 276, '#b6bbf5b4');
   glow(ctx, 578, 119, 180, '#efbfce8a');
   const moonX = 545;
@@ -421,7 +434,7 @@ function anime(ctx, t) {
 
   for (let i = 0; i < towers.length; i += 1) {
     const [base, width, height] = towers[i];
-    const x = base - t * (i % 2 ? 1.4 : .7);
+    const x = base - approach * (i % 2 ? 8 : 4);
     const roof = 316 - height;
     ctx.fillStyle = i % 2 ? '#6b77a682' : '#8798c678';
     ctx.fillRect(x, roof, width, height + 19);
@@ -441,9 +454,8 @@ function anime(ctx, t) {
     line(ctx, x, y, x + 23 + i * 4, y - 10, '#8790c65c');
   }
 
-  const approach = 1 - (1 - Math.min(t / 4.4, 1)) ** 2;
   const x = 519 - approach * 74;
-  const y = 177 - approach * 36;
+  const y = 177 - approach * 36 + 7 * Math.sin(orbit);
   glow(ctx, x, y + 39, 59, '#f9b6ba91');
   drawMecha(ctx, x, y, -.17 + approach * .22);
 }

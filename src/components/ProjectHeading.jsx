@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from 'react';
 import { pageScenes, sceneWidth, sceneHeight } from './pageScenes.js';
 
 const frameInterval = 1000 / 30;
-const sceneDuration = 4800;
 
 function PageBackdrop({ scene }) {
   const canvasRef = useRef(null);
@@ -42,7 +41,7 @@ function PageBackdrop({ scene }) {
     }
 
     function sync() {
-      if (elapsed >= sceneDuration || motion.matches || !visible || document.hidden) {
+      if (motion.matches || !visible || document.hidden) {
         cancelAnimationFrame(frame);
         frame = 0;
         lastPaint = 0;
@@ -54,7 +53,7 @@ function PageBackdrop({ scene }) {
     function tick(now) {
       frame = 0;
       if (!lastPaint || now - lastPaint >= frameInterval - 1) {
-        if (lastPaint) elapsed = Math.min(sceneDuration, elapsed + now - lastPaint);
+        if (lastPaint) elapsed += now - lastPaint;
         lastPaint = now;
         paint();
       }

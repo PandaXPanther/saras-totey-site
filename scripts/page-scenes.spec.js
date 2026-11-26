@@ -40,29 +40,24 @@ test('the ATT Agency preview uses the homepage crop for its screen size', async 
 });
 
 for (const [route, scene] of routes) {
-  test(`${route} paints its own background without capturing clicks`, async ({ page }) => {
+  test(`${route} keeps animating its background without capturing clicks`, async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 860 });
+    await page.clock.install();
     await page.goto(route);
     const canvas = page.locator(`canvas[data-scene="${scene}"]`);
     await expect(canvas).toBeVisible();
     await expect(canvas).toHaveAttribute('aria-hidden', 'true');
     await expect(canvas).toHaveCSS('pointer-events', 'none');
+    await expect(page.getByRole('button', { name: 'Pause background animation' })).toHaveCount(0);
     await expect.poll(() => paintedPixels(canvas)).toBeGreaterThan(0);
     const first = await picture(canvas);
-    await expect.poll(() => picture(canvas)).not.toBe(first);
+    await expect.poll(async () => (await picture(canvas)) !== first).toBe(true);
+
+    await page.clock.fastForward(5400);
+    const afterFirstCycle = await picture(canvas);
+    await expect.poll(async () => (await picture(canvas)) !== afterFirstCycle).toBe(true);
   });
 }
-
-test('background motion has no pause button and settles on its own', async ({ page }) => {
-  await page.goto('/work-with-me');
-  const canvas = page.locator('canvas[data-scene="studio"]');
-  await expect.poll(() => paintedPixels(canvas)).toBeGreaterThan(0);
-  await expect(page.getByRole('button', { name: 'Pause background animation' })).toHaveCount(0);
-  await page.waitForTimeout(5200);
-  const settled = await picture(canvas);
-  await page.waitForTimeout(250);
-  expect(await picture(canvas)).toBe(settled);
-});
 
 test('reduced motion still displays the background artwork', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -85,7 +80,7 @@ test('Other Projects shows the About me scores and selected honors', async ({ pa
   await expect(page.getByRole('heading', { name: 'Extemp National Points Race' })).toBeVisible();
 });
 
-test('the background stops drawing when its heading scrolls offscreen', async ({ page }) => {
+test('the background pauses offscreen and resumes when its heading returns', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 700 });
   await page.goto('/work-with-me');
   const canvas = page.locator('canvas[data-scene="studio"]');
@@ -96,4 +91,7 @@ test('the background stops drawing when its heading scrolls offscreen', async ({
   const offscreen = await picture(canvas);
   await page.waitForTimeout(180);
   expect(await picture(canvas)).toBe(offscreen);
+
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  await expect.poll(async () => (await picture(canvas)) !== offscreen).toBe(true);
 });
