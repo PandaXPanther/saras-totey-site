@@ -15,13 +15,23 @@
   ],
   "games": [
     {
+      "id": 10770094427,
+      "placeId": 100395469744967,
+      "title": "[🎃] Dig a Hole and Automate",
+      "creator": "Crazy Diamondo",
+      "description": "Dig deeper, discover impossible treasures, and build an automated mining factory that earns money while you're away.",
+      "visits": 11777,
+      "updated": "2026-11-27T06:09:40.618Z",
+      "image": "https://tr.rbxcdn.com/180DAY-3d48d01aaa3edc21d4372246a9aa6000/768/432/Image/Webp/noFilter"
+    },
+    {
       "id": 10771597294,
       "placeId": 83347621580247,
       "title": "[🐟] Breed a Fish!",
       "creator": "Crazy Diamondo",
       "description": "Breed impossible fish, discover rare mutations, and build your dream aquarium!",
-      "visits": 19836,
-      "updated": "2026-11-24T21:25:30.177Z",
+      "visits": 21210,
+      "updated": "2026-11-27T06:01:39.501Z",
       "image": "https://tr.rbxcdn.com/180DAY-7be82270d829cacea452efc4f80dbe61/768/432/Image/Webp/noFilter"
     },
     {
@@ -40,19 +50,9 @@
       "title": "[🐾] Catboy Cooking Simulator",
       "creator": "Crazy Diamondo",
       "description": "Can you get dinner on the table before they get home? 🍳",
-      "visits": 1669,
+      "visits": 1683,
       "updated": "2026-11-08T22:31:14.477Z",
       "image": "https://tr.rbxcdn.com/180DAY-d68b92b4e0cc30364247c71315da19d2/768/432/Image/Webp/noFilter"
-    },
-    {
-      "id": 10770094427,
-      "placeId": 100395469744967,
-      "title": "[🎃] Dig a Hole (and Automate)",
-      "creator": "Crazy Diamondo",
-      "description": "Dig deeper, discover impossible treasures, and build an automated mining factory that earns money while you're away.",
-      "visits": 11147,
-      "updated": "2026-10-16T01:13:04.987Z",
-      "image": "https://tr.rbxcdn.com/180DAY-3d48d01aaa3edc21d4372246a9aa6000/768/432/Image/Webp/noFilter"
     },
     {
       "id": 10768542044,
@@ -60,9 +60,9 @@
       "title": "Stand Mayhem",
       "creator": "Studio Duzz",
       "description": "Every Stand is a song. Awaken yours and fight for the harbor.",
-      "visits": 238,
+      "visits": 239,
       "updated": "2026-10-04T06:03:10.25Z",
-      "image": "https://tr.rbxcdn.com/180DAY-ceb1cdf249604d64402bdea05e244ad2/768/432/Image/Png/noFilter"
+      "image": "https://tr.rbxcdn.com/180DAY-ceb1cdf249604d64402bdea05e244ad2/768/432/Image/Webp/noFilter"
     }
   ]
 }
